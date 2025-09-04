@@ -1,6 +1,6 @@
 Ian Bacchi Nascimento
 
-Levantamento de Requisitos do Projeto: Sistema de Gerenciamento de Hábitos
+**Levantamento de Requisitos do Projeto: Sistema de Gerenciamento de Hábitos**
 1. Objetivo da Pesquisa
 O objetivo desta pesquisa é realizar um levantamento de requisitos detalhado para o desenvolvimento de um aplicativo de rastreamento de hábitos. A meta é ir além de uma simples aplicação CRUD, definindo um produto com uma proposta de valor clara e fundamentada em dados de mercado, análise da concorrência e princípios da psicologia comportamental. A pesquisa busca responder a questões estratégicas sobre o mercado, os concorrentes, os fundamentos psicológicos da formação de hábitos, as estratégias de engajamento mais eficazes e os requisitos não funcionais críticos para o sucesso do projeto.
 
@@ -44,3 +44,8 @@ Análise de Produtos Concorrentes: Foi realizada uma análise direta dos princip
 Literatura Acadêmica e Científica: Foram revisados artigos sobre a psicologia da formação de hábitos, mudança de comportamento e a eficácia da gamificação, como os trabalhos de Wood & Runger e revisões sistemáticas sobre o tema.17
 Relatórios de Mercado e Reportagens: Foram consultados relatórios de empresas como Straits Research e Global Growth Insights, além de reportagens sobre tendências tecnológicas no setor de saúde digital.1
 Critérios de Seleção: As fontes foram escolhidas com base em Atualidade (publicações de 2023 a 2025), Autoridade (fontes com credibilidade reconhecida), Corroboração de Dados (cruzamento de estatísticas) e Relevância para o desenvolvimento do aplicativo.
+
+**Reportagem**
+
+I Tried the Most Talked About Habit Tracking App
+https://www.youtube.com/watch?v=xSA88hEocrU&ab_channel=ImprovewithJules
