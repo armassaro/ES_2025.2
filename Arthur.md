@@ -1,12 +1,10 @@
-Pesquisa
+# Pesquisa
 
-Introdução
+## Introdução
 
 No cotidiano, é possível perceber um interesse popular na criação de hábitos, com a venda de cursos e vários outros conteúdos relacionados. Para tal, o presente relatório possui como objetivo dar ênfase aos problemas relacionados à criação de hábitos e a influência da gameficação ligada à criação de hábitos.
 
-Desenvolvimento
-
-Os Problemas na Criação de Hábitos
+## Desenvolvimento
 
 A psicologia define hábitos como ações que são acionadas automaticamente em resposta a pistas contextuais que foram associadas ao seu desempenho. A formação de um hábito ocorre através da simples repetição de uma ação em um contexto consistente, o que leva a uma aprendizagem associativa. Uma vez que o início da ação é transferido para pistas externas, a dependência da atenção consciente ou de processos motivacionais é reduzida. Contudo, diversas dificuldades surgem neste processo.
 
@@ -18,17 +16,15 @@ A falta de consistência também é um obstáculo significativo. O conselho típ
 
 Finalmente, muitas pessoas tentam formar um hábito de "não fazer algo", o que não é viável, pois não é possível formar um hábito para a inação. A estratégia correta é selecionar um novo comportamento positivo para substituir um indesejado. Quebrar hábitos existentes exige estratégias diferentes e mais trabalhosas do que criar novos.
 
-A Influência da Gameficação na Criação de Hábitos
-
 A gameficação é definida como um processo de aprimoramento de serviços com recursos motivacionais para invocar experiências lúdicas e, consequentemente, resultados comportamentais. Uma revisão da literatura científica sobre o tema indica que a gameficação, de fato, tende a produzir efeitos positivos, embora seu sucesso dependa muito do contexto de implementação e dos usuários envolvidos.
 
 A influência da gameficação se manifesta através de "recursos motivacionais" (motivational affordances), que são elementos de design de jogos aplicados a contextos não lúdicos. Os mais comuns e estudados são:
 
-    Pontos 
+- Pontos 
 
-Placares de Líderes (Leaderboards) 
+- Placares de Líderes (Leaderboards) 
 
-Conquistas ou Medalhas (Achievements/Badges) 
+- Conquistas ou Medalhas (Achievements/Badges) 
 
 Outros elementos incluem níveis, histórias ou temas, metas claras, feedback, recompensas e desafios. A implementação desses elementos busca gerar resultados psicológicos, como aumento da motivação, engajamento e prazer, que por sua vez levam a resultados comportamentais, como maior frequência de uso de um serviço ou maior qualidade nas contribuições dos usuários. No contexto educacional, por exemplo, a gameficação demonstrou aumentar a motivação e o engajamento dos alunos nas tarefas de aprendizagem.
 
@@ -36,13 +32,13 @@ Apesar dos resultados positivos, existem ressalvas importantes. O efeito pode se
 
 As características dos próprios usuários também são um fator crucial. Pessoas diferentes interagem com sistemas gamificados de maneiras distintas e por razões diferentes. Por exemplo, em um estudo sobre um sistema interno da IBM, observou-se que alguns usuários se esforçavam para estar no topo do placar de líderes, enquanto para outros era suficiente apenas aparecer na lista, independentemente da classificação. A mesma mecânica pode ser percebida como positiva por alguns e negativa por outros (como as que incentivam a competição).
 
-Conclusão
+## Conclusão
 
 A formação de hábitos é um processo psicológico complexo, cujos principais desafios incluem a manutenção da consistência, o estabelecimento de expectativas de tempo realistas e o foco em ações simples e na criação de novos comportamentos em vez da supressão de antigos. A gameficação surge como uma estratégia promissora para apoiar este processo, utilizando elementos de jogos para aumentar a motivação e o engajamento necessários para a repetição do comportamento.
 
 Contudo, a aplicação da gameficação não é uma solução universal. Seu sucesso é altamente dependente do contexto da atividade e das características individuais dos usuários. Uma abordagem eficaz, portanto, deve integrar o conhecimento sobre a psicologia da formação de hábitos com um design de gameficação cuidadosamente planejado, que considere o público-alvo e o ambiente em que o novo hábito será desenvolvido.
 
-Referências
+## Referências
 
 Gardner, B., Lally, P., & Wardle, J. (2012). Making health habitual: the psychology of 'habit-formation' and general practice. British Journal of General Practice, 62(605), 664–666.
 
