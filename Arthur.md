@@ -43,3 +43,107 @@ Contudo, a aplicação da gameficação não é uma solução universal. Seu suc
 Gardner, B., Lally, P., & Wardle, J. (2012). Making health habitual: the psychology of 'habit-formation' and general practice. British Journal of General Practice, 62(605), 664–666.
 
 Hamari, J., Koivisto, J., & Sarsa, H. (2014). Does Gamification Work? – A Literature Review of Empirical Studies on Gamification. In 2014 47th Hawaii International Conference on System Sciences (pp. 3025-3034).
+
+# Entrevista
+## Transcrição da entrevista
+### 1. Tentativa de criar novos hábitos
+
+**Pergunta:** Você já tentou criar um hábito novo? Como foi essa experiência?
+**Resposta:**
+
+* Já tentei criar vários hábitos, mas nenhum deu certo.
+* No máximo consegui manter por uma semana.
+
+---
+
+### 2. Tempo necessário para consolidar um hábito
+
+**Pergunta:** Quanto tempo você acha que leva para incorporar um hábito na rotina?
+**Resposta:**
+
+* Pelo menos **uma semana** para começar a praticar de forma recorrente.
+* Após **duas semanas**, já dá para começar a manter o hábito de forma mais estável.
+
+---
+
+### 3. Dificuldades para manter hábitos
+
+**Pergunta:** O que costuma te atrapalhar quando tenta manter um hábito novo?
+**Resposta:**
+
+* Mudanças abruptas.
+* Exemplo: tentar dormir às 20h quando o costume era dormir à meia-noite.
+* O corpo não se adapta rápido a mudanças radicais.
+
+---
+
+### 4. Motivação para não desistir
+
+**Pergunta:** O que te ajuda a não desistir quando falha ou perde um dia?
+**Resposta:**
+
+* O pensamento de que preciso mudar minha rotina, que considero ruim.
+* O desejo de melhorar a qualidade de vida.
+
+---
+
+### 5. Substituição de hábitos
+
+**Pergunta:** É mais fácil trocar um hábito ruim por um bom ou apenas parar o ruim?
+**Resposta:**
+
+* Melhor **parar aos poucos** o hábito ruim, sem precisar trocá-lo imediatamente.
+* Exemplo: parar de comer quando estressado antes de trocar por outra prática.
+
+---
+
+### 6. Preferência por repetição ou variação
+
+**Pergunta:** O que te motiva mais: repetir sempre igual ou variar?
+**Resposta:**
+
+* Prefere variações pequenas de vez em quando.
+* Algo **dinâmico**, com mudanças semanais.
+* Nada muito rígido.
+
+---
+
+### 7. Recompensas como motivação
+
+**Pergunta:** Recompensas funcionam para você quando cumpre metas?
+**Resposta:**
+
+* Para ele, **não funcionam**.
+* As recompensas não compensaram o esforço da mudança.
+* Mas reconhece que para outras pessoas podem funcionar bem.
+
+---
+
+### 8. Competição vs progresso pessoal
+
+**Pergunta:** Prefere competir com outras pessoas ou acompanhar seu progresso?
+**Resposta:**
+
+* Prefere **acompanhar o próprio progresso**.
+* Competição não é uma motivação.
+
+---
+
+### 9. Motivação individual
+
+**Pergunta:** Cada pessoa precisa de um tipo diferente de motivação para criar hábitos?
+**Resposta:**
+
+* Sim, cada pessoa é diferente.
+* O que funciona para um pode não funcionar para outro.
+
+---
+
+### 10. Continuidade após a empolgação inicial
+
+**Pergunta:** O que faz você continuar um hábito depois que a empolgação inicial passa?
+**Resposta:**
+
+* O hábito se torna parte da rotina.
+* A repetição gera estabilidade.
+* Depois de um tempo, manter o hábito se torna natural e mais fácil.
