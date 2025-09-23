@@ -146,4 +146,15 @@ Hamari, J., Koivisto, J., & Sarsa, H. (2014). Does Gamification Work? – A Lite
 
 * O hábito se torna parte da rotina.
 * A repetição gera estabilidade.
-* Depois de um tempo, manter o hábito se torna natural e mais fácil.
+
+# Criação de histórias de usuário a partir da entrevista
+A partir da entrevista realizada, foi possível elaborar as seguintes histórias de usuário: 
+
+1 - **Como uma pessoa que deseja criar novos hábitos, quero que as mudanças sejam feitas de forma progressiva, para que meu corpo e minha rotina consigam se adaptar naturalmente e eu consiga manter o hábito a longo prazo.**
+Uma das principais dificuldades relatadas pelo entrevistado foi a da dificuldade do desenvolvimento de hábitos de forma muito abrupta. Logo, para suprir tal dificuldade, o sistema proposto poderia implementar e sugerir mudanças mais progressivas e que se adaptassem ao usuário, para que não houvesse um desincentivo muito cedo na implementação de um hábito.
+
+2 - **Como alguém que prefere focar no próprio desempenho, quero ter um sistema que registre minha evolução diária ou semanal, para que eu possa visualizar minha constância e me sentir motivado sem depender de comparações com outras pessoas.**
+O entrevistado também relatou um desinteresse na visualização do resultado alheio, ou seja, da presença de competitividade na elaboração de um novo hábito. O sistema proposto poderia implementar um modo com e sem competitividade para pessoas que houvesse uma maior gama de usuários do sistema.
+
+3 - **Como alguém que não gosta de rotinas engessadas, quero que os hábitos tenham pequenas variações ao longo do tempo, para que a prática não se torne monótona e eu consiga manter o hábito de forma dinâmica e prazerosa.**
+O entrevistado relata não gostar de rotinas engessadas, ou seja, que os hábitos que ele gostaria de incluir na rotina fossem muito rígidos. O sistema proposto poderia incluir junto de um modo sem competitividade, um maior prazo para cumprimento dos hábitos propostos. 
