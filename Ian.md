@@ -48,4 +48,98 @@ Critérios de Seleção: As fontes foram escolhidas com base em Atualidade (publ
 **Reportagem**
 
 I Tried the Most Talked About Habit Tracking App
+
 https://www.youtube.com/watch?v=xSA88hEocrU&ab_channel=ImprovewithJules
+
+**Entrevista**
+
+Transcrição da Entrevista (Resumo)
+1. Tentativa de criar novos hábitos
+
+Pergunta: Você já tentou criar um hábito novo? Como foi essa experiência?
+
+Resposta: Sim. Recentemente, para beber mais água, ele estabeleceu uma meta de 2,5 litros por dia e usou uma garrafa de 2 litros como medida visual para acompanhar o progresso diário.
+
+2. Tempo necessário para consolidar um hábito
+
+Pergunta: Quanto tempo você acha que leva para um hábito realmente pegar?
+
+Resposta: Ele acredita que leva meses de consistência e disciplina para um hábito se consolidar de verdade.
+
+3. Dificuldades para manter hábitos
+
+Pergunta: O que costuma te atrapalhar quando tenta manter um hábito novo?
+
+Resposta: A principal dificuldade é que os hábitos positivos (ir à academia, estudar) não são tão prazerosos quanto distrações como rolar o feed do Instagram. A falta de prazer imediato é uma barreira.
+
+4. Motivação para não desistir
+
+Pergunta: O que te ajuda a não desistir quando falha ou perde um dia?
+
+Resposta: A mentalidade de "seguir em frente". Se ele não consegue em um dia, ele foca em tentar de novo no dia seguinte, sem desistir.
+
+5. Substituição de hábitos
+
+Pergunta: É mais fácil trocar um hábito ruim por um bom ou apenas parar o ruim?
+
+Resposta: Ele acha mais fácil trocar um hábito por outro. Cita o exemplo de fumantes que substituem o cigarro por comer amendoim ou beber água.
+
+6. Preferência por repetição ou variação
+
+Pergunta: O que te motiva mais: repetir sempre igual ou variar?
+
+Resposta: Ele acredita que o hábito vem da constância e da repetição do mesmo comportamento.
+
+7. Recompensas como motivação
+
+Pergunta: Recompensas funcionam para você quando cumpre metas?
+
+Resposta: Sim, funcionam muito bem. Ele deu um exemplo concreto de que só se permite sair no fim de semana depois de cumprir todas as suas tarefas da faculdade. O final de semana funciona como uma recompensa que o motiva a ser produtivo.
+
+8. Competição vs. progresso pessoal
+
+Pergunta: Prefere competir com outras pessoas ou acompanhar seu progresso?
+
+Resposta: Ele vê a competição como uma "lâmina de dois gumes". Se for com as pessoas certas, pode ser muito boa e saudável, como competir com um amigo para ver quem resolve mais exercícios de cálculo, onde ambos saem ganhando. Ele gosta desse tipo de competição.
+
+9. Motivação individual
+
+Pergunta: Cada pessoa precisa de um tipo diferente de motivação para criar hábitos?
+
+Resposta: Sim, ele acredita que cada pessoa é diferente e precisa de estímulos diferentes.
+
+10. Continuidade após a empolgação inicial
+
+Pergunta: O que faz você continuar um hábito depois que a empolgação inicial passa?
+
+Resposta: A percepção do impacto positivo que o hábito traz para a sua vida. Ver a diferença que o hábito faz é o que o motiva a continuar, mesmo depois de atingir os objetivos iniciais.
+
+Levantamento de Requisitos do Sistema Proposto
+A partir da análise da entrevista realizada com Eduardo, foram identificadas as seguintes necessidades e requisitos para o sistema:
+
+O sistema deve permitir que o usuário defina metas claras e quantificáveis para seus hábitos (ex: "beber 2,5 litros de água").
+
+O sistema deve ter uma funcionalidade de recompensas personalizáveis, onde o usuário pode definir um prêmio (ex: "ir ao cinema") que é desbloqueado após a conclusão de um conjunto de tarefas ou metas semanais.
+
+O sistema deve incluir um modo de competição opcional e saudável, permitindo que usuários convidem amigos para desafios específicos, onde o progresso de ambos é compartilhado.
+
+O sistema deve ter uma abordagem motivacional e não punitiva em caso de falhas, incentivando o usuário a recomeçar no dia seguinte, alinhado à mentalidade de "seguir em frente".
+
+O sistema deve focar no acompanhamento da consistência e da repetição como métrica principal de sucesso para a formação de um hábito.
+
+O sistema pode sugerir a troca de um hábito ruim por um bom, oferecendo alternativas positivas para comportamentos que o usuário deseja mudar.
+
+Criação de Histórias de Usuário a partir da Entrevista
+A partir da entrevista realizada, foi possível elaborar as seguintes histórias de usuário:
+
+1 - Como um usuário motivado por objetivos, quero poder definir uma recompensa pessoal (como "sair no fim de semana") que eu só ganho se completar minhas tarefas, para que eu tenha um incentivo forte e concreto para me manter disciplinado.
+
+Justificativa: O entrevistado deu um exemplo claro e pessoal de como essa estratégia funciona para ele, afirmando que só se permite ter o lazer do fim de semana após concluir seus estudos da faculdade, como a prova de POO e o trabalho de Cálculo. Isso mostra que um sistema de recompensas customizáveis seria um grande fator de motivação.
+
+2 - Como um usuário que gosta de desafios, quero ter a opção de criar competições com meus amigos para ver quem é mais consistente em um hábito (como "fazer mais exercícios"), para que possamos nos motivar de forma saudável e crescer juntos.
+
+Justificativa: Diferente do outro entrevistado, Eduardo se mostrou aberto à competição, desde que seja positiva. Ele a descreveu como uma "lâmina de dois gumes" e citou o exemplo de uma competição de estudos com um amigo como algo bom, "onde ambos ganham". Portanto, um modo de desafio opcional atenderia perfeitamente a esse perfil de usuário.
+
+3 - Como alguém que sabe que pode falhar, quero que o aplicativo me encoraje a recomeçar no dia seguinte sem me fazer sentir culpado, para que eu mantenha a mentalidade de "seguir em frente" e não desista do meu objetivo.
+
+Justificativa: O entrevistado deixou claro que sua abordagem para a falha não é desistir, mas sim "tentar de novo" no dia seguinte. Um sistema que adota essa filosofia, oferecendo mensagens de incentivo em vez de quebrar sequências de forma punitiva, manteria o usuário engajado a longo prazo.
