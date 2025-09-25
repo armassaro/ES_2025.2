@@ -14,8 +14,12 @@ O problema descrito para o sistema proposto no presente repositório é da dific
 1. Cada um tem que formular 3 histórias de usuário e 1 diagrama de sequência 
 
 ## Diagrama de Sequência
-**O qeu fazer?**
+**O que fazer?**
 1. Cada um tem que fazer no mínimo 1 diagrama de sequência que registra como o programa vai funcionar, qual o fluxo dele
+
+A partir das histórias de usuário obtidas com as entrevistas relacionado ao tema de criação de hábitos, foi possível chegar ao seguinte diagrama de sequência:
+
+![Diagrama de sequência](/Arthur/Diagrama%20de%20Sequência.svg)
 
 ## Demonstração de protótipo
 **O que fazer?**

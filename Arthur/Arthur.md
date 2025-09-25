@@ -147,6 +147,15 @@ Hamari, J., Koivisto, J., & Sarsa, H. (2014). Does Gamification Work? – A Lite
 * O hábito se torna parte da rotina.
 * A repetição gera estabilidade.
 
+# Levantamento de Requisitos do Sistema Proposto
+A partir da análise da entrevista realizada, foram identificadas as seguintes necessidades e requisitos para o sistema:
+
+1. O sistema deve sugerir mudanças de hábitos de forma progressiva, evitando alterações abruptas na rotina do usuário.
+2. O sistema deve permitir o acompanhamento da evolução do usuário, registrando o progresso diário ou semanal, sem obrigatoriedade de comparação com outros usuários.
+3. O sistema deve oferecer opções para rotinas dinâmicas, permitindo pequenas variações nos hábitos ao longo do tempo, evitando práticas monótonas e rígidas.
+4. O sistema deve possibilitar a configuração de modos com ou sem competitividade, respeitando o perfil motivacional de cada usuário.
+5. O sistema deve incentivar a substituição gradual de hábitos indesejados por novos comportamentos positivos, sem exigir mudanças radicais imediatas.
+
 # Criação de histórias de usuário a partir da entrevista
 A partir da entrevista realizada, foi possível elaborar as seguintes histórias de usuário: 
 
