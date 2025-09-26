@@ -3,7 +3,7 @@
 O problema descrito para o sistema proposto no presente repositório é da dificuldade na formação diária de hábitos. Com isso, o objetivo que o presente sistema possui é a da formação de hábitos de forma mais facilitada, se utilizando de sistemas de gamificação.
 
 ## Levantamento de requisitos
-O processo do levantamento de requisitos foi feito a partir da observação das necessidades levantadas por cada entrevistado por meio da técnica de walkthrough, onde foi feita uma revisão informal em grupo das entrevistas e dos requisitos levantados por cada um para identificar os pontos em comum
+O processo da validação de requisitos foi feito a partir da observação das necessidades levantadas por cada entrevistado por meio da técnica de walkthrough, onde foi feita uma revisão informal em grupo das entrevistas e dos requisitos levantados por cada um para identificar os pontos em comum.
 
 ## Requisitos do sistema
 
@@ -38,5 +38,6 @@ A partir das histórias de usuário obtidas com as entrevistas relacionado ao te
 ![Diagrama de sequência](/Arthur/Diagrama%20de%20Sequência.svg)
 
 ## Demonstração de protótipo
-**O que fazer?**
-1. Mostrar o protótipo de média fidelidade, pode ser feito apenas no Figma com o esqueleto do programa
+O protótipo, desenvolvido a partir da plataforma Figma, demonstra as principais seções do sistema proposto. 
+
+[https://www.figma.com/design/VuYDJSnOO228fxFbdibMRn/Gerenciamento-de-H%C3%A1bitos?node-id=0-1&p=f&t=zgzMUz14WHbMaorM-0]
