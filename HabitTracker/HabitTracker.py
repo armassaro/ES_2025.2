@@ -3,11 +3,11 @@ import os
 from abc import ABC, abstractmethod
 from datetime import datetime
 import uuid
-from Model.UserModel import UserModel
-from Model.HabitModel import HabitModel
+from model.UserModel import UserModel
+from model.HabitModel import HabitModel
 from controller.HabitController import HabitController
 from controller.ReportController import ReportController
-from View.ConsoleView import ConsoleView
+from view.ConsoleView import ConsoleView
 
 # --- CONFIGURAÇÃO E PERSISTÊNCIA (Arquivos Locais) ---
 USER_FILE = "usuarios.json"
@@ -60,74 +60,34 @@ class Observer(ABC):
         """Recebe a notificação de atualização do sujeito."""
         pass
 
-# --- PADRÃO FACTORY METHOD (Para criação de relatórios) ---
-
-class Report(ABC):
-    """Produto (Product): Interface comum para todos os relatórios."""
-    @abstractmethod
-    def generate_visualization_data(self):
-        """Método para formatar os dados para exibição no gráfico."""
-        pass
-
-class DailyReport(Report):
-    """Produto Concreto: Relatório Diário."""
-    def __init__(self, raw_data):
-        self.raw_data = raw_data
-        # Lógica de formatação diária
-
-    def generate_visualization_data(self):
-        print("Gerando dados de visualização Diária...")
-        # Lógica de cálculo e retorno dos dados diários
-        return {"period": "Daily", "data": self.raw_data}
-
-class WeeklyReport(Report):
-    """Produto Concreto: Relatório Semanal."""
-    def __init__(self, raw_data):
-        self.raw_data = raw_data
-        # Lógica de formatação semanal
-
-    def generate_visualization_data(self):
-        print("Gerando dados de visualização Semanal...")
-        # Lógica de cálculo e retorno dos dados semanais
-        return {"period": "Weekly", "data": self.raw_data}
-
-class MonthlyReport(Report):
-    """Produto Concreto: Relatório Mensal."""
-    def __init__(self, raw_data):
-        self.raw_data = raw_data
-        # Lógica de formatação mensal
-
-    def generate_visualization_data(self):
-        print("Gerando dados de visualização Mensal...")
-        # Lógica de cálculo e retorno dos dados mensais
-        return {"period": "Monthly", "data": self.raw_data}
-
-def setup_architecture(user_model):
+def setup_architecture(user_model, view_type='console'):
     """Inicializa todos os componentes e estabelece as conexões MVC/Padrões."""
     
     # Models
     habit_model = HabitModel(user_model)
-
-    # Views (O ReportController precisa da ReportView, que agora é a ConsoleView)
-    console_view = ConsoleView(None, user_model) 
     
     # Controllers
     habit_controller = HabitController(habit_model)
-    report_controller = ReportController(habit_model, console_view) # ReportController é o Observer
-
-    # Conecta o Controller de Hábito na View
-    console_view.habit_controller = habit_controller
     
-    return console_view, report_controller
+    # Views (escolhe entre Console ou GUI)
+    if view_type == 'gui':
+        from view.gui.MainWindow import GUIReportView
+        report_view = GUIReportView()
+    else:
+        report_view = ConsoleView(None, user_model)
+        report_view.habit_controller = habit_controller
+    
+    # ReportController é o Observer
+    report_controller = ReportController(habit_model, report_view)
+    
+    return report_view, habit_controller, report_controller
 
 def run_main_menu(console_view):
-    """Loop principal da aplicação após o login."""
+    """Loop principal da aplicação após o login (apenas para Console)."""
     while True:
-        # [CORREÇÃO AQUI] Usa o novo método para obter o username
         logged_in_username = console_view.user_model.get_logged_in_username()
         
         print("\n--- MENU PRINCIPAL ---")
-        # Exibe o username
         print(f"Usuário Logado: {logged_in_username}") 
         
         print("1. Ver Meus Hábitos (Read - R1)")
@@ -152,8 +112,6 @@ def run_main_menu(console_view):
         elif choice == '5':
             console_view.handle_mark_done_input()
         elif choice == '6':
-            # Chama o ReportController diretamente para forçar a atualização dos relatórios
-            # O ReportController é notificado e dispara a geração dos relatórios
             console_view.habit_controller.model.notify()
         elif choice == '7':
             print("Saindo do Habit Tracker. Volte sempre!")
@@ -162,25 +120,45 @@ def run_main_menu(console_view):
             console_view.show_error("Opção inválida. Tente novamente.")
 
 
-def run_app():
-    """Função de entrada que inicia o processo de autenticação e o menu principal."""
-    # Inicializa o Modelo de Usuário (carrega usuarios.json)
+def run_app_console():
+    """Função de entrada para versão Console."""
     user_model = UserModel()
-    
-    # Inicializa toda a arquitetura MVC e padrões
-    console_view, _ = setup_architecture(user_model)
+    console_view, habit_controller, _ = setup_architecture(user_model, view_type='console')
 
-    # R4: Handle Login/Cadastro
     if console_view.handle_initial_auth():
-        # Após o sucesso da autenticação, inicia o menu principal
         run_main_menu(console_view)
     else:
         console_view.show_error("Falha na autenticação. Encerrando o aplicativo.")
 
 
-if __name__ == "__main__":
-    # Limpa os arquivos de persistência para uma simulação limpa, se quiser:
-    # if os.path.exists(USER_FILE): os.remove(USER_FILE)
-    # if os.path.exists(HABIT_DATA_FILE): os.remove(HABIT_DATA_FILE)
+def run_app_gui():
+    """Função de entrada para versão GUI."""
+    from view.gui.LoginWindow import LoginWindow
+    from view.gui.MainWindow import MainWindow
     
-    run_app()
+    user_model = UserModel()
+    
+    # Abre janela de login
+    login_window = LoginWindow(user_model)
+    authenticated = login_window.run()
+    
+    if not authenticated:
+        print("Login cancelado.")
+        return
+    
+    # Configura arquitetura com GUI
+    report_view, habit_controller, _ = setup_architecture(user_model, view_type='gui')
+    
+    # Abre janela principal
+    main_window = MainWindow(habit_controller, user_model)
+    main_window.run()
+
+
+if __name__ == "__main__":
+    # Permite escolher qual interface usar
+    import sys
+    
+    if len(sys.argv) > 1 and sys.argv[1] == '--gui':
+        run_app_gui()
+    else:
+        run_app_console()
