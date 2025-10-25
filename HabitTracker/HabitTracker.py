@@ -123,7 +123,8 @@ def run_main_menu(console_view):
 def run_app_console():
     """Função de entrada para versão Console."""
     user_model = UserModel()
-    console_view, habit_controller, _ = setup_architecture(user_model, view_type='console')
+    console_view, habit_controller, report_controller = setup_architecture(user_model, view_type='console')
+    #                                 ^^^^^^^^^^^^^^^^ NÃO DESCARTE ISSO!
 
     if console_view.handle_initial_auth():
         run_main_menu(console_view)
@@ -134,11 +135,10 @@ def run_app_console():
 def run_app_gui():
     """Função de entrada para versão GUI."""
     from view.gui.LoginWindow import LoginWindow
-    from view.gui.MainWindow import MainWindow
+    from view.gui.MainWindow import MainWindow  # ← Mudar para view.gui (minúsculo)
     
     user_model = UserModel()
     
-    # Abre janela de login
     login_window = LoginWindow(user_model)
     authenticated = login_window.run()
     
@@ -146,10 +146,8 @@ def run_app_gui():
         print("Login cancelado.")
         return
     
-    # Configura arquitetura com GUI
-    report_view, habit_controller, _ = setup_architecture(user_model, view_type='gui')
+    report_view, habit_controller, report_controller = setup_architecture(user_model, view_type='gui')
     
-    # Abre janela principal
     main_window = MainWindow(habit_controller, user_model)
     main_window.run()
 

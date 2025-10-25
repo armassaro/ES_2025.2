@@ -22,7 +22,7 @@ class ReportController(Observer):
 
     def generate_and_display_all_reports(self):
         """Gera e envia todos os dados de relatório para a View."""
-        from Model.ReportFactory import ReportFactory
+        from model.ReportFactory import ReportFactory
         
         raw_data = self.model.get_user_data()
         if raw_data is None:
