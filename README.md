@@ -1,25 +1,24 @@
 # ES_2025.2
 
-## 1. Primeira ideia do projeto
+## Ideia do projeto
 Sistema de Gerenciamento de Hábitos (Habit Tracker) 
-  - **Descrição:**  
-  Um app para registrar hábitos diários (ex: estudar, beber água, fazer exercícios), com histórico e relatórios básicos.
+### Descrição
+Um app para registrar hábitos diários (ex: estudar, beber água, fazer exercícios), com histórico e relatórios básicos.
     
-  - **Funções principais:**  
-    O sistema CRUD seria para o controle de hábitos e usuários e as informações ficariam salvas em dois arquivos diferentes.
-    
-    Cadastro de hábitos (CRUD: criar, editar, excluir).
+### Funções principais
+O sistema CRUD seria para o controle de hábitos e usuários e as informações ficariam salvas em dois arquivos diferentes.    
+Cadastro de hábitos (CRUD: criar, editar, excluir).
+Registro diário de progresso (checkboxes ou botões).
+Exibição de relatórios (ex.: gráficos simples de desempenho semanal/mensal).
 
-    Registro diário de progresso (checkboxes ou botões).
+### Padrões de projeto aplicáveis
+Os padrões de projeto consistem em várias arquiteturas documentadas e especializadas em determinados tipos de funções para uma aplicação. A seguir, são listados os padrões de projeto utilizados durante o desenvolvimento da aplicação proposta, assim como as referências utilizadas e explicações para a utilização de cada padrão de projeto utilizado para cada função presente na aplicação. Seguem os padrões de projeto utilizados: 
 
-    Exibição de relatórios (ex.: gráficos simples de desempenho semanal/mensal).
-    
-  - **Padrões de projeto aplicáveis:**  
-    Observer → atualização automática do painel de relatórios ao registrar progresso.
+- **Observer** - também conhecido como "Event-Subscriber" ou "Listener", o padrão de projeto Observer funciona a partir de um mecanismo de assinatura com o intuito de notificar um ou mais objetos a respeito de eventos específicos que aconteçam com o objeto que está sendo "observado". O padrão de projeto Observer é composto essencialmente por duas classes, a publicadora e a assinante, onde a classe publicadora contém uma lista de assinantes e métodos como ```subscribe()```, ```unsubscribe()``` e ```notifySubscribers()```, que servem para incluir e remover assinantes e o de enviar notificação para um determinado acontecimento dentro da classe publicadora. Já a classe assinante possui um método ```update()``` que serve para notificação direta da classe publicadora para a classe assinante, onde a classe publicadora irá utilizar o método ```update()``` de forma direta.
 
-    MVC (Model-View-Controller) → separar interface, dados e lógica.
-
-    Factory Method → criação de diferentes tipos de relatórios (diário, semanal, mensal).
+atualização automática do painel de relatórios ao registrar progresso.
+MVC (Model-View-Controller) → separar interface, dados e lógica.
+Factory Method → criação de diferentes tipos de relatórios (diário, semanal, mensal).
 
 ##  Viabilidade Técnica
 A viabilidade técnica do projeto é alta. As funcionalidades descritas são padrão em aplicações modernas e existem inúmeras ferramentas, bibliotecas e frameworks consolidados para implementá-las.
