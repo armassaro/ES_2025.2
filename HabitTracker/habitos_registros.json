@@ -22,5 +22,31 @@
             }
         ],
         "progress": {}
+    },
+    "21c1b924-3739-4a49-a3f4-e80dcbe29a05": {
+        "habits": [
+            {
+                "id": "61bb91e0-d9d9-468e-b57d-5d00b2f6767e",
+                "name": "fe tropa",
+                "description": "tautau",
+                "created_at": "2025-10-25T00:06:19.751044",
+                "active": true
+            },
+            {
+                "id": "fcd7a2d7-ba0c-4f9f-b3d3-9e940115559e",
+                "name": "vai gremio",
+                "description": "boa",
+                "created_at": "2025-10-25T00:27:28.591703",
+                "active": true
+            },
+            {
+                "id": "ab9bc8c6-ccd0-4515-9110-08be9c9b16bb",
+                "name": "1",
+                "description": "iji",
+                "created_at": "2025-10-25T00:29:05.180194",
+                "active": true
+            }
+        ],
+        "progress": {}
     }
 }
