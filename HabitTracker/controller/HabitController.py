@@ -33,4 +33,6 @@ class HabitController:
     def handle_mark_done_request(self, habit_id, date=None):
         """Lida com a solicitação de marcar hábito como concluído."""
         print(f"🔧 Controller: Marcando hábito ID={habit_id} como concluído em {date}")
-        return self.model.mark_habit_done(habit_id, date)
+        result = self.model.mark_habit_done(habit_id, date)
+        print(f"🔧 Controller: Resultado do model = {result}")
+        return result

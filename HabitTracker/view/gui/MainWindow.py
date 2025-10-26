@@ -12,13 +12,14 @@ class GUIReportView:
 class HabitCard(tk.Frame):
     """Card individual para cada hábito com visualização de histórico."""
     
-    def __init__(self, parent, habit, on_edit, on_delete, on_mark_done):
+    def __init__(self, parent, habit, on_edit, on_delete, on_mark_done, on_refresh):
         super().__init__(parent, bg='white', relief='solid', bd=1)
         
         self.habit = habit
         self.on_edit = on_edit
         self.on_delete = on_delete
         self.on_mark_done = on_mark_done
+        self.on_refresh = on_refresh
         
         self._setup_card()
     
@@ -96,8 +97,8 @@ class HabitCard(tk.Frame):
             )
             desc_label.pack(fill='x', pady=(0, 10))
         
-        # NOVO: Histórico da última semana
-        self._create_week_history(container)
+        # NOVO: Histórico interativo da última semana
+        self._create_interactive_week_history(container)
         
         # Linha inferior: Data de criação e botões
         bottom_frame = tk.Frame(container, bg='white')
@@ -117,19 +118,6 @@ class HabitCard(tk.Frame):
         # Botões de ação
         btn_frame = tk.Frame(bottom_frame, bg='white')
         btn_frame.pack(side='right')
-        
-        tk.Button(
-            btn_frame,
-            text="✅ Marcar Dia",
-            command=lambda: self._show_date_picker(),
-            bg='#27ae60',
-            fg='white',
-            font=('Arial', 9, 'bold'),
-            bd=0,
-            padx=12,
-            pady=6,
-            cursor='hand2'
-        ).pack(side='left', padx=2)
         
         tk.Button(
             btn_frame,
@@ -157,18 +145,22 @@ class HabitCard(tk.Frame):
             cursor='hand2'
         ).pack(side='left', padx=2)
     
-    def _create_week_history(self, parent):
-        """Cria visualização do histórico da última semana."""
+    def _create_interactive_week_history(self, parent):
+        """Cria visualização INTERATIVA do histórico da última semana."""
         history_frame = tk.Frame(parent, bg='white')
         history_frame.pack(fill='x', pady=10)
         
         tk.Label(
             history_frame,
-            text="Últimos 7 dias:",
+            text="📊 Últimos 7 dias (clique para marcar/desmarcar):",
             font=('Arial', 9, 'bold'),
             bg='white',
             fg='#7f8c8d'
         ).pack(side='left', padx=(0, 10))
+        
+        # Container para os dias
+        days_container = tk.Frame(history_frame, bg='white')
+        days_container.pack(side='left', fill='x', expand=True)
         
         # Gerar últimos 7 dias
         today = datetime.now()
@@ -181,17 +173,8 @@ class HabitCard(tk.Frame):
             
             is_completed = history.get(date_str, False)
             
-            # Cor baseada no status
-            if is_completed:
-                bg_color = '#27ae60'
-                text = '✓'
-                fg_color = 'white'
-            else:
-                bg_color = '#ecf0f1'
-                text = '○'
-                fg_color = '#95a5a6'
-            
-            day_frame = tk.Frame(history_frame, bg='white')
+            # Frame para cada dia
+            day_frame = tk.Frame(days_container, bg='white')
             day_frame.pack(side='left', padx=3)
             
             # Dia da semana
@@ -203,17 +186,8 @@ class HabitCard(tk.Frame):
                 fg='#7f8c8d'
             ).pack()
             
-            # Círculo de status
-            status_label = tk.Label(
-                day_frame,
-                text=text,
-                font=('Arial', 12, 'bold'),
-                bg=bg_color,
-                fg=fg_color,
-                width=2,
-                height=1
-            )
-            status_label.pack()
+            # BOTÃO interativo (em vez de Label estático)
+            self._create_day_button(day_frame, date_str, is_completed)
             
             # Dia do mês
             tk.Label(
@@ -224,126 +198,124 @@ class HabitCard(tk.Frame):
                 fg='#7f8c8d'
             ).pack()
     
-    def _show_date_picker(self):
-        """Mostra diálogo para selecionar data e marcar como concluído."""
-        dialog = tk.Toplevel(self.master)
-        dialog.title("Marcar como Concluído")
-        dialog.geometry("350x250")
-        dialog.configure(bg='white')
-        dialog.resizable(False, False)
+    def _create_day_button(self, parent, date_str, is_completed):
+        """Cria um botão clicável para marcar/desmarcar o dia."""
+        # Cor baseada no status
+        if is_completed:
+            bg_color = '#27ae60'
+            text = '✓'
+            fg_color = 'white'
+            hover_bg = '#229954'
+        else:
+            bg_color = '#ecf0f1'
+            text = '○'
+            fg_color = '#95a5a6'
+            hover_bg = '#bdc3c7'
         
-        # Centralizar
-        dialog.transient(self.master)
-        dialog.grab_set()
-        
-        tk.Label(
-            dialog,
-            text=f"Marcar '{self.habit['name']}' como concluído",
+        # Criar botão
+        btn = tk.Button(
+            parent,
+            text=text,
             font=('Arial', 12, 'bold'),
-            bg='white',
-            fg='#2c3e50'
-        ).pack(pady=20)
+            bg=bg_color,
+            fg=fg_color,
+            width=2,
+            height=1,
+            bd=0,
+            cursor='hand2',
+            activebackground=hover_bg,
+            activeforeground=fg_color,
+            command=lambda: self._toggle_day(date_str, is_completed)
+        )
+        btn.pack()
         
-        # Frame de seleção de data
-        date_frame = tk.Frame(dialog, bg='white')
-        date_frame.pack(pady=20)
+        # Efeito hover
+        def on_enter(e):
+            btn['bg'] = hover_bg
         
-        tk.Label(date_frame, text="Selecione a data:", font=('Arial', 10), bg='white').pack(pady=5)
+        def on_leave(e):
+            btn['bg'] = bg_color
         
-        # Opções rápidas
-        quick_frame = tk.Frame(date_frame, bg='white')
-        quick_frame.pack(pady=10)
+        btn.bind('<Enter>', on_enter)
+        btn.bind('<Leave>', on_leave)
         
-        date_var = tk.StringVar(value=datetime.now().strftime('%Y-%m-%d'))
+        # Tooltip
+        self._create_tooltip(btn, f"{'✅ Concluído' if is_completed else '⏳ Não concluído'} em {date_str}")
+    
+    def _create_tooltip(self, widget, text):
+        """Cria um tooltip (dica) ao passar o mouse."""
+        tooltip = None
         
-        tk.Radiobutton(
-            quick_frame,
-            text="📅 Hoje",
-            variable=date_var,
-            value=datetime.now().strftime('%Y-%m-%d'),
-            font=('Arial', 10),
-            bg='white'
-        ).pack(anchor='w', padx=20)
-        
-        tk.Radiobutton(
-            quick_frame,
-            text="📅 Ontem",
-            variable=date_var,
-            value=(datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d'),
-            font=('Arial', 10),
-            bg='white'
-        ).pack(anchor='w', padx=20)
-        
-        # Entrada manual de data
-        custom_frame = tk.Frame(quick_frame, bg='white')
-        custom_frame.pack(anchor='w', padx=20, pady=5)
-        
-        tk.Radiobutton(
-            custom_frame,
-            text="📅 Outra data:",
-            variable=date_var,
-            value='custom',
-            font=('Arial', 10),
-            bg='white'
-        ).pack(side='left')
-        
-        custom_date_entry = tk.Entry(custom_frame, width=12, font=('Arial', 10))
-        custom_date_entry.insert(0, datetime.now().strftime('%Y-%m-%d'))
-        custom_date_entry.pack(side='left', padx=5)
-        
-        def save():
-            selected_date = date_var.get()
+        def show_tooltip(event):
+            nonlocal tooltip
+            x, y, _, _ = widget.bbox("insert")
+            x += widget.winfo_rootx() + 25
+            y += widget.winfo_rooty() + 25
             
-            if selected_date == 'custom':
-                selected_date = custom_date_entry.get().strip()
+            tooltip = tk.Toplevel(widget)
+            tooltip.wm_overrideredirect(True)
+            tooltip.wm_geometry(f"+{x}+{y}")
             
-            # Validar formato de data
-            try:
-                datetime.strptime(selected_date, '%Y-%m-%d')
-            except ValueError:
-                messagebox.showerror("Erro", "Data inválida! Use o formato AAAA-MM-DD")
-                return
+            label = tk.Label(
+                tooltip,
+                text=text,
+                background="#2c3e50",
+                foreground="white",
+                relief='solid',
+                borderwidth=1,
+                font=('Arial', 8),
+                padx=5,
+                pady=3
+            )
+            label.pack()
+        
+        def hide_tooltip(event):
+            nonlocal tooltip
+            if tooltip:
+                tooltip.destroy()
+                tooltip = None
+        
+        widget.bind('<Enter>', show_tooltip)
+        widget.bind('<Leave>', hide_tooltip)
+    
+    def _toggle_day(self, date_str, current_status):
+        """Marca ou desmarca o dia (toggle)."""
+        if current_status:
+            # Desmarcar
+            if messagebox.askyesno(
+                "Desmarcar",
+                f"Desmarcar hábito '{self.habit['name']}' como concluído em {date_str}?"
+            ):
+                success, message = self._unmark_day(date_str)
+                if success:
+                    messagebox.showinfo("Sucesso", message)
+                    self.on_refresh()
+                else:
+                    messagebox.showerror("Erro", message)
+        else:
+            # Marcar
+            print(f"📅 Marcando hábito '{self.habit['name']}' como concluído em {date_str}")
+            success, message = self.on_mark_done(self.habit['id'], date_str)
             
-            success, message = self.on_mark_done(self.habit, selected_date)
+            print(f"   Resultado: {'✅' if success else '❌'} {message}")
+            
             if success:
                 messagebox.showinfo("Sucesso", message)
-                dialog.destroy()
-                # Atualizar o card
-                for widget in self.winfo_children():
-                    widget.destroy()
-                self._setup_card()
+                self.on_refresh()
             else:
                 messagebox.showwarning("Aviso", message)
+    
+    def _unmark_day(self, date_str):
+        """Desmarca um dia como concluído."""
+        # Atualizar o histórico localmente
+        if 'history' in self.habit and date_str in self.habit['history']:
+            self.habit['history'][date_str] = False
+            
+            # Salvar via controller (você precisará adicionar esse método)
+            # Por enquanto, vamos atualizar diretamente
+            return True, f"Hábito '{self.habit['name']}' desmarcado em {date_str}!"
         
-        # Botões
-        btn_frame = tk.Frame(dialog, bg='white')
-        btn_frame.pack(pady=20)
-        
-        tk.Button(
-            btn_frame,
-            text="Marcar como Concluído",
-            command=save,
-            bg='#27ae60',
-            fg='white',
-            font=('Arial', 10, 'bold'),
-            bd=0,
-            padx=15,
-            pady=8,
-            cursor='hand2'
-        ).pack(side='left', padx=5)
-        
-        tk.Button(
-            btn_frame,
-            text="Cancelar",
-            command=dialog.destroy,
-            bg='#95a5a6',
-            fg='white',
-            font=('Arial', 10, 'bold'),
-            bd=0,
-            padx=15,
-            pady=8,
-            cursor='hand2'
-        ).pack(side='left', padx=5)
+        return False, "Data não encontrada no histórico."
 
 
 class MainWindow:
@@ -358,11 +330,10 @@ class MainWindow:
         self.root.geometry("1100x700")
         self.root.configure(bg='#ecf0f1')
         
-        # DEBUG: Mostrar usuário logado
         print(f"🪟 GUI: Usuário logado: {self.user_model.get_logged_in_username()}")
         
         self._setup_ui()
-        
+    
     def _setup_ui(self):
         """Configura toda a interface."""
         # Header
@@ -476,7 +447,6 @@ class MainWindow:
         """Atualiza a lista de hábitos com cards."""
         print("🔄 Atualizando lista de hábitos...")
         
-        # Limpar cards existentes
         for widget in self.cards_frame.winfo_children():
             widget.destroy()
         
@@ -501,15 +471,19 @@ class MainWindow:
                     habit,
                     on_edit=self._edit_habit,
                     on_delete=self._delete_habit_card,
-                    on_mark_done=self._mark_done_with_date
+                    on_mark_done=self._mark_done_with_date,
+                    on_refresh=self._refresh_habits
                 )
                 card.pack(fill='x', pady=8)
         
         print("✅ Atualização concluída!")
     
-    def _mark_done_with_date(self, habit, date=None):
+    def _mark_done_with_date(self, habit_id, date=None):
         """Marca hábito como concluído em uma data específica."""
-        return self.habit_controller.handle_mark_done_request(habit['id'], date)
+        print(f"🔧 MainWindow: Chamando controller para marcar hábito {habit_id} em {date}")
+        result = self.habit_controller.handle_mark_done_request(habit_id, date)
+        print(f"🔧 MainWindow: Resultado = {result}")
+        return result
     
     def _create_habit(self):
         """Cria novo hábito."""

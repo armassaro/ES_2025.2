@@ -13,7 +13,7 @@ def load_data(filepath, default_value):
     except FileNotFoundError:
         return default_value
     except json.JSONDecodeError:
-        print(f"Aviso: Arquivo {filepath} corrompido.")
+        print(f"⚠️ Aviso: Arquivo {filepath} corrompido.")
         return default_value
 
 def save_data(filepath, data):
@@ -45,38 +45,6 @@ class HabitModel(Subject):
         super().__init__()
         self.user_model = user_model
         self.data = load_data(HABIT_DATA_FILE, {})
-        # CORREÇÃO: Migrar estrutura antiga se necessário
-        self._migrate_old_structure()
-
-    def _migrate_old_structure(self):
-        """Migra estrutura antiga (por usuário ID) para nova estrutura."""
-        # Se os dados estão no formato antigo {user_id: {habits: [], progress: {}}}
-        # converter para {username: [habits]}
-        needs_migration = False
-        
-        for key, value in list(self.data.items()):
-            if isinstance(value, dict) and 'habits' in value:
-                # Estrutura antiga encontrada
-                needs_migration = True
-                # Converter para nova estrutura
-                username = self.user_model.users.get(key, {}).get('username', key)
-                self.data[username] = value.get('habits', [])
-                # Migrar histórico para dentro de cada hábito
-                progress = value.get('progress', {})
-                for habit in self.data[username]:
-                    if 'history' not in habit:
-                        habit['history'] = {}
-                    # Migrar progresso antigo
-                    for date_str, habit_ids in progress.items():
-                        if habit['id'] in habit_ids:
-                            habit['history'][date_str] = True
-                
-                # Remover chave antiga
-                del self.data[key]
-        
-        if needs_migration:
-            save_data(HABIT_DATA_FILE, self.data)
-            print("✅ Estrutura de dados migrada com sucesso!")
 
     def notify(self):
         """Notifica todos os observers sobre mudanças."""
@@ -115,7 +83,7 @@ class HabitModel(Subject):
             return []
         
         habits = self.data.get(username, [])
-        print(f"📊 Buscando hábitos para '{username}': {len(habits)} encontrados")
+        print(f"📊 Model: Buscando hábitos para '{username}': {len(habits)} encontrados")
         return habits
 
     def update_habit(self, habit_id, name=None, description=None, active=None, frequency=None):
@@ -137,7 +105,7 @@ class HabitModel(Subject):
                 
                 save_data(HABIT_DATA_FILE, self.data)
                 self.notify()
-                print(f"✅ Hábito '{habit['name']}' atualizado com sucesso!")
+                print(f"✅ Model: Hábito '{habit['name']}' atualizado com sucesso!")
                 return True, f"Hábito '{habit['name']}' atualizado!"
 
         return False, "Hábito não encontrado."
@@ -163,21 +131,37 @@ class HabitModel(Subject):
         if date is None:
             date = datetime.now().strftime('%Y-%m-%d')
 
+        print(f"📊 Model: Marcando hábito {habit_id} em {date}")
+        
         username = self.user_model.get_logged_in_username()
         if not username or username not in self.data:
+            print(f"❌ Model: Usuário não encontrado ({username})")
             return False, "Usuário não encontrado."
 
         for habit in self.data[username]:
-            if habit['id'] == habit_id:
+            if habit.get('id') == habit_id:
+                # Verificar se já foi marcado
                 if date in habit.get('history', {}) and habit['history'][date]:
+                    print(f"⚠️ Model: Hábito já marcado em {date}")
                     return False, f"Hábito '{habit['name']}' já foi marcado como concluído em {date}!"
 
+                # Garantir que 'history' existe
                 if 'history' not in habit:
                     habit['history'] = {}
                 
+                # Marcar como concluído
                 habit['history'][date] = True
+                
+                # Salvar dados
                 save_data(HABIT_DATA_FILE, self.data)
+                print(f"✅ Model: Hábito '{habit['name']}' marcado em {date}")
+                print(f"   History atualizado: {habit['history']}")
+                
+                # Notificar observers
                 self.notify()
+                
                 return True, f"Hábito '{habit['name']}' marcado como concluído em {date}!"
 
+        print(f"❌ Model: Hábito {habit_id} não encontrado")
+        print(f"   Hábitos disponíveis: {[h.get('id') for h in self.data.get(username, [])]}")
         return False, "Hábito não encontrado."
