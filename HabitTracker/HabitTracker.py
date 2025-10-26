@@ -135,18 +135,29 @@ def run_app_console():
 def run_app_gui():
     """Função de entrada para versão GUI."""
     from view.gui.LoginWindow import LoginWindow
-    from view.gui.MainWindow import MainWindow  # ← Mudar para view.gui (minúsculo)
+    from view.gui.MainWindow import MainWindow
     
     user_model = UserModel()
+    
+    print(f"👤 Usuários cadastrados: {list(user_model.users.keys())}")
     
     login_window = LoginWindow(user_model)
     authenticated = login_window.run()
     
     if not authenticated:
-        print("Login cancelado.")
+        print("❌ Login cancelado.")
         return
     
+    print(f"✅ Usuário autenticado: {user_model.get_logged_in_username()}")
+    print(f"   ID: {user_model.get_logged_in_user_id()}")
+    
     report_view, habit_controller, report_controller = setup_architecture(user_model, view_type='gui')
+    
+    # DEBUG: Verificar hábitos carregados
+    habits = habit_controller.handle_read_habits_request()
+    print(f"📊 Hábitos carregados: {len(habits)}")
+    for i, h in enumerate(habits):
+        print(f"   {i+1}. {h.get('name')} (ID: {h.get('id')})")
     
     main_window = MainWindow(habit_controller, user_model)
     main_window.run()

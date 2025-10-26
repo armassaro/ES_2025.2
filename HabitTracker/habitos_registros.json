@@ -1,50 +1,51 @@
 {
-    "ee6fd21c-0ae3-4327-b6fd-40c036a0ae11": {
-        "habits": [
-            {
-                "id": "1846cc67-032f-470b-8ebb-52e43c431e26",
-                "name": "Meditar 10 minutos",
-                "description": "Foco e aten\u00e7\u00e3o plena",
-                "created_at": "2025-10-24T20:24:22.492135",
-                "active": true
+    "ian": [
+        {
+            "id": "fcd7a2d7-ba0c-4f9f-b3d3-9e940115559e",
+            "name": "vai gremio",
+            "description": "boa",
+            "created_at": "2025-10-25T00:27:28.591703",
+            "active": true,
+            "history": {
+                "2025-10-25": true
             }
-        ],
-        "progress": {}
-    },
-    "a10c4fa3-4941-4208-b193-7b820a42e3c3": {
-        "habits": [
-            {
-                "id": "fe430690-d9f9-4b14-a055-444b1266c6ee",
-                "name": "Leitura",
-                "description": "Ler por no minimo 15min",
-                "created_at": "2025-10-24T20:42:55.327965",
-                "active": true
-            }
-        ],
-        "progress": {}
-    },
-    "21c1b924-3739-4a49-a3f4-e80dcbe29a05": {
-        "habits": [
-            {
-                "id": "fcd7a2d7-ba0c-4f9f-b3d3-9e940115559e",
-                "name": "vai gremio",
-                "description": "boa",
-                "created_at": "2025-10-25T00:27:28.591703",
-                "active": true
-            },
-            {
-                "id": "ab9bc8c6-ccd0-4515-9110-08be9c9b16bb",
-                "name": "1",
-                "description": "iji",
-                "created_at": "2025-10-25T00:29:05.180194",
-                "active": true
-            }
-        ],
-        "progress": {
-            "2025-10-25": [
-                "fcd7a2d7-ba0c-4f9f-b3d3-9e940115559e",
-                "61bb91e0-d9d9-468e-b57d-5d00b2f6767e"
-            ]
+        },
+        {
+            "id": "ab9bc8c6-ccd0-4515-9110-08be9c9b16bb",
+            "name": "1",
+            "description": "iji",
+            "created_at": "2025-10-25T00:29:05.180194",
+            "active": true,
+            "history": {}
+        },
+        {
+            "id": "8578ff39-21f8-455d-a1b0-774038f9a1a6",
+            "name": "oi ne",
+            "description": "neymar",
+            "frequency": "monthly",
+            "active": true,
+            "created_at": "2025-10-25T22:47:51.882550",
+            "history": {}
         }
-    }
+    ],
+    "teste": [
+        {
+            "id": "1846cc67-032f-470b-8ebb-52e43c431e26",
+            "name": "Meditar 10 minutos",
+            "description": "Foco e atenção plena",
+            "created_at": "2025-10-24T20:24:22.492135",
+            "active": true,
+            "history": {}
+        }
+    ],
+    "Vini Silvino": [
+        {
+            "id": "fe430690-d9f9-4b14-a055-444b1266c6ee",
+            "name": "Leitura",
+            "description": "Ler por no minimo 15min",
+            "created_at": "2025-10-24T20:42:55.327965",
+            "active": true,
+            "history": {}
+        }
+    ]
 }
