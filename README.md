@@ -1,5 +1,19 @@
 # ES_2025.2
 
+> **Sumário**
+> - [1. Ideia do projeto](#1-ideia-do-projeto)
+>    - [1.1. Descrição](#11-descrição)
+>    - [1.2. Funções principais](#12-funções-principais)
+>    - [1.3. Padrões de projeto aplicáveis](#13-padrões-de-projeto-aplicáveis)
+> - [2. Viabilidade técnica](#2-viabilidade-técnica)
+> - [3. Definições relacionadas à gerência de qualidade](#3-definições-relacionadas-à-gerência-de-qualidade)
+>   - [3.1. Padrões de segurança](#31-padrões-de-segurança)
+>   - [3.2. Padrões de qualidade](#32-padrões-de-qualidade)
+>   - [3.3. Papéis e atividades](#33-papéis-e-atividades)
+>   - [3.4. Definições de atividades recorrentes para validação dos padrões propostos](#34-definições-de-atividades-recorrentes-para-validação-dos-padrões-propostos)
+>       - [3.4.1. Para o caso de código](#para_o_caso_de_codigo)
+>       - [3.4.2. Para o caso de documentação](#para_o_caso_de_documentacao)
+
 ## 1. Ideia do projeto
 O presente projeto possui como principal intuito a criação de um sistema de gerenciamento de hábitos com capacidade de criação de conta e acompanhamento da criação e evolução pessoal dos hábitos escolhidos pelo próprio usuário, ao passo que sistemas de gameficação são apresentados na aplicação para incentivo do usuário ao desenvolvimento do hábito.
 
@@ -98,12 +112,17 @@ As menções às definições de padrão de qualidade e padrões de segurança s
 
 ---
 
-### 3.3. Definições de atividades recorrentes para validação dos padrões propostos
+### 3.3. Papéis e atividades 
+
+
+### 3.4. Definições de atividades recorrentes para validação dos padrões propostos
 A presente seção possui como intuito a recapitulação e resumo das atitudes a serem tomadas para a contínua validação dos padrões propostos nas seções 3.1 e 3.2, para facilitação e organização de cada reunião semanal do projeto.
 Cada reunião semanal será norteada nas seguintes premissas: 
 1. Cada membro deverá demonstrar as próprias contribuições feitas desde a última reunião e enviadas ao repositório para todos os outros membros, de forma a explicar no código/documentação e na prática o que foi feito. Devem ser observados os seguintes pontos para cada caso:
 
-> **1.1. Para o caso de código**  
+<div id="para_o_caso_de_codigo"></div> 
+
+> **3.4.1. Para o caso de código**
 > - **As contribuições trazidas necessitam de alguma permissão a ser concedida por parte do usuário?**  
     Tal ponto deve ser observado por questões de segurança e por questões de transparência de permissões para o usuário, para que o usuário tenha ciência do tipo de informação que a aplicação possui acesso. 
 > - **O _commit_ obedece a convenção estabelecida e possui descrição curta e objetiva?**  
@@ -117,6 +136,8 @@ Cada reunião semanal será norteada nas seguintes premissas:
 > - **O novo recurso trazido pela contribuição lida com dados sensíveis?**  
     Tal ponto deve ser observado para que hajam outras verificações como a de permissões e mensagens de _log_, assim como verificações para encapsulamento das informações sensíveis sendo manuseadas.
 
-> **1.2. Para o caso de documentação**
+<div id="para_o_caso_de_documentacao"></div> 
+
+> **3.4.2. Para o caso de documentação**
 > - **O commit que trouxe a contribuição para a documentação segue a convenção?**
     Tal ponto deve ser observado para manutenção da legibilidade e organização dos últimos _commits_ submetidos ao repositório.
