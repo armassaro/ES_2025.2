@@ -4,7 +4,12 @@
 > - [1. Ideia do projeto](#1-ideia-do-projeto)
 >    - [1.1. Descrição](#11-descrição)
 >    - [1.2. Funções principais](#12-funções-principais)
->    - [1.3. Padrões de projeto aplicáveis](#13-padrões-de-projeto-aplicáveis)
+>    - [1.3. Padrões de projeto e estrutura geral](#13-padrões-de-projeto-e-estrutura-geral)
+>       - [1.3.1. Padrão de Arquitetura: MVC (Model-View-Controller)](#131-padrão-de-arquitetura-mvc-model-view-controller)
+>       - [1.3.2. Padrão de Criação: Factory Method](#132-padrão-de-criação-factory-method)
+>       - [1.3.3. Padrão Comportamental: Observer](#133-padrão-comportamental-observer)
+>       - [1.3.4. Persistência de Dados](#134-persistência-de-dados)
+>       - [1.3.5. Estrutura de Pacotes](#135-estrutura-de-pacotes)
 > - [2. Viabilidade técnica](#2-viabilidade-técnica)
 > - [3. Definições relacionadas à gerência de qualidade](#3-definições-relacionadas-à-gerência-de-qualidade)
 >   - [3.1. Padrões de segurança](#31-padrões-de-segurança)
@@ -26,33 +31,81 @@ Cadastro de hábitos (CRUD: criar, editar, excluir).
 Registro diário de progresso (checkboxes ou botões).
 Exibição de relatórios (ex.: gráficos simples de desempenho semanal/mensal).
 
-### 1.3. Padrões de projeto aplicáveis
-Os padrões de projeto consistem em várias arquiteturas documentadas e especializadas em determinados tipos de funções para uma aplicação. A seguir, são listados os padrões de projeto utilizados durante o desenvolvimento da aplicação proposta, assim como as referências utilizadas e explicações para a utilização de cada padrão de projeto utilizado para cada função presente na aplicação. Seguem os padrões de projeto utilizados: 
+### 1.3. Padrões de projeto e estrutura geral
+Os padrões de projeto consistem em várias arquiteturas documentadas e especializadas em determinados tipos de funções para uma aplicação. A seguir, são listados os padrões de projeto e arquitetura utilizados durante o desenvolvimento da aplicação proposta, assim como as explicações para a utilização de cada padrão de projeto utilizado para cada função presente na aplicação.
 
-- **Observer** - também conhecido como "Event-Subscriber" ou "Listener", o padrão de projeto Observer funciona a partir de um mecanismo de assinatura com o intuito de notificar um ou mais objetos a respeito de eventos específicos que aconteçam com o objeto que está sendo "observado". O padrão de projeto Observer é composto essencialmente por duas classes, a publicadora e a assinante, onde a classe publicadora contém uma lista de assinantes e métodos como ```subscribe()```, ```unsubscribe()``` e ```notifySubscribers()```, que servem para incluir e remover assinantes e o de enviar notificação para um determinado acontecimento dentro da classe publicadora. Já a classe assinante possui um método ```update()``` que serve para notificação direta da classe publicadora para a classe assinante, onde a classe publicadora irá utilizar o método ```update()``` de forma direta.
+#### 1.3.1. Padrão de Arquitetura: MVC (Model-View-Controller)
+O padrão **MVC** foi escolhido como arquitetura base do sistema de gerenciamento de hábitos por proporcionar uma clara separação de responsabilidades entre as camadas da aplicação:
 
-atualização automática do painel de relatórios ao registrar progresso.
-MVC (Model-View-Controller) → separar interface, dados e lógica.
-Factory Method → criação de diferentes tipos de relatórios (diário, semanal, mensal).
+- **Model (Modelo)**: Responsável pela lógica de negócio e manipulação de dados. No projeto, os modelos (`HabitModel`, `UserModel`, `ReportFactory`) gerenciam as operações relacionadas a hábitos, usuários e relatórios, incluindo validações e persistência em arquivos JSON.
 
-  ##  Viabilidade Técnica
+- **View (Visão)**: Responsável pela apresentação dos dados ao usuário. O sistema possui duas interfaces: `ConsoleView` para interação via terminal e `GUI` (LoginWindow e MainWindow) para interface gráfica, permitindo flexibilidade na forma de interação.
+
+- **Controller (Controlador)**: Atua como intermediário entre Model e View, processando as entradas do usuário e coordenando as operações. Os controladores (`HabitController`, `ReportController`) recebem comandos da interface, invocam os modelos apropriados e atualizam as visualizações.
+
+O MVC foi escolhido porque facilita a manutenção e evolução do código, permite o desenvolvimento paralelo de diferentes componentes, facilita testes unitários (cada camada pode ser testada independentemente) e possibilita a criação de múltiplas interfaces (console e GUI) compartilhando a mesma lógica de negócio.
+
+--- 
+
+O material utilizado para escolha e estudo do modelo MVC pode ser encontrado em: [https://www.devmedia.com.br/padrao-mvc-java-magazine/21995]
+
+---
+
+#### 1.3.2. Padrão de Criação: Factory Method
+O padrão **Factory Method** foi implementado através da classe `ReportFactory` para a criação de diferentes tipos de relatórios:
+
+- Permite criar relatórios diários, semanais e mensais de forma padronizada
+- Encapsula a lógica de criação, facilitando a adição de novos tipos de relatórios
+- Centraliza a responsabilidade de instanciação em um único local
+
+Este padrão foi escolhido porque o sistema precisa gerar diferentes tipos de relatórios com estruturas e cálculos variados. O Factory Method permite adicionar novos formatos de relatório sem modificar o código cliente, seguindo o princípio Open/Closed (aberto para extensão, fechado para modificação).
+
+---
+
+O material utilizado para escolha e estudo do padrão de projeto Factory está disponível em: [https://www.devmedia.com.br/padrao-mvc-java-magazine/21995]
+
+---
+
+#### 1.3.3. Padrão Comportamental: Observer
+O padrão **Observer** é utilizado para notificação de mudanças no estado dos hábitos e atualização automática das interfaces:
+
+- Quando um progresso é registrado em um hábito, os componentes de visualização (relatórios, estatísticas) são automaticamente notificados
+- Permite que múltiplos observadores (diferentes views) sejam atualizados simultaneamente
+- Implementa um mecanismo de assinatura/publicação para desacoplamento entre componentes
+
+O Observer foi implementado para garantir que todas as visualizações do sistema se mantenham sincronizadas com o estado atual dos dados. Quando o usuário registra progresso em um hábito, os painéis de estatísticas, gráficos e relatórios são atualizados automaticamente sem necessidade de recarregamento manual, melhorando a experiência do usuário e mantendo a consistência dos dados exibidos.
+
+---
+
+O material utilizado para escolha e estudo do padrão de projeto Observer está disponível em: [https://www.devmedia.com.br/padrao-mvc-java-magazine/21995]
+
+---
+
+#### 1.3.4. Persistência de Dados
+O sistema utiliza **arquivos JSON** para armazenamento de dados:
+
+- `usuarios.json`: Armazena informações de usuários e autenticação
+- `habitos_registros.json`: Mantém o histórico de hábitos e registros de progresso
+
+A escolha por JSON foi feita considerando a simplicidade do projeto, facilidade de leitura e edição manual dos dados (útil para debugging), portabilidade entre diferentes sistemas, e não necessidade de um servidor de banco de dados complexo para um sistema de uso individual/local.
+
+#### 1.3.5. Estrutura de Pacotes
+
+O projeto segue uma organização modular em pacotes:
+
+```
+HabitTracker/
+├── Model/          # Classes de modelo e lógica de negócio
+├── view/           # Interfaces de usuário (console e GUI)
+├── controller/     # Controladores que coordenam Model e View
+└── *.json          # Arquivos de persistência de dados
+```
+
+Esta estrutura facilita a localização de componentes, manutenção do código, implementação de testes unitários por camada, e permite que diferentes membros da equipe trabalhem em paralelo em diferentes camadas sem conflitos significativos.
+
+## 2. Viabilidade Técnica
 A viabilidade técnica do projeto é alta. As funcionalidades descritas são padrão em aplicações modernas e existem inúmeras ferramentas, bibliotecas e frameworks consolidados para implementá-las.
-
-## Definições relacionadas à gerência de qualidade
-Abaixo são definidos os padrões de segurança e qualidade, os quais são fatores determinantes para o desenvolvimetno do projeto como um todo. 
-### Padrões de segurança
-São definidos as seguintes premissas para os padrões de segurança: 
- - O aplicativo deve solicitar apenas as permissões mínimas necessárias para seu funcionamento, evitando acesso a dados ou recursos do dispositivo que não sejam essenciais.
- - Todos os dados sensíveis (tokens, credenciais, informações pessoais) devem ser armazenados de forma segura utilizando mecanismos nativos da plataforma (Android Keystore / iOS Keychain).
- - Toda comunicação entre o app e o servidor deve ocorrer exclusivamente via HTTPS/TLS 1.2 ou superior, garantindo a confidencialidade e integridade das informações transmitidas.
- - O sistema de autenticação deve usar provedores confiáveis, implementando OAuth 2.0 / OpenID Connect para logins via Google, Facebook ou e-mail.
- - O aplicativo deve ser assinado digitalmente e ter suas atualizações testadas e verificadas antes da publicação, prevenindo a introdução de novas vulnerabilidades.
- - Todas as dependências e bibliotecas externas devem ser mantidas atualizadas e provenientes de fontes seguras, evitando o uso de versões vulneráveis ou não mantidas.
- - Nenhum dado sensível deve ser exposto em logs, nem salvo em texto plano, respeitando as normas de privacidade e proteção de dados (como a LGPD).
- - Devem ser realizados testes básicos de segurança (análise estática e dinâmica) para identificar vulnerabilidades simples antes da publicação.
- - O aplicativo deve evitar funcionalidades não autorizadas e garantir que seu comportamento seja transparente e previsível para o usuário.
-
-Todas as funcionalidades apresentadas estão disponíveis no documento de normas de segurança do NIST (National Institute of Standards and Techonology) do departamento de comércio dos Estados Unidos. O respectivo documento possui como título "Vetting the Secutiry of Mobile Applications", foi redigido por Steve Quirolgico, Jeffrey Voas, Tom Karygiannis, Christoph Micheal e Karen Scarfone e está disponível no seguinte link: [http://dx.doi.org/10.6028/NIST.SP.800-163].
+Dados os estudos científicos recolhidos e a crescente demanda para o desenvolvimento de hábitos, é possível considerar como altamente viável o desenvolvimento de uma aplicação com o intuito do desenvolvimento pessoal, com foco na criação e mantenimento de hábitos. Além disso, todos os padrões estão devidamente descritos e é possível obter uma visão clara do funcionamento do sistema a partir da presente documentação.
 
 ## 3. Definições relacionadas à gerência de qualidade
 Abaixo são definidos os padrões de segurança e qualidade, os quais são fatores determinantes para o desenvolvimetno do projeto como um todo. 
@@ -61,10 +114,9 @@ Abaixo são definidos os padrões de segurança e qualidade, os quais são fator
 Assim como define Sommerville (2019), os padrões de segurança podem ser divididos em padrões de _Safety_ e de _Security_, sendo o primeiro o conjunto de práticas destinadas à prevenção de danos físicos e econômicos, enquanto o segundo destina-se à prevenção de acesso não autorizado ou ataques maliciosos na aplicação.
 Deste modo, são definidos as seguintes premissas para os padrões de segurança:
  - O aplicativo deve solicitar apenas as permissões mínimas necessárias para seu funcionamento, evitando acesso a dados ou recursos do dispositivo que não sejam essenciais.
- - O sistema de autenticação deve usar provedores confiáveis, implementando OAuth 2.0 / OpenID Connect para logins via Google, Facebook ou e-mail.
  - O aplicativo deve ser assinado digitalmente e ter suas atualizações testadas e verificadas antes da publicação, prevenindo a introdução de novas vulnerabilidades.
  - Todas as dependências e bibliotecas externas devem ser mantidas atualizadas e provenientes de fontes seguras, evitando o uso de versões vulneráveis ou não mantidas.
- - Nenhum dado sensível deve ser exposto em logs, nem salvo em texto plano, respeitando as normas de privacidade e proteção de dados (como a LGPD).
+ - Nenhum dado sensível deve ser exposto em logs, nem salvo em texto plano, respeitando as normas de privacidade e proteção de dados, como a LGPD (Lei Geral de Proteção de Dados).
  - O aplicativo deve evitar funcionalidades não autorizadas e garantir que seu comportamento seja transparente e previsível para o usuário.  
 
 **Como os padrões listados serão validados?**  
@@ -147,5 +199,7 @@ Cada reunião semanal será norteada nas seguintes premissas:
 <div id="para_o_caso_de_documentacao"></div> 
 
 > **3.4.2. Para o caso de documentação**
-> - **O commit que trouxe a contribuição para a documentação segue a convenção?**
+> - **O commit que trouxe a contribuição para a documentação segue a convenção?**  
     Tal ponto deve ser observado para manutenção da legibilidade e organização dos últimos _commits_ submetidos ao repositório.
+> - **A documentação trazida pela contribuição coincide exatamente com as contribuições no código?**  
+    Tal ponto deve ser observado para que a documentação possa continuamente refletir no código.
