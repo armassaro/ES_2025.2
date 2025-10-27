@@ -26,10 +26,10 @@ O presente projeto possui como principal intuito a criação de um sistema de ge
 Uma aplicação para registro de hábitos diários (ex: estudar, beber água, fazer exercícios), com histórico e relatórios básicos e mecanismos de incentivo ao desenvolvimetno do hábito, por meio de técnicas de gameficação com base em estudos científicos. 
     
 ### 1.2. Funções principais
-O sistema CRUD seria para o controle de hábitos e usuários e as informações ficariam salvas em dois arquivos diferentes.    
-Cadastro de hábitos (CRUD: criar, editar, excluir).
-Registro diário de progresso (checkboxes ou botões).
-Exibição de relatórios (ex.: gráficos simples de desempenho semanal/mensal).
+A aplicação proposta seria composta por 3 principais funções: 
+1. Cadastro de hábitos (CRUD: criar, editar, excluir e modificar).
+2. Registro diário de progresso (checkboxes ou botões).
+3. Exibição de relatórios diário, mensal e semanal
 
 ### 1.3. Padrões de projeto e estrutura geral
 Os padrões de projeto consistem em várias arquiteturas documentadas e especializadas em determinados tipos de funções para uma aplicação. A seguir, são listados os padrões de projeto e arquitetura utilizados durante o desenvolvimento da aplicação proposta, assim como as explicações para a utilização de cada padrão de projeto utilizado para cada função presente na aplicação.

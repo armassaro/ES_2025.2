@@ -67,12 +67,16 @@
     ],
     "teste": [
         {
-            "id": "1846cc67-032f-470b-8ebb-52e43c431e26",
-            "name": "Meditar 10 minutos",
-            "description": "Foco e atenção plena",
-            "created_at": "2025-10-24T20:24:22.492135",
+            "id": "7fda16a0-03a6-4bd0-b894-41f7ba9f5b44",
+            "name": "teste",
+            "description": "teste",
+            "frequency": "weekly",
             "active": true,
-            "history": {}
+            "created_at": "2025-10-27T15:27:30.347419",
+            "history": {
+                "2025-10-21": true,
+                "2025-10-22": true
+            }
         }
     ],
     "Vini Silvino": [
