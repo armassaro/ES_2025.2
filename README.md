@@ -20,7 +20,7 @@
 >       - [3.4.2. Para o caso de documentação](#para_o_caso_de_documentacao)
 
 ## 1. Ideia do projeto
-O presente projeto possui como principal intuito a criação de um sistema de gerenciamento de hábitos com capacidade de criação de conta e acompanhamento da criação e evolução pessoal dos hábitos escolhidos pelo próprio usuário, ao passo que sistemas de gameficação são apresentados na aplicação para incentivo do usuário ao desenvolvimento do hábito.
+O presente projeto possui como principal intuito a criação de um sistema de gerenciamento de hábitos com capacidade de criação de conta e acompanhamento da criação e evolução pessoal dos hábitos escolhidos pelo próprio usuário.
 
 ### 1.1. Descrição
 Uma aplicação para registro de hábitos diários (ex: estudar, beber água, fazer exercícios), com histórico e relatórios básicos e mecanismos de incentivo ao desenvolvimetno do hábito, por meio de técnicas de gameficação com base em estudos científicos. 
