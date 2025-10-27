@@ -5,8 +5,8 @@
         "id": "ee6fd21c-0ae3-4327-b6fd-40c036a0ae11"
     },
     "a10c4fa3-4941-4208-b193-7b820a42e3c3": {
-        "username": "Vini Silvino",
-        "password": "ViniSilvino",
+        "username": "Vini",
+        "password": "1234",
         "id": "a10c4fa3-4941-4208-b193-7b820a42e3c3"
     },
     "21c1b924-3739-4a49-a3f4-e80dcbe29a05": {
@@ -18,5 +18,10 @@
         "username": "1",
         "password": "1111",
         "id": "248f7fb2-0faf-4c4c-88e7-53df188f08a9"
+    },
+    "9f1b6c22-4c23-4c3a-b60a-e36eb5947121": {
+        "username": "test_user",
+        "password": "pass",
+        "id": "9f1b6c22-4c23-4c3a-b60a-e36eb5947121"
     }
 }

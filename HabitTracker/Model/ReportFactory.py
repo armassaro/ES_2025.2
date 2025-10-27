@@ -104,29 +104,22 @@ class WeeklyReport(Report):
         for i in range(7):
             current_date = (self.start_of_week + timedelta(days=i)).strftime('%Y-%m-%d')
             day_completed = 0
-            day_total = 0
-            
+            # Definir total como número de hábitos ativos (aplicável como referência)
+            day_total = len(active_habits)
+
             for habit in active_habits:
-                frequency = habit.get('frequency', 'daily')
                 history = habit.get('history', {})
-                
-                # Contar apenas hábitos relevantes para cada dia
-                if frequency == 'daily':
-                    day_total += 1
-                    if history.get(current_date, False):
-                        day_completed += 1
-                        total_completed += 1
-                elif frequency == 'weekly' and i == 0:  # Contar apenas no primeiro dia
-                    day_total += 1
-                    if self._check_done_in_week(habit):
-                        day_completed += 1
-                        total_completed += 1
-            
+
+                # Contar conclusão apenas se o hábito foi marcado naquela data
+                if history.get(current_date, False):
+                    day_completed += 1
+                    total_completed += 1
+
             daily_data[current_date] = {
                 'completed': day_completed,
                 'total': day_total
             }
-            
+
             if day_completed > max_count:
                 max_count = day_completed
                 best_day = current_date

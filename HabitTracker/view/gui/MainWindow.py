@@ -679,8 +679,127 @@ class MainWindow:
     
     def _show_reports(self):
         """Exibe relatórios com gráficos."""
-        # ... (código de relatórios anterior)
-        pass
+        # Gera os dados de relatório a partir dos hábitos atuais
+        raw_data = self.habit_controller.handle_read_habits_request()
+
+        if not raw_data:
+            from tkinter import messagebox
+            messagebox.showinfo("Relatórios", "Nenhum hábito cadastrado para gerar relatórios.")
+            return
+
+        # Criar objetos de relatório
+        daily = ReportFactory.create_report('daily', raw_data).generate_visualization_data()
+        weekly = ReportFactory.create_report('weekly', raw_data).generate_visualization_data()
+        monthly = ReportFactory.create_report('monthly', raw_data).generate_visualization_data()
+
+        # Janela modal para exibir relatórios
+        modal = tk.Toplevel(self.root)
+        modal.title("Relatórios de Progresso")
+        modal.geometry("900x600")
+        modal.transient(self.root)
+        modal.grab_set()
+
+        # Notebook com abas para daily/weekly/monthly
+        notebook = ttk.Notebook(modal)
+        notebook.pack(fill='both', expand=True, padx=10, pady=10)
+
+        # Helper para criar um quadro com texto resumido
+        def _make_text_frame(parent, title, lines):
+            f = tk.Frame(parent, bg='white')
+            txt = tk.Text(f, wrap='word', bg='white', bd=0)
+            txt.pack(fill='both', expand=True, padx=10, pady=10)
+            txt.insert('end', title + '\n\n')
+            for line in lines:
+                txt.insert('end', line + '\n')
+            txt.config(state='disabled')
+            return f
+
+        # Aba Diário
+        daily_lines = [f"Data: {daily.get('date', 'N/A')}",
+                       f"Hábitos totais (ativos): {daily.get('total_habits', 0)}",
+                       f"Concluídos: {daily.get('completed', 0)}",
+                       f"Pendentes: {daily.get('pending', 0)}",
+                       f"Taxa de conclusão: {daily.get('completion_rate', 0)}%",
+                       '', 'Detalhes:']
+        for h in daily.get('habits_detail', []):
+            daily_lines.append(f" - {h.get('name')}: {h.get('status')}")
+
+        daily_frame = _make_text_frame(notebook, 'Relatório Diário', daily_lines)
+        notebook.add(daily_frame, text='Diário')
+
+        # Aba Semanal
+        weekly_lines = [f"Período: {weekly.get('start_date', 'N/A')} a {weekly.get('end_date', 'N/A')}",
+                        f"Total concluído: {weekly.get('total_completed', 0)}",
+                        f"Média por dia: {weekly.get('average_per_day', 0)}",
+                        f"Sequência atual: {weekly.get('current_streak', 0)} dias",
+                        f"Taxa de conclusão: {weekly.get('completion_rate', 0)}%",
+                        f"Melhor dia: {weekly.get('best_day', '')} ({weekly.get('best_day_count', 0)})",
+                        '', 'Progresso diário:']
+        for date, d in sorted(weekly.get('daily_data', {}).items()):
+            weekly_lines.append(f" - {date}: {d.get('completed',0)}/{d.get('total',0)}")
+
+        weekly_frame = _make_text_frame(notebook, 'Relatório Semanal', weekly_lines)
+        notebook.add(weekly_frame, text='Semanal')
+
+        # Aba Mensal
+        monthly_lines = [f"Período: {monthly.get('start_date', 'N/A')} a {monthly.get('end_date', 'N/A')}",
+                         f"Total concluído: {monthly.get('total_completed', 0)}",
+                         f"Média por dia: {monthly.get('average_per_day', 0)}",
+                         f"Maior sequência: {monthly.get('max_streak', 0)} dias",
+                         f"Taxa de conclusão: {monthly.get('completion_rate', 0)}%",
+                         f"Melhor semana começa: {monthly.get('best_week_start', 'N/A')} ({monthly.get('best_week_count', 0)})",
+                         '', 'Resumo por semana:']
+        for w in monthly.get('weekly_summary', []):
+            monthly_lines.append(f" - {w.get('week')}: {w.get('completed',0)} hábitos ({w.get('dates',[])[0]} a {w.get('dates',[-1])})")
+
+        monthly_frame = _make_text_frame(notebook, 'Relatório Mensal', monthly_lines)
+        notebook.add(monthly_frame, text='Mensal')
+
+        # Tentativa de desenhar gráficos simples se matplotlib estiver disponível
+        try:
+            from matplotlib.figure import Figure
+            from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
+            # Gráfico semanal (percentual concluído por dia)
+            fig_w = Figure(figsize=(5, 2.5), dpi=100)
+            ax_w = fig_w.add_subplot(111)
+            dates = []
+            percents = []
+            for date, d in sorted(weekly.get('daily_data', {}).items()):
+                dates.append(date[-5:])  # mostrar MM-DD para condensar
+                total = d.get('total', 0)
+                completed = d.get('completed', 0)
+                percent = (completed / total * 100) if total > 0 else 0
+                percents.append(percent)
+            ax_w.bar(dates, percents, color='#3498db')
+            ax_w.set_title('Percentual concluído por dia (semana)')
+            ax_w.set_ylabel('%')
+            ax_w.set_ylim(0, 100)
+
+            canvas_w = FigureCanvasTkAgg(fig_w, master=weekly_frame)
+            canvas_w.draw()
+            canvas_w.get_tk_widget().pack(side='bottom', fill='both', expand=False, padx=10, pady=5)
+
+            # Gráfico mensal: completados por semana
+            fig_m = Figure(figsize=(5, 2.5), dpi=100)
+            ax_m = fig_m.add_subplot(111)
+            weeks = [w.get('week') for w in monthly.get('weekly_summary', [])]
+            comps = [w.get('completed', 0) for w in monthly.get('weekly_summary', [])]
+            if weeks:
+                ax_m.bar(weeks, comps, color='#27ae60')
+                ax_m.set_title('Hábito(s) completados por semana (mês)')
+                ax_m.set_ylabel('Concluídos')
+                canvas_m = FigureCanvasTkAgg(fig_m, master=monthly_frame)
+                canvas_m.draw()
+                canvas_m.get_tk_widget().pack(side='bottom', fill='both', expand=False, padx=10, pady=5)
+
+        except Exception:
+            # matplotlib não disponível ou falha na plotagem — continuar com texto apenas
+            pass
+
+        # Botão fechar
+        btn_close = tk.Button(modal, text='Fechar', command=modal.destroy, bg='#95a5a6', fg='white')
+        btn_close.pack(pady=8)
     
     def _quit(self):
         """Fecha a aplicação."""

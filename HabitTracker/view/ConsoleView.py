@@ -135,7 +135,9 @@ class ConsoleView:
     
     def render_reports(self, report_data):
         """Simula a renderização dos gráficos com os dados formatados."""
+        # Exibe um resumo simples dos relatórios recebidos pelo controller
         print("\n--- REPORT VIEW: RELATÓRIOS ATUALIZADOS ---")
         for period, data in report_data.items():
-            print(f"Relatório {data['period']}: Dados de visualização gerados. (Modelo notificado)")
+            # period deve ser 'daily', 'weekly' ou 'monthly'
+            print(f"Relatório {period.capitalize()}: dados prontos para visualização.")
         print("-----------------------------------------")

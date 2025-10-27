@@ -18,8 +18,32 @@ class ReportController(Observer):
     def update(self, subject):
         """Implementação do Observer: Chamado quando o HabitModel muda."""
         print("\n[Sistema]: ✅ Notificação recebida do HabitModel")
-        # NÃO gerar relatórios automaticamente na GUI
-        # self.generate_and_display_all_reports()
+        # Gerar e exibir relatórios automaticamente apenas quando a view for o ConsoleView
+        try:
+            view_name = self.view.__class__.__name__
+        except Exception:
+            view_name = None
+
+        if view_name == 'ConsoleView':
+            # Gera os relatórios e manda para a view (console)
+            self.generate_and_display_all_reports()
+        else:
+            # Em outras views (GUI) apenas encaminhar a notificação para a view se suportado
+            if hasattr(self.view, 'render_reports'):
+                # A GUI pode optar por solicitar os dados no momento adequado
+                raw_data = self.model.get_all_habits()
+                from model.ReportFactory import ReportFactory
+                report_data = {
+                    'daily': ReportFactory.create_report('daily', raw_data).generate_visualization_data(),
+                    'weekly': ReportFactory.create_report('weekly', raw_data).generate_visualization_data(),
+                    'monthly': ReportFactory.create_report('monthly', raw_data).generate_visualization_data(),
+                }
+                # chamar render_reports para que implementações GUI possam usar os dados (se quiserem)
+                try:
+                    self.view.render_reports(report_data)
+                except Exception:
+                    # Silenciar erros da view para não quebrar a notificação
+                    pass
 
     def generate_and_display_all_reports(self):
         """Gera e envia todos os dados de relatório para a View."""
