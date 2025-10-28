@@ -67,14 +67,13 @@
     ],
     "teste": [
         {
-            "id": "7fda16a0-03a6-4bd0-b894-41f7ba9f5b44",
-            "name": "teste",
-            "description": "teste",
-            "frequency": "weekly",
+            "id": "2cfed743-4e3b-42b5-aa3e-6f2079cee821",
+            "name": "tes",
+            "description": "eee",
+            "frequency": "daily",
             "active": true,
-            "created_at": "2025-10-27T15:27:30.347419",
+            "created_at": "2025-10-28T11:46:31.068841",
             "history": {
-                "2025-10-21": true,
                 "2025-10-22": true
             }
         }

@@ -103,6 +103,21 @@ HabitTracker/
 
 Esta estrutura facilita a localização de componentes, manutenção do código, implementação de testes unitários por camada, e permite que diferentes membros da equipe trabalhem em paralelo em diferentes camadas sem conflitos significativos.
 
+#### 1.3.6. Diagrama de classes
+![Diagrama de classes utilizado no projeto proposto](./imagens/diagrama_de_classes.png)
+
+#### 1.3.7. Diagramas de sequência
+Abaixo se encontram os diagramas de sequência utilizados para o desenvolvimento do projeto, para eclucidação do que seria feito posteriormente na programação das funções: 
+
+##### 1.3.7.1. Registro de progresso (Observer)
+![](./imagens/diagrama_registro_progresso.png)
+
+##### 1.3.7.2. Geração de relatórios (Factory)
+![](./imagens/diagrama_geracao_relatorios.png)
+
+##### 1.3.7.3. Exportação de PDF (Singleton)
+![](./imagens/diagrama_exportacao_pdf.png)
+
 ## 2. Viabilidade Técnica
 Dados os estudos científicos recolhidos e a crescente demanda para o desenvolvimento de hábitos, é possível considerar como altamente viável o desenvolvimento de uma aplicação com o intuito do desenvolvimento pessoal, com foco na criação e mantenimento de hábitos. Além disso, todos os padrões estão devidamente descritos e é possível obter uma visão clara do funcionamento do sistema a partir da presente documentação.
 
