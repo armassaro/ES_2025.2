@@ -395,6 +395,19 @@ class MainWindow:
         
         tk.Button(
             action_bar,
+            text="📄 Exportar PDF",
+            command=self._export_pdf,
+            bg='#9b59b6',
+            fg='white',
+            font=('Arial', 11, 'bold'),
+            bd=0,
+            padx=20,
+            pady=10,
+            cursor='hand2'
+        ).pack(side='left', padx=5)
+        
+        tk.Button(
+            action_bar,
             text="🔄 Atualizar",
             command=self._refresh_habits,
             bg='#95a5a6',
@@ -800,6 +813,108 @@ class MainWindow:
         # Botão fechar
         btn_close = tk.Button(modal, text='Fechar', command=modal.destroy, bg='#95a5a6', fg='white')
         btn_close.pack(pady=8)
+    
+    def _export_pdf(self):
+        """Exporta relatório em PDF."""
+        from view.PDFExporter import PDFExporter
+        from tkinter import simpledialog, filedialog
+        
+        habits = self.habit_controller.handle_read_habits_request()
+        
+        if not habits:
+            messagebox.showinfo("Exportar PDF", "Nenhum hábito cadastrado para exportar.")
+            return
+        
+        # Dialog para selecionar hábito
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Exportar Relatório em PDF")
+        dialog.geometry("500x400")
+        dialog.configure(bg='white')
+        dialog.resizable(False, False)
+        dialog.transient(self.root)
+        dialog.grab_set()
+        
+        tk.Label(
+            dialog,
+            text="Selecione um hábito para exportar:",
+            font=('Arial', 14, 'bold'),
+            bg='white',
+            fg='#2c3e50'
+        ).pack(pady=20)
+        
+        # Listbox com hábitos
+        listbox_frame = tk.Frame(dialog, bg='white')
+        listbox_frame.pack(fill='both', expand=True, padx=30, pady=10)
+        
+        scrollbar = tk.Scrollbar(listbox_frame)
+        scrollbar.pack(side='right', fill='y')
+        
+        listbox = tk.Listbox(
+            listbox_frame,
+            font=('Arial', 11),
+            yscrollcommand=scrollbar.set,
+            selectmode='single'
+        )
+        listbox.pack(side='left', fill='both', expand=True)
+        scrollbar.config(command=listbox.yview)
+        
+        # Preencher listbox
+        for habit in habits:
+            listbox.insert('end', f"{habit['name']} ({habit.get('frequency', 'daily')})")
+        
+        def export():
+            selection = listbox.curselection()
+            if not selection:
+                messagebox.showwarning("Atenção", "Selecione um hábito!")
+                return
+            
+            selected_habit = habits[selection[0]]
+            
+            # Escolher onde salvar
+            filename = filedialog.asksaveasfilename(
+                defaultextension=".pdf",
+                filetypes=[("PDF files", "*.pdf")],
+                initialfile=f"relatorio_{selected_habit['name'].replace(' ', '_')}.pdf"
+            )
+            
+            if filename:
+                try:
+                    exporter = PDFExporter.get_instance()
+                    exporter.export_habit_report(selected_habit, filename)
+                    messagebox.showinfo("Sucesso", f"Relatório exportado para:\n{filename}")
+                    dialog.destroy()
+                except Exception as e:
+                    messagebox.showerror("Erro", f"Erro ao exportar PDF:\n{str(e)}")
+        
+        # Botões
+        btn_frame = tk.Frame(dialog, bg='white')
+        btn_frame.pack(pady=20)
+        
+        tk.Button(
+            btn_frame,
+            text="📄 Exportar",
+            command=export,
+            bg='#9b59b6',
+            fg='white',
+            font=('Arial', 11, 'bold'),
+            bd=0,
+            padx=20,
+            pady=10,
+            cursor='hand2'
+        ).pack(side='left', padx=10)
+        
+        tk.Button(
+            btn_frame,
+            text="Cancelar",
+            command=dialog.destroy,
+            bg='#95a5a6',
+            fg='white',
+            font=('Arial', 11, 'bold'),
+            bd=0,
+            padx=20,
+            pady=10,
+            cursor='hand2'
+        ).pack(side='left', padx=10)
     
     def _quit(self):
         """Fecha a aplicação."""

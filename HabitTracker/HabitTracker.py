@@ -96,9 +96,10 @@ def run_main_menu(console_view):
         print("4. Deletar Hábito (Delete - R1)")
         print("5. REGISTRAR PROGRESSO (R2)")
         print("6. Gerar Relatórios (R3)")
-        print("7. Sair")
+        print("7. Exportar Relatório em PDF")
+        print("8. Sair")
         
-        choice = input("Escolha uma opção (1-7): ")
+        choice = input("Escolha uma opção (1-8): ")
 
         if choice == '1':
             habits = console_view.habit_controller.handle_read_habits_request()
@@ -114,6 +115,8 @@ def run_main_menu(console_view):
         elif choice == '6':
             console_view.habit_controller.model.notify()
         elif choice == '7':
+            console_view.handle_export_pdf_input()
+        elif choice == '8':
             print("Saindo do Habit Tracker. Volte sempre!")
             break
         else:

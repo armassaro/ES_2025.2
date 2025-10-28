@@ -141,3 +141,47 @@ class ConsoleView:
             # period deve ser 'daily', 'weekly' ou 'monthly'
             print(f"Relatório {period.capitalize()}: dados prontos para visualização.")
         print("-----------------------------------------")
+
+    # --- Exportação de PDF ---
+    
+    def handle_export_pdf_input(self):
+        """Captura o ID do hábito para exportar relatório em PDF."""
+        from view.PDFExporter import PDFExporter
+        
+        habits = self.habit_controller.handle_read_habits_request()
+        if not habits:
+            self.show_error("Não há hábitos para exportar.")
+            return
+
+        print("\n--- EXPORTAR RELATÓRIO EM PDF ---")
+        self.display_habits(habits)
+        
+        try:
+            habit_index = int(input("Digite o número do hábito para exportar (1-{}): ".format(len(habits)))) - 1
+            
+            if habit_index < 0 or habit_index >= len(habits):
+                self.show_error("Número inválido.")
+                return
+            
+            selected_habit = habits[habit_index]
+            
+            # Nome do arquivo
+            default_filename = f"relatorio_{selected_habit['name'].replace(' ', '_')}.pdf"
+            filename = input(f"Nome do arquivo (Enter para '{default_filename}'): ").strip()
+            
+            if not filename:
+                filename = default_filename
+            
+            if not filename.endswith('.pdf'):
+                filename += '.pdf'
+            
+            # Exportar usando Singleton
+            exporter = PDFExporter.get_instance()
+            exporter.export_habit_report(selected_habit, filename)
+            
+            self.show_message(f"✅ Relatório exportado com sucesso!\nArquivo salvo em: {filename}")
+            
+        except ValueError:
+            self.show_error("Por favor, digite um número válido.")
+        except Exception as e:
+            self.show_error(f"Erro ao exportar PDF: {str(e)}")
