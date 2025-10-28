@@ -8,13 +8,14 @@
 >       - [1.3.1. Padrão de Arquitetura: MVC (Model-View-Controller)](#131-padrão-de-arquitetura-mvc-model-view-controller)
 >       - [1.3.2. Padrão de Criação: Factory Method](#132-padrão-de-criação-factory-method)
 >       - [1.3.3. Padrão Comportamental: Observer](#133-padrão-comportamental-observer)
->       - [1.3.4. Persistência de Dados](#134-persistência-de-dados)
->       - [1.3.5. Estrutura de Pacotes](#135-estrutura-de-pacotes)
->       - [1.3.6. Diagrama de classes](#136-diagrama-de-classes)
->       - [1.3.7. Diagramas de sequência](#137-diagramas-de-sequência)
->          - [1.3.7.1. Registro de progresso (Observer)](#1371-registro-de-progresso-observer)
->          - [1.3.7.2. Geração de relatórios (Factory)](#1372-geração-de-relatórios-factory)
->          - [1.3.7.3. Exportação de PDF (Singleton)](#1373-exportação-de-pdf-singleton)
+>       - [1.3.4. Padrão de Criação: Singleton](#134-padrão-de-criação-singleton)
+>       - [1.3.5. Persistência de Dados](#135-persistência-de-dados)
+>       - [1.3.6. Estrutura de Pacotes](#136-estrutura-de-pacotes)
+>       - [1.3.7. Diagrama de classes](#137-diagrama-de-classes)
+>       - [1.3.8. Diagramas de sequência](#138-diagramas-de-sequência)
+>          - [1.3.8.1. Registro de progresso (Observer)](#1381-registro-de-progresso-observer)
+>          - [1.3.8.2. Geração de relatórios (Factory)](#1382-geração-de-relatórios-factory)
+>          - [1.3.8.3. Exportação de PDF (Singleton)](#1383-exportação-de-pdf-singleton)
 > - [2. Viabilidade técnica](#2-viabilidade-técnica)
 > - [3. Definições relacionadas à gerência de qualidade](#3-definições-relacionadas-à-gerência-de-qualidade)
 >   - [3.1. Padrões de segurança](#31-padrões-de-segurança)
@@ -86,7 +87,39 @@ O material utilizado para escolha e estudo do padrão de projeto Observer está 
 
 ---
 
-#### 1.3.4. Persistência de Dados
+#### 1.3.4. Padrão de Criação: Singleton
+O padrão **Singleton** foi implementado na classe `PDFExporter` para garantir que apenas uma única instância do exportador de PDF exista durante toda a execução da aplicação:
+
+- **Instância única**: O Singleton garante que apenas um objeto `PDFExporter` seja criado, independentemente de quantas vezes a classe seja instanciada
+- **Controle de inicialização**: A inicialização dos estilos e configurações do PDF ocorre apenas uma vez, evitando processamento desnecessário
+- **Acesso global controlado**: Fornece um ponto de acesso global à instância através do método `get_instance()` ou através do construtor padrão
+
+A implementação do Singleton foi feita em `PDFExporter` e utiliza das seguintes variáveis e métodos:
+- Atributo de classe `_instance`: armazena a única instância da classe
+- Atributo de classe `_initialized`: controla se a inicialização já foi realizada
+- Método `__new__()`: para controlar a criação de instâncias
+- Método `get_instance()`: método alternativo para obter a instância única
+
+O fluxo geral da função implementada no código é feita da seguinte forma:
+1. O usuário solicita a exportação de um relatório através da interface
+2. O sistema obtém a instância única do `PDFExporter`
+3. O exportador formata os dados do hábito em um relatório estruturado
+4. O PDF é gerado com informações detalhadas:
+   - Cabeçalho com nome do hábito
+   - Informações gerais , como descrição, frequência, status, data de criação
+   - Resumo de progresso, como dias registrados, taxa de conclusão, sequência atual
+   - Histórico detalhado dos últimos 30 dias
+   - Rodapé com data e hora de geração
+
+Este padrão foi escolhido para a exportação de PDF por conta da economia de memória, evitando a criação de várias instâncias da mesma classe, consistência visual nos PDFs gerados e do gerenciamento centralizado que o padrão de projeto é capaz de oferecer ao limitar a criação de objetos.
+
+---
+
+O material utilizado para escolha e estudo do padrão de projeto Singleton está disponível em: [https://refactoring.guru/design-patterns/singleton]
+
+---
+
+#### 1.3.5. Persistência de Dados
 O sistema utiliza **arquivos JSON** para armazenamento de dados:
 
 - `usuarios.json`: Armazena informações de usuários e autenticação
@@ -94,7 +127,7 @@ O sistema utiliza **arquivos JSON** para armazenamento de dados:
 
 A escolha por JSON foi feita considerando a simplicidade do projeto, facilidade de leitura e edição manual dos dados (útil para debugging), portabilidade entre diferentes sistemas, e não necessidade de um servidor de banco de dados complexo para um sistema de uso individual/local.
 
-#### 1.3.5. Estrutura de Pacotes
+#### 1.3.6. Estrutura de Pacotes
 
 O projeto segue uma organização modular em pacotes:
 
@@ -108,19 +141,19 @@ HabitTracker/
 
 Esta estrutura facilita a localização de componentes, manutenção do código, implementação de testes unitários por camada, e permite que diferentes membros da equipe trabalhem em paralelo em diferentes camadas sem conflitos significativos.
 
-#### 1.3.6. Diagrama de classes
+#### 1.3.7. Diagrama de classes
 ![Diagrama de classes utilizado no projeto proposto](./imagens/diagrama_de_classes.png)
 
-#### 1.3.7. Diagramas de sequência
+#### 1.3.8. Diagramas de sequência
 Abaixo se encontram os diagramas de sequência utilizados para o desenvolvimento do projeto, para eclucidação do que seria feito posteriormente na programação das funções: 
 
-##### 1.3.7.1. Registro de progresso (Observer)
+##### 1.3.8.1. Registro de progresso (Observer)
 ![](./imagens/diagrama_registro_progresso.png)
 
-##### 1.3.7.2. Geração de relatórios (Factory)
+##### 1.3.8.2. Geração de relatórios (Factory)
 ![](./imagens/diagrama_geracao_relatorios.png)
 
-##### 1.3.7.3. Exportação de PDF (Singleton)
+##### 1.3.8.3. Exportação de PDF (Singleton)
 ![](./imagens/diagrama_exportacao_pdf.png)
 
 ## 2. Viabilidade Técnica
