@@ -29,7 +29,7 @@ Uma aplicação para registro de hábitos diários (ex: estudar, beber água, fa
 A aplicação proposta seria composta por 3 principais funções: 
 1. Cadastro de hábitos (CRUD: criar, editar, excluir e modificar).
 2. Registro diário de progresso (checkboxes ou botões).
-3. Exibição de relatórios diário, mensal e semanal
+3. Exibição e exportação de relatórios diário, mensal e semanal
 
 ### 1.3. Padrões de projeto e estrutura geral
 Os padrões de projeto consistem em várias arquiteturas documentadas e especializadas em determinados tipos de funções para uma aplicação. A seguir, são listados os padrões de projeto e arquitetura utilizados durante o desenvolvimento da aplicação proposta, assim como as explicações para a utilização de cada padrão de projeto utilizado para cada função presente na aplicação.
