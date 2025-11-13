@@ -326,3 +326,10 @@ Ex.:
 ```
 
 A estrutura do registro de teste colocado acima possui como principais características a possibilidade da documentação dos testes de forma objetiva e clara, bem como pela busca fácil a partir da seção de tags em cada teste.
+
+### 4.3. Testes automatizados
+Os testes automatizados são uma coleção de scripts programados para testar as funcionalidades do projeto de forma automática e em larga escala, de forma com que seja possível economizar tempo.  
+Os scripts de teste da aplicação estão presentes na pasta [scripts](/3a%20entrega/scripts/) e os resultados da execução destes scripts também estarão listados no [Logs de testes.md](/3a%20entrega/Logs%20de%20testes.md).  
+Abaixo se encontram os cenários de teste que os scripts automatizados se baseiam: 
+
+**(A FAZER)**
