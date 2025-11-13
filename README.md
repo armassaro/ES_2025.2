@@ -30,6 +30,7 @@
 >       - [4.1.2. Cenários de teste relacionados a marcação de conclusão de hábitos (Ian)](#412-cenários-de-teste-relacionados-a-marcação-de-conclusão-de-hábitos-ian)
 >       - [4.1.3. Cenários de teste relacionados a geração de relatórios (Silvino)](#413-cenários-de-teste-relacionados-a-geração-de-relatórios-silvino)
 >   - [4.2. Registros de testes](#42-registro-dos-testes)
+>   - [4.3. Testes automatizados](#43-testes-automatizados)
 
 ## 1. Ideia do projeto
 O presente projeto possui como principal intuito a criação de um sistema de gerenciamento de hábitos com capacidade de criação de conta e acompanhamento da criação e evolução pessoal dos hábitos escolhidos pelo próprio usuário.
