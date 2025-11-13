@@ -24,6 +24,12 @@
 >   - [3.4. Definições de atividades recorrentes para validação dos padrões propostos](#34-definições-de-atividades-recorrentes-para-validação-dos-padrões-propostos)
 >       - [3.4.1. Para o caso de código](#para_o_caso_de_codigo)
 >       - [3.4.2. Para o caso de documentação](#para_o_caso_de_documentacao)
+> - [4. Testes e validação](#4-testes-e-validação)
+>   - [4.1. Cenários de testes](#41-cenários-de-testes)
+>       - [4.1.1. Cenários de teste relacionados ao CRUD de criação de hábitos (Arthur)](#411-cenários-de-teste-relacionados-ao-crud-de-criação-de-hábitos-arthur)  
+>       - [4.1.2. Cenários de teste relacionados a marcação de conclusão de hábitos (Ian)](#412-cenários-de-teste-relacionados-a-marcação-de-conclusão-de-hábitos-ian)
+>       - [4.1.3. Cenários de teste relacionados a geração de relatórios (Silvino)](#413-cenários-de-teste-relacionados-a-geração-de-relatórios-silvino)
+>   - [4.2. Registros de testes](#42-registro-dos-testes)
 
 ## 1. Ideia do projeto
 O presente projeto possui como principal intuito a criação de um sistema de gerenciamento de hábitos com capacidade de criação de conta e acompanhamento da criação e evolução pessoal dos hábitos escolhidos pelo próprio usuário.
@@ -255,3 +261,68 @@ Cada reunião semanal será norteada nas seguintes premissas:
     Tal ponto deve ser observado para manutenção da legibilidade e organização dos últimos _commits_ submetidos ao repositório.
 > - **A documentação trazida pela contribuição coincide exatamente com as contribuições no código?**  
     Tal ponto deve ser observado para que a documentação possa continuamente refletir no código.
+
+## 4. Testes e validação
+Esta seção se reserva a compilar as práticas de testes e validação que serão aplicadas durante o desenvolvimento do projeto para validação das funcionalidades e melhoria contínua das funcionalidades propostas.
+
+### 4.1. Cenários de testes
+Os cenários de testes se tratam de determinados cenários estruturados a partir de uma pré-condição, uma ação e o resultado esperado a partir do teste executado. Os testes a seguir são documentados pelos membros e cada membro está encarregado de um escopo diferente dentro da aplicação, estando dividido em 3 principais escopos: testes para CRUD de criação de hábitos, testes para marcação de conclusão dos hábitos e testes para geração de relatórios.   
+Os cenários de teste serão executados pelos membros a cada **1 semana**, a fim de atestar o funcionamento de cada escopo da aplicação.  
+São listados abaixo os cenários de teste separados por escopo: 
+
+#### 4.1.1. Cenários de teste relacionados ao CRUD de criação de hábitos (Arthur)
+| ID     | Dado que (pré-condição) | Quando (ação) | Então (resultado esperado) |
+|--------|--------------------------|----------------|-----------------------------|
+| **CT-001** | O usuário está autenticado no sistema e está na tela de gerenciamento de hábitos | O usuário seleciona a opção **"Criar Novo Hábito"**, preenche o campo **"Nome"** com *"Beber água"*, o campo **"Descrição"** com *"Beber 2 litros de água por dia"*, seleciona a frequência **"diária"** e confirma a criação | O sistema exibe a mensagem **"✅ Hábito criado com sucesso"**, o hábito *"Beber água"* aparece na lista de hábitos cadastrados e é persistido no arquivo `habitos_registros.json` |
+| **CT-002** | O usuário está autenticado no sistema e está na tela de criação de hábito | O usuário deixa o campo **"Nome"** em branco, preenche o campo **"Descrição"** com *"Exercícios matinais"* e tenta confirmar a criação | O sistema exibe a mensagem de erro **"[ERRO]: Nome do hábito não pode estar vazio"**, o hábito não é criado e o usuário permanece na tela de criação |
+| **CT-003** | O usuário está autenticado no sistema e está na tela de criação de hábito | O usuário preenche o campo **"Nome"** com *"Meditar"*, deixa o campo **"Descrição"** vazio, seleciona a frequência **"diária"** e confirma a criação | O sistema cria o hábito com sucesso, o hábito *"Meditar"* aparece na lista com descrição vazia e o sistema exibe mensagem de confirmação |
+| **CT-004** | O usuário está autenticado no sistema e não possui nenhum hábito cadastrado | O usuário acessa a opção **"Ver Meus Hábitos"** | O sistema exibe a mensagem **"Nenhum hábito ativo cadastrado."** e não exibe nenhuma lista de hábitos |
+| **CT-005** | O usuário está autenticado no sistema e possui 3 hábitos cadastrados: *"Beber água"*, *"Exercícios"*, *"Meditar"* | O usuário acessa a opção **"Ver Meus Hábitos"** | O sistema exibe a lista de hábitos mostrando nome, ID e status (ATIVO/INATIVO), numerada de 1 a 3 |
+| **CT-006** | O usuário está autenticado no sistema e possui um hábito cadastrado com nome *"Beber água"* | O usuário seleciona a opção **"Atualizar Hábito"**, escolhe o hábito *"Beber água"*, altera o nome para *"Beber 3 litros de água"*, altera a descrição para *"Aumentar hidratação diária"* e confirma | O sistema exibe mensagem de sucesso, o hábito tem os dados atualizados na lista e as alterações são persistidas no arquivo JSON |
+| **CT-007** | O usuário está autenticado no sistema e não possui nenhum hábito cadastrado | O usuário seleciona a opção **"Atualizar Hábito"** | O sistema exibe a mensagem **"[ERRO]: Não há hábitos para atualizar."** e não permite prosseguir |
+| **CT-008** | O usuário está autenticado no sistema e possui um hábito cadastrado com nome *"Meditar"* | O usuário seleciona a opção **"Deletar Hábito"**, seleciona o hábito *"Meditar"* e confirma a exclusão | O sistema exibe mensagem de confirmação, o hábito *"Meditar"* não aparece mais na lista e é marcado como inativo (**active: false**) no arquivo JSON |
+| **CT-009** | O usuário está autenticado no sistema e não possui nenhum hábito ativo cadastrado | O usuário seleciona a opção **"Deletar Hábito"** | O sistema exibe a mensagem **"[ERRO]: Não há hábitos para deletar."** e não permite prosseguir |
+| **CT-010** | O usuário está autenticado no sistema e possui um hábito *"Exercícios"* com histórico de 10 dias de progresso | O usuário exclui o hábito *"Exercícios"* | O hábito é marcado como inativo no sistema, o histórico de progresso é mantido no arquivo JSON, o hábito não aparece na lista de hábitos ativos e os dados ficam disponíveis para restauração futura |
+
+#### 4.1.2. Cenários de teste relacionados a marcação de conclusão de hábitos (Ian)
+| ID | Dado que (pré-condição) | Quando (ação) | Então (resultado esperado) |
+|----|--------------------------|----------------|-----------------------------|
+| **CT-011** | O usuário **"ana"** está autenticado e possui o hábito **"Beber 2L de água"** ativo para hoje. | O usuário solicita **"marcar concluído"** para o hábito *"Beber 2L de água"* sem especificar data (padrão = hoje). | O sistema deve criar/registrar uma entrada de conclusão para a data de hoje, retornar confirmação de sucesso e atualizar o contador/sequência do hábito. |
+| **CT-012** | O usuário **"ana"** está autenticado e o hábito **"Caminhar 30min"** existe e é configurado para permitir marcações em datas passadas dentro do período permitido. | O usuário solicita **"marcar concluído"** para *"Caminhar 30min"* na data **"2025-11-09"**. | O sistema deve registrar a conclusão para **2025-11-09**, atualizar as estatísticas correspondentes e retornar confirmação. |
+| **CT-013** | O usuário **"ana"** já marcou **"Meditar 10min"** como concluído para hoje. | O usuário tenta marcar novamente **"Meditar 10min"** como concluído para hoje. | O sistema deve rejeitar a operação, não duplicar o registro e retornar uma mensagem de erro indicativa (**"Hábito já marcado para esta data"**). |
+| **CT-014** | O usuário **"ana"** está autenticado e não existe nenhum hábito com id/nome **"Ler 100 páginas"** associado a ela. | O usuário tenta marcar **"Ler 100 páginas"** como concluído para hoje. | O sistema deve retornar erro **"Hábito não encontrado"** e não criar nenhum registro. |
+| **CT-015** | A sessão do usuário expirou (usuário não autenticado) ou o token é inválido. | É feita a solicitação para marcar qualquer hábito como concluído. | O sistema deve rejeitar a operação com erro de autenticação/autorização (ex: HTTP 401/403) e não alterar dados. |
+| **CT-016** | O usuário **"ana"** está autenticado e a política do sistema não permite marcar conclusões para datas futuras. | O usuário solicita marcar **"Estudar 1h"** como concluído na data **"2025-12-31"** (futura). | O sistema deve rejeitar a solicitação com mensagem de validação de data (**"Data inválida: não é permitida marcação futura"**) e não criar registro. |
+| **CT-017** | O usuário **"ana"** está autenticado. | O usuário envia a solicitação para marcar **"Beber 2L de água"** com a data **"31-11-2025"** ou em formato não reconhecido. | O sistema deve validar e rejeitar a entrada com mensagem de formato de data inválido e instrução sobre o formato esperado. |
+
+#### 4.1.3. Cenários de teste relacionados a geração de relatórios (Silvino)
+| ID | Dado que (pré-condição) | Quando (ação) | Então (resultado esperado) |
+|----|--------------------------|----------------|-----------------------------|
+| **CT-018** | O usuário está na tela de Relatórios e possui hábitos cadastrados com registros de conclusão na data de hoje. | O usuário seleciona a opção **"Diário"** (último 1 dia). | O sistema deve exibir um relatório que contenha apenas os dados (concluído/não concluído) dos hábitos referentes à data de hoje. |
+| **CT-019** | O usuário está na tela de Relatórios e possui hábitos cadastrados com registros de conclusão nos últimos 7 dias. | O usuário seleciona a opção **"Semanal"** (últimos 7 dias). | O sistema deve exibir um relatório abrangendo o período dos últimos 7 dias, mostrando a performance (ex: taxa de conclusão) de todos os hábitos nesse intervalo. |
+| **CT-020** | O usuário está na tela de Relatórios e possui hábitos cadastrados com registros de conclusão nos últimos 30 dias. | O usuário seleciona a opção **"Mensal"** (últimos 30 dias). | O sistema deve exibir um relatório abrangendo o período dos últimos 30 dias, mostrando a performance geral e tendências dos hábitos nesse intervalo. |
+| **CT-021** | O usuário gera um Relatório (Diário, Semanal ou Mensal) com múltiplos hábitos. | O relatório é exibido na tela. | Os hábitos devem estar ordenados de forma consistente (ex: por ordem alfabética do nome do hábito). |
+
+
+### 4.2. Registro dos testes
+Os testes serão armazenados em um arquivo .md na pasta [3a entrega](/3a%20entrega/) como [Logs de testes.md](/3a%20entrega/Logs%20de%20testes.md). A estrutura de cada teste documentado no arquivo de log de testes está estruturada abaixo:  
+
+```
+## Teste #00
+
+> **Data de execução**: 13/11/2025 14:00 
+> **ID do cenário**: CT-001  
+> **Membro**: Arthur  
+> **Foram apontados erros?**: True/False
+
+### Descrição do teste
+Nesta seção deve ser descrito como o teste ocorreu e se foram detectados quaisquer tipos de erro. Para o caso de erros estéticos, é importante arquivar imagens ou vídeos que apontem claramente o erro e a explicação do que possivelmente levou ao erro. É importante também documentar por meio de imagens ou vídeos quaisquer mensagens de erro vindas da execução do Python como linguagem ou erro de lógica do código.
+
+### Ações tomadas para correção do erro
+Aqui devem ser listadas as ações que foram tomadas para corrigir o erro. 
+Ex.: 
+- Otimização da lógica do código
+- Correção do erro estético relatado
+```
+
+A estrutura do registro de teste colocado acima possui como principais características a possibilidade da documentação dos testes de forma objetiva e clara, bem como pela busca fácil a partir da seção de tags em cada teste.
