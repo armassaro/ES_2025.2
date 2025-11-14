@@ -31,6 +31,9 @@
 >       - [4.1.3. Cenários de teste relacionados a geração de relatórios (Silvino)](#413-cenários-de-teste-relacionados-a-geração-de-relatórios-silvino)
 >   - [4.2. Registros de testes](#42-registro-dos-testes)
 >   - [4.3. Testes automatizados](#43-testes-automatizados)
+>       - [4.3.1. Cenários de teste automatizados relacionados ao CRUD de criação de hábitos (Arthur)](#431-cenários-de-teste-automatizados-relacionados-ao-crud-de-criação-de-hábitos-arthur)
+>       - [4.3.2. Cenários de teste automatizados relacionados a visualização de hábitos (Ian)](#432-cenários-de-teste-automatizados-relacionados-a-visualização-de-hábitos-ian)
+>       - [4.3.3. Cenários de teste automatizados relacionados a geração de relatórios (Silvino)](#433-cenários-de-teste-automatizados-relacionados-a-geração-de-relatórios-silvino)
 
 ## 1. Ideia do projeto
 O presente projeto possui como principal intuito a criação de um sistema de gerenciamento de hábitos com capacidade de criação de conta e acompanhamento da criação e evolução pessoal dos hábitos escolhidos pelo próprio usuário.
@@ -272,38 +275,59 @@ Os cenários de teste serão executados pelos membros a cada **1 semana**, a fim
 São listados abaixo os cenários de teste separados por escopo: 
 
 #### 4.1.1. Cenários de teste relacionados ao CRUD de criação de hábitos (Arthur)
-| ID     | Dado que (pré-condição) | Quando (ação) | Então (resultado esperado) |
-|--------|--------------------------|----------------|-----------------------------|
+
+**Como um** usuário do sistema de gerenciamento de hábitos  
+**Eu quero** criar, visualizar, atualizar e excluir meus hábitos  
+**De modo que** eu possa gerenciar efetivamente minha rotina e acompanhar meu progresso pessoal
+
+---
+
+**Cenários Funcionais**
+
+| ID | Dado que (pré-condição) | Quando (ação) | Então (resultado esperado) |
+|----|--------------------------|----------------|-----------------------------|
 | **CT-001** | O usuário está autenticado no sistema e está na tela de gerenciamento de hábitos | O usuário seleciona a opção **"Criar Novo Hábito"**, preenche o campo **"Nome"** com *"Beber água"*, o campo **"Descrição"** com *"Beber 2 litros de água por dia"*, seleciona a frequência **"diária"** e confirma a criação | O sistema exibe a mensagem **"✅ Hábito criado com sucesso"**, o hábito *"Beber água"* aparece na lista de hábitos cadastrados e é persistido no arquivo `habitos_registros.json` |
 | **CT-002** | O usuário está autenticado no sistema e está na tela de criação de hábito | O usuário deixa o campo **"Nome"** em branco, preenche o campo **"Descrição"** com *"Exercícios matinais"* e tenta confirmar a criação | O sistema exibe a mensagem de erro **"[ERRO]: Nome do hábito não pode estar vazio"**, o hábito não é criado e o usuário permanece na tela de criação |
-| **CT-003** | O usuário está autenticado no sistema e está na tela de criação de hábito | O usuário preenche o campo **"Nome"** com *"Meditar"*, deixa o campo **"Descrição"** vazio, seleciona a frequência **"diária"** e confirma a criação | O sistema cria o hábito com sucesso, o hábito *"Meditar"* aparece na lista com descrição vazia e o sistema exibe mensagem de confirmação |
-| **CT-004** | O usuário está autenticado no sistema e não possui nenhum hábito cadastrado | O usuário acessa a opção **"Ver Meus Hábitos"** | O sistema exibe a mensagem **"Nenhum hábito ativo cadastrado."** e não exibe nenhuma lista de hábitos |
-| **CT-005** | O usuário está autenticado no sistema e possui 3 hábitos cadastrados: *"Beber água"*, *"Exercícios"*, *"Meditar"* | O usuário acessa a opção **"Ver Meus Hábitos"** | O sistema exibe a lista de hábitos mostrando nome, ID e status (ATIVO/INATIVO), numerada de 1 a 3 |
-| **CT-006** | O usuário está autenticado no sistema e possui um hábito cadastrado com nome *"Beber água"* | O usuário seleciona a opção **"Atualizar Hábito"**, escolhe o hábito *"Beber água"*, altera o nome para *"Beber 3 litros de água"*, altera a descrição para *"Aumentar hidratação diária"* e confirma | O sistema exibe mensagem de sucesso, o hábito tem os dados atualizados na lista e as alterações são persistidas no arquivo JSON |
-| **CT-007** | O usuário está autenticado no sistema e não possui nenhum hábito cadastrado | O usuário seleciona a opção **"Atualizar Hábito"** | O sistema exibe a mensagem **"[ERRO]: Não há hábitos para atualizar."** e não permite prosseguir |
-| **CT-008** | O usuário está autenticado no sistema e possui um hábito cadastrado com nome *"Meditar"* | O usuário seleciona a opção **"Deletar Hábito"**, seleciona o hábito *"Meditar"* e confirma a exclusão | O sistema exibe mensagem de confirmação, o hábito *"Meditar"* não aparece mais na lista e é marcado como inativo (**active: false**) no arquivo JSON |
-| **CT-009** | O usuário está autenticado no sistema e não possui nenhum hábito ativo cadastrado | O usuário seleciona a opção **"Deletar Hábito"** | O sistema exibe a mensagem **"[ERRO]: Não há hábitos para deletar."** e não permite prosseguir |
-| **CT-010** | O usuário está autenticado no sistema e possui um hábito *"Exercícios"* com histórico de 10 dias de progresso | O usuário exclui o hábito *"Exercícios"* | O hábito é marcado como inativo no sistema, o histórico de progresso é mantido no arquivo JSON, o hábito não aparece na lista de hábitos ativos e os dados ficam disponíveis para restauração futura |
+| **CT-003** | O usuário está autenticado no sistema e possui um hábito cadastrado com nome *"Beber água"* | O usuário seleciona a opção **"Atualizar Hábito"**, escolhe o hábito *"Beber água"*, altera o nome para *"Beber 3 litros de água"*, altera a descrição para *"Aumentar hidratação diária"* e confirma | O sistema exibe mensagem de sucesso, o hábito tem os dados atualizados na lista e as alterações são persistidas no arquivo JSON |
+| **CT-004** | O usuário está autenticado no sistema e possui um hábito *"Exercícios"* com histórico de 10 dias de progresso | O usuário seleciona **"Deletar Hábito"**, escolhe *"Exercícios"* e confirma a exclusão | O hábito é marcado como inativo (**active: false**) no sistema, o histórico de progresso é mantido no arquivo JSON, o hábito não aparece na lista de hábitos ativos e os dados ficam disponíveis para restauração futura |
+
+---
 
 #### 4.1.2. Cenários de teste relacionados a marcação de conclusão de hábitos (Ian)
+
+**Como um** usuário do sistema de gerenciamento de hábitos  
+**Eu quero** marcar meus hábitos como concluídos em diferentes datas  
+**De modo que** eu possa acompanhar meu progresso e manter meu histórico atualizado
+
+---
+
+**Cenários Funcionais**
+
 | ID | Dado que (pré-condição) | Quando (ação) | Então (resultado esperado) |
 |----|--------------------------|----------------|-----------------------------|
-| **CT-011** | O usuário **"ana"** está autenticado e possui o hábito **"Beber 2L de água"** ativo para hoje. | O usuário solicita **"marcar concluído"** para o hábito *"Beber 2L de água"* sem especificar data (padrão = hoje). | O sistema deve criar/registrar uma entrada de conclusão para a data de hoje, retornar confirmação de sucesso e atualizar o contador/sequência do hábito. |
-| **CT-012** | O usuário **"ana"** está autenticado e o hábito **"Caminhar 30min"** existe e é configurado para permitir marcações em datas passadas dentro do período permitido. | O usuário solicita **"marcar concluído"** para *"Caminhar 30min"* na data **"2025-11-09"**. | O sistema deve registrar a conclusão para **2025-11-09**, atualizar as estatísticas correspondentes e retornar confirmação. |
-| **CT-013** | O usuário **"ana"** já marcou **"Meditar 10min"** como concluído para hoje. | O usuário tenta marcar novamente **"Meditar 10min"** como concluído para hoje. | O sistema deve rejeitar a operação, não duplicar o registro e retornar uma mensagem de erro indicativa (**"Hábito já marcado para esta data"**). |
-| **CT-014** | O usuário **"ana"** está autenticado e não existe nenhum hábito com id/nome **"Ler 100 páginas"** associado a ela. | O usuário tenta marcar **"Ler 100 páginas"** como concluído para hoje. | O sistema deve retornar erro **"Hábito não encontrado"** e não criar nenhum registro. |
-| **CT-015** | A sessão do usuário expirou (usuário não autenticado) ou o token é inválido. | É feita a solicitação para marcar qualquer hábito como concluído. | O sistema deve rejeitar a operação com erro de autenticação/autorização (ex: HTTP 401/403) e não alterar dados. |
-| **CT-016** | O usuário **"ana"** está autenticado e a política do sistema não permite marcar conclusões para datas futuras. | O usuário solicita marcar **"Estudar 1h"** como concluído na data **"2025-12-31"** (futura). | O sistema deve rejeitar a solicitação com mensagem de validação de data (**"Data inválida: não é permitida marcação futura"**) e não criar registro. |
-| **CT-017** | O usuário **"ana"** está autenticado. | O usuário envia a solicitação para marcar **"Beber 2L de água"** com a data **"31-11-2025"** ou em formato não reconhecido. | O sistema deve validar e rejeitar a entrada com mensagem de formato de data inválido e instrução sobre o formato esperado. |
+| **CT-005** | O usuário **"ana"** está autenticado e possui o hábito **"Beber 2L de água"** ativo para hoje | O usuário solicita **"marcar concluído"** para o hábito *"Beber 2L de água"* sem especificar data (padrão = hoje) | O sistema cria/registra uma entrada de conclusão para a data de hoje, retorna confirmação de sucesso e atualiza o contador/sequência do hábito |
+| **CT-006** | O usuário **"ana"** está autenticado e o hábito **"Caminhar 30min"** existe e permite marcações em datas passadas | O usuário solicita **"marcar concluído"** para *"Caminhar 30min"* na data **"2025-11-09"** | O sistema registra a conclusão para **2025-11-09**, atualiza as estatísticas correspondentes e retorna confirmação |
+| **CT-007** | O usuário **"ana"** já marcou **"Meditar 10min"** como concluído para hoje | O usuário tenta marcar novamente **"Meditar 10min"** como concluído para hoje | O sistema rejeita a operação, não duplica o registro e retorna mensagem de erro **"Hábito já marcado para esta data"** |
+| **CT-008** | A política do sistema não permite marcar conclusões para datas futuras | O usuário solicita marcar **"Estudar 1h"** como concluído na data **"2025-12-31"** (futura) | O sistema rejeita a solicitação com mensagem **"Data inválida: não é permitida marcação futura"** e não cria registro |
+
+---
 
 #### 4.1.3. Cenários de teste relacionados a geração de relatórios (Silvino)
+
+**Como um** usuário do sistema de gerenciamento de hábitos  
+**Eu quero** visualizar relatórios de diferentes períodos (diário, semanal, mensal)  
+**De modo que** eu possa analisar meu desempenho e identificar padrões nos meus hábitos
+
+---
+
+## C.2 Cenários Funcionais
+
 | ID | Dado que (pré-condição) | Quando (ação) | Então (resultado esperado) |
 |----|--------------------------|----------------|-----------------------------|
-| **CT-018** | O usuário está na tela de Relatórios e possui hábitos cadastrados com registros de conclusão na data de hoje. | O usuário seleciona a opção **"Diário"** (último 1 dia). | O sistema deve exibir um relatório que contenha apenas os dados (concluído/não concluído) dos hábitos referentes à data de hoje. |
-| **CT-019** | O usuário está na tela de Relatórios e possui hábitos cadastrados com registros de conclusão nos últimos 7 dias. | O usuário seleciona a opção **"Semanal"** (últimos 7 dias). | O sistema deve exibir um relatório abrangendo o período dos últimos 7 dias, mostrando a performance (ex: taxa de conclusão) de todos os hábitos nesse intervalo. |
-| **CT-020** | O usuário está na tela de Relatórios e possui hábitos cadastrados com registros de conclusão nos últimos 30 dias. | O usuário seleciona a opção **"Mensal"** (últimos 30 dias). | O sistema deve exibir um relatório abrangendo o período dos últimos 30 dias, mostrando a performance geral e tendências dos hábitos nesse intervalo. |
-| **CT-021** | O usuário gera um Relatório (Diário, Semanal ou Mensal) com múltiplos hábitos. | O relatório é exibido na tela. | Os hábitos devem estar ordenados de forma consistente (ex: por ordem alfabética do nome do hábito). |
-
+| **CT-009** | O usuário está na tela de Relatórios e possui hábitos cadastrados com registros de conclusão na data de hoje | O usuário seleciona a opção **"Diário"** (último 1 dia) | O sistema exibe um relatório contendo apenas os dados (concluído/não concluído) dos hábitos referentes à data de hoje |
+| **CT-010** | O usuário está na tela de Relatórios e possui hábitos cadastrados com registros de conclusão nos últimos 7 dias | O usuário seleciona a opção **"Semanal"** (últimos 7 dias) | O sistema exibe um relatório abrangendo o período dos últimos 7 dias, mostrando a performance (taxa de conclusão) de todos os hábitos nesse intervalo |
+| **CT-011** | O usuário está na tela de Relatórios e possui hábitos cadastrados com registros de conclusão nos últimos 30 dias | O usuário seleciona a opção **"Mensal"** (últimos 30 dias) | O sistema exibe um relatório abrangendo o período dos últimos 30 dias, mostrando a performance geral e tendências dos hábitos nesse intervalo |
+| **CT-012** | O usuário gera um Relatório (Diário, Semanal ou Mensal) com múltiplos hábitos cadastrados | O relatório é exibido na tela | Os hábitos devem estar ordenados de forma consistente (por ordem alfabética do nome) e apresentar dados corretos de conclusão para o período selecionado |
 
 ### 4.2. Registro dos testes
 Os testes serão armazenados em um arquivo .md na pasta [3a entrega](/3a%20entrega/) como [Logs de testes.md](/3a%20entrega/Logs%20de%20testes.md). A estrutura de cada teste documentado no arquivo de log de testes está estruturada abaixo:  
@@ -333,4 +357,86 @@ Os testes automatizados são uma coleção de scripts programados para testar as
 Os scripts de teste da aplicação estão presentes na pasta [scripts](/3a%20entrega/scripts/) e os resultados da execução destes scripts também estarão listados no [Logs de testes.md](/3a%20entrega/Logs%20de%20testes.md).  
 Abaixo se encontram os cenários de teste que os scripts automatizados se baseiam: 
 
-**(A FAZER)**
+#### 4.3.1. Cenários de teste automatizados relacionados ao CRUD de criação de hábitos (Arthur)
+
+**Como um** desenvolvedor do sistema de gerenciamento de hábitos  
+**Eu quero** automatizar os testes de CRUD de hábitos  
+**De modo que** possa garantir a integridade das operações básicas do sistema de forma contínua
+
+---
+
+**Cenários Funcionais - Testes Automatizados**
+
+| ID | Dado que (pré-condição) | Quando (ação) | Então (resultado esperado) |
+|----|--------------------------|----------------|-----------------------------|
+| **CTA-001** | O sistema está inicializado com `HabitModel` e `HabitController` instanciados, e o arquivo `habitos_registros.json` está vazio ou com estado conhecido | O teste automatizado chama o método `create_habit(name="Beber água", description="Beber 2L por dia", frequency="daily")` | O método retorna `True`, o hábito é adicionado ao modelo com ID único, o atributo `active` é `True`, e o arquivo JSON contém o novo hábito com todos os campos corretos |
+| **CTA-002** | O sistema está inicializado com `HabitModel` e `HabitController` instanciados | O teste automatizado tenta chamar `create_habit(name="", description="Desc", frequency="daily")` com nome vazio | O método retorna `False` ou lança exceção, nenhum hábito é criado no modelo, e o arquivo JSON permanece inalterado |
+| **CTA-003** | O sistema possui um hábito pré-cadastrado com `habit_id="h001"`, `name="Exercícios"`, `description="30min diários"` | O teste automatizado chama `update_habit(habit_id="h001", name="Exercícios Intensos", description="45min diários")` | O método retorna `True`, os dados do hábito `h001` são atualizados no modelo, o arquivo JSON reflete as alterações, e os demais campos (ID, created_at, active) permanecem inalterados |
+| **CTA-004** | O sistema possui um hábito `habit_id="h002"` com `active=True` e histórico de 10 registros em `history` | O teste automatizado chama `delete_habit(habit_id="h002")` | O método retorna `True`, o atributo `active` do hábito é alterado para `False`, o histórico é preservado no JSON, e o hábito não aparece em consultas de hábitos ativos |
+
+---
+
+#### 4.3.2. Cenários de teste automatizados relacionados a visualização de hábitos (Ian)
+
+**Como um** desenvolvedor do sistema de gerenciamento de hábitos  
+**Eu quero** automatizar os testes de visualização e listagem de hábitos  
+**De modo que** possa validar a correta exibição e filtragem de hábitos no sistema
+
+---
+
+**Cenários Funcionais - Testes Automatizados**
+
+| ID | Dado que (pré-condição) | Quando (ação) | Então (resultado esperado) |
+|----|--------------------------|----------------|-----------------------------|
+| **CTA-005** | O sistema possui 3 hábitos cadastrados: `h001="Beber água"` (ativo), `h002="Exercícios"` (ativo), `h003="Meditar"` (inativo) | O teste automatizado chama `get_active_habits()` ou método equivalente que retorna apenas hábitos ativos | O método retorna lista com 2 hábitos (`h001` e `h002`), o hábito `h003` não aparece na lista, e cada hábito contém os campos: `habit_id`, `name`, `description`, `active=True` |
+| **CTA-006** | O sistema possui um hábito `h001` com histórico `history={"2025-11-10": true, "2025-11-12": true}` | O teste automatizado chama `get_habit_by_id("h001")` | O método retorna o objeto do hábito completo, incluindo o campo `history` com todas as entradas corretas, e os campos `name`, `description`, `frequency`, `active` estão presentes |
+| **CTA-007** | O sistema está vazio sem nenhum hábito cadastrado | O teste automatizado chama `get_active_habits()` | O método retorna lista vazia `[]` ou `None`, e nenhum erro é lançado durante a execução |
+| **CTA-008** | O sistema possui 4 hábitos ativos com nomes: "Zumba", "Academia", "Meditação", "Beber água" | O teste automatizado chama método de listagem de hábitos e verifica a ordenação | Os hábitos são retornados em ordem alfabética: ["Academia", "Beber água", "Meditação", "Zumba"], mantendo todas as propriedades de cada hábito intactas |
+
+---
+
+#### 4.3.3. Cenários de teste automatizados relacionados a geração de relatórios (Silvino)
+
+**Como um** desenvolvedor do sistema de gerenciamento de hábitos  
+**Eu quero** automatizar os testes de geração de relatórios  
+**De modo que** possa validar a correta geração e cálculo de estatísticas para diferentes períodos
+
+---
+
+**Cenários Funcionais - Testes Automatizados**
+
+| ID | Dado que (pré-condição) | Quando (ação) | Então (resultado esperado) |
+|----|--------------------------|----------------|-----------------------------|
+| **CTA-009** | O sistema possui 3 hábitos ativos, a data atual é `2025-11-14`, e existe histórico: `h001` marcado hoje (concluído), `h002` não marcado hoje, `h003` marcado hoje | O teste automatizado chama `ReportFactory.create_report("daily", raw_data)` e obtém `report.generate_visualization_data()` | O relatório retorna estrutura com `date="2025-11-14"`, `completed=2`, `total_habits=3`, e lista de hábitos com status correto para cada um |
+| **CTA-010** | O sistema possui 2 hábitos ativos com histórico dos últimos 7 dias: `h001` concluído em 5 dias, `h002` concluído em 3 dias | O teste automatizado chama `ReportFactory.create_report("weekly", raw_data)` e obtém `report.generate_visualization_data()` | O relatório retorna estrutura com período dos últimos 7 dias, `total_completed=8`, cálculo de estatísticas semanais, e dados diários (`daily_data`) com contagens corretas |
+| **CTA-011** | O sistema possui 3 hábitos ativos com histórico distribuído nos últimos 30 dias com padrões variados de conclusão | O teste automatizado chama `ReportFactory.create_report("monthly", raw_data)` e obtém `report.generate_visualization_data()` | O relatório retorna estrutura com período dos últimos 30 dias, `total_completed` correto, cálculo de sequência máxima (`max_streak`), e resumo semanal (`weekly_summary`) com dados agregados |
+| **CTA-012** | O sistema possui hábitos sem nenhum registro de conclusão (histórico vazio) | O teste automatizado gera relatórios diário, semanal e mensal | Todos os relatórios retornam estrutura válida sem erros, com `completed=0`, `total_habits` correto, e campos de estatísticas zerados ou com valores padrão |
+
+---
+
+#### 4.3.4. Cenários de teste automatizados relacionados a exportação de PDF (Todos)
+
+**Como um** desenvolvedor do sistema de gerenciamento de hábitos  
+**Eu quero** automatizar os testes de exportação de PDF com padrão Singleton  
+**De modo que** possa garantir a geração correta de relatórios e a unicidade da instância do exportador
+
+---
+
+**Cenários Funcionais - Testes Automatizados**
+
+| ID | Dado que (pré-condição) | Quando (ação) | Então (resultado esperado) |
+|----|--------------------------|----------------|-----------------------------|
+| **CTA-013** | O sistema está inicializado e nenhuma instância de `PDFExporter` foi criada ainda | O teste automatizado cria duas variáveis: `exporter1 = PDFExporter()` e `exporter2 = PDFExporter()` | Ambas as variáveis apontam para a mesma instância (`exporter1 is exporter2 == True`), a mensagem "PDFExporter inicializado (Singleton)" aparece apenas uma vez nos logs, e `PDFExporter._instance` não é `None` |
+| **CTA-014** | O sistema possui um hábito com dados completos: `name="Exercícios"`, `description="30min"`, `history` com 15 dias de registros variados | O teste automatizado chama `exporter.export_habit_report(habit, "test_report.pdf")` | O método retorna sem erros, o arquivo `test_report.pdf` é criado no sistema de arquivos, o arquivo tem tamanho > 0 bytes, e contém estrutura PDF válida (pode ser aberto) |
+| **CTA-015** | O sistema possui um hábito válido e `PDFExporter` já foi instanciado | O teste automatizado chama `export_habit_report()` para o mesmo hábito em dois arquivos diferentes: `"report1.pdf"` e `"report2.pdf"` | Ambos os arquivos são criados com sucesso, ambos contêm os mesmos dados do hábito formatados, e a mesma instância de `PDFExporter` é utilizada (verificado por logs ou ID da instância) |
+| **CTA-016** | O sistema possui um hábito com histórico dos últimos 30 dias com padrão misto (dias concluídos e pendentes) | O teste automatizado gera PDF e verifica o conteúdo através de biblioteca de parsing (ex: PyPDF2) | O PDF contém seções obrigatórias: "Informações Gerais", "Resumo de Progresso", "Histórico Detalhado", e os dados numéricos (dias registrados, taxa de conclusão, sequência) correspondem aos cálculos esperados |
+
+---
+
+**Observações sobre os testes automatizados:**
+
+- Os testes CTA-001 a CTA-004 são **totalmente viáveis** e podem ser implementados imediatamente
+- Os testes CTA-005 a CTA-008 substituem os testes originais de marcação de conclusão por testes de **visualização de hábitos**, pois a implementação atual usa `input()` que dificulta automação
+- Os testes CTA-009 a CTA-012 são **viáveis** e testam a geração de relatórios através do padrão Factory
+- Os testes CTA-013 a CTA-016 são **totalmente viáveis** e validam o padrão Singleton do `PDFExporter`
+- Todos os cenários foram ajustados para refletir a **implementação real** do sistema, garantindo que possam ser executados sem modificações significativas no código base
