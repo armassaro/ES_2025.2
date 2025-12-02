@@ -82,7 +82,7 @@ class TestHabitCRUD:
                 assert created_habit['name'] == sample_habit_data["name"]
                 assert created_habit['description'] == sample_habit_data["description"]
                 assert created_habit.get('active', True) == True
-                assert 'habit_id' in created_habit
+                assert 'id' in created_habit
         
         # Verificar persistência no JSON
         with open('habitos_registros.json', 'r', encoding='utf-8') as f:

@@ -17,8 +17,8 @@ class TestHabitVisualization:
         self.user_model = UserModel()
         
         # Usar usuário que JÁ EXISTE no usuarios.json
-        test_username = "1"
-        test_password = "1111"
+        test_username = "teste"
+        test_password = "123"
         
         # Fazer login com usuário existente
         success, msg = self.user_model.authenticate(test_username, test_password)
