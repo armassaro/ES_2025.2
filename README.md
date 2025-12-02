@@ -411,32 +411,11 @@ Abaixo se encontram os cenários de teste que os scripts automatizados se baseia
 | **CTA-010** | O sistema possui 2 hábitos ativos com histórico dos últimos 7 dias: `h001` concluído em 5 dias, `h002` concluído em 3 dias | O teste automatizado chama `ReportFactory.create_report("weekly", raw_data)` e obtém `report.generate_visualization_data()` | O relatório retorna estrutura com período dos últimos 7 dias, `total_completed=8`, cálculo de estatísticas semanais, e dados diários (`daily_data`) com contagens corretas |
 | **CTA-011** | O sistema possui 3 hábitos ativos com histórico distribuído nos últimos 30 dias com padrões variados de conclusão | O teste automatizado chama `ReportFactory.create_report("monthly", raw_data)` e obtém `report.generate_visualization_data()` | O relatório retorna estrutura com período dos últimos 30 dias, `total_completed` correto, cálculo de sequência máxima (`max_streak`), e resumo semanal (`weekly_summary`) com dados agregados |
 | **CTA-012** | O sistema possui hábitos sem nenhum registro de conclusão (histórico vazio) | O teste automatizado gera relatórios diário, semanal e mensal | Todos os relatórios retornam estrutura válida sem erros, com `completed=0`, `total_habits` correto, e campos de estatísticas zerados ou com valores padrão |
+| **CTA-013** | O sistema possui 3 hábitos ativos com histórico distribuído no período de `2025-11-01` a `2025-11-15` (15 dias): `h001` concluído em 10 dias consecutivos, `h002` concluído em 7 dias alternados, `h003` concluído em 5 dias específicos | O teste automatizado chama `ReportFactory.create_report("custom", raw_data, "2025-11-01", "2025-11-15")` e obtém `report.generate_visualization_data()` | O relatório retorna estrutura com `start_date="2025-11-01"`, `end_date="2025-11-15"`, `total_days=15`, `total_completed=22`, campos `average_per_day`, `max_streak>=10`, `completion_rate`, `best_day`, `best_day_count` e `daily_data` com 15 entradas corretas |
+| **CTA-014** | O sistema está inicializado com `HabitModel` e hábitos cadastrados | O teste automatizado tenta chamar `ReportFactory.create_report("custom", raw_data, "2025-11-15", "2025-11-01")` com data final anterior à data inicial | O método levanta `ValueError` com mensagem contendo "data final não pode ser menor que a data inicial", nenhum relatório é gerado e o sistema permanece estável |
+| **CTA-015** | O sistema possui 2 hábitos ativos mas com histórico apenas em `2025-12-01` e `2025-12-02`, e o teste solicita período de `2024-01-01` a `2024-01-31` (período passado sem dados) | O teste automatizado chama `ReportFactory.create_report("custom", raw_data, "2024-01-01", "2024-01-31")` | O relatório retorna estrutura válida com `total_completed=0`, `completion_rate=0.0`, `max_streak=0`, `total_days=31`, e todos os 31 dias em `daily_data` com `completed=0` |
+| **CTA-016** | O sistema possui 2 hábitos ativos com histórico extenso de 90 dias: `h001` concluído todos os dias, `h002` concluído a cada 3 dias | O teste automatizado gera relatórios customizados para períodos de 1 dia, 7 dias, 30 dias e 90 dias usando datas específicas | Todos os 4 relatórios retornam estrutura válida, cada um com `total_days` correto (1, 7, 31, 91 respectivamente), campos de estatísticas calculados corretamente, e `daily_data` com número de entradas correspondente ao período |
+| **CTA-017** | O sistema possui 2 hábitos ativos com histórico no período `2025-11-01` a `2025-11-10`, e `ReportController` está configurado com `HabitModel` e `ConsoleView` | O teste automatizado chama `report_controller.generate_custom_report("2025-11-01", "2025-11-10")` | O método retorna tupla `(True, mensagem_sucesso, report_data)`, onde `mensagem_sucesso` contém "sucesso" ou "gerado", `report_data` é dicionário não-nulo com `start_date="2025-11-01"`, `end_date="2025-11-10"`, `total_days=10` e estatísticas corretas |
+| **CTA-018** | O sistema está inicializado com hábitos cadastrados | O teste automatizado tenta chamar `ReportFactory.create_report("custom", raw_data, None, None)`, depois `("custom", raw_data, None, "2025-11-15")`, e depois `("custom", raw_data, "2025-11-01", None)` | Todos os 3 casos levantam `ValueError` com mensagem contendo "obrigatórios" ou "required", nenhum relatório é gerado em nenhum dos casos, e o sistema permanece estável |
 
 ---
-
-#### 4.3.4. Cenários de teste automatizados relacionados a exportação de PDF (Todos)
-
-**Como um** desenvolvedor do sistema de gerenciamento de hábitos  
-**Eu quero** automatizar os testes de exportação de PDF com padrão Singleton  
-**De modo que** possa garantir a geração correta de relatórios e a unicidade da instância do exportador
-
----
-
-**Cenários Funcionais - Testes Automatizados**
-
-| ID | Dado que (pré-condição) | Quando (ação) | Então (resultado esperado) |
-|----|--------------------------|----------------|-----------------------------|
-| **CTA-013** | O sistema está inicializado e nenhuma instância de `PDFExporter` foi criada ainda | O teste automatizado cria duas variáveis: `exporter1 = PDFExporter()` e `exporter2 = PDFExporter()` | Ambas as variáveis apontam para a mesma instância (`exporter1 is exporter2 == True`), a mensagem "PDFExporter inicializado (Singleton)" aparece apenas uma vez nos logs, e `PDFExporter._instance` não é `None` |
-| **CTA-014** | O sistema possui um hábito com dados completos: `name="Exercícios"`, `description="30min"`, `history` com 15 dias de registros variados | O teste automatizado chama `exporter.export_habit_report(habit, "test_report.pdf")` | O método retorna sem erros, o arquivo `test_report.pdf` é criado no sistema de arquivos, o arquivo tem tamanho > 0 bytes, e contém estrutura PDF válida (pode ser aberto) |
-| **CTA-015** | O sistema possui um hábito válido e `PDFExporter` já foi instanciado | O teste automatizado chama `export_habit_report()` para o mesmo hábito em dois arquivos diferentes: `"report1.pdf"` e `"report2.pdf"` | Ambos os arquivos são criados com sucesso, ambos contêm os mesmos dados do hábito formatados, e a mesma instância de `PDFExporter` é utilizada (verificado por logs ou ID da instância) |
-| **CTA-016** | O sistema possui um hábito com histórico dos últimos 30 dias com padrão misto (dias concluídos e pendentes) | O teste automatizado gera PDF e verifica o conteúdo através de biblioteca de parsing (ex: PyPDF2) | O PDF contém seções obrigatórias: "Informações Gerais", "Resumo de Progresso", "Histórico Detalhado", e os dados numéricos (dias registrados, taxa de conclusão, sequência) correspondem aos cálculos esperados |
-
----
-
-**Observações sobre os testes automatizados:**
-
-- Os testes CTA-001 a CTA-004 são **totalmente viáveis** e podem ser implementados imediatamente
-- Os testes CTA-005 a CTA-008 substituem os testes originais de marcação de conclusão por testes de **visualização de hábitos**, pois a implementação atual usa `input()` que dificulta automação
-- Os testes CTA-009 a CTA-012 são **viáveis** e testam a geração de relatórios através do padrão Factory
-- Os testes CTA-013 a CTA-016 são **totalmente viáveis** e validam o padrão Singleton do `PDFExporter`
-- Todos os cenários foram ajustados para refletir a **implementação real** do sistema, garantindo que possam ser executados sem modificações significativas no código base

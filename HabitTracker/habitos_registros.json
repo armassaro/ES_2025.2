@@ -1,1 +1,16 @@
-{}
+{
+    "teste": [
+        {
+            "id": "149c0c6b-8832-4097-a424-92efd0da25a8",
+            "name": "gg",
+            "description": "",
+            "frequency": "daily",
+            "active": true,
+            "color": "pink",
+            "created_at": "2025-12-02T03:40:08.284003",
+            "history": {
+                "2025-11-26": true
+            }
+        }
+    ]
+}

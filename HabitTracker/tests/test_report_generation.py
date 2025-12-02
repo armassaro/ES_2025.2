@@ -12,7 +12,7 @@ from controller.ReportController import ReportController
 
 class TestReportGeneration:
     """
-    Testes automatizados para geração de relatórios (CTA-009 a CTA-012)
+    Testes automatizados para geração de relatórios (CTA-009 a CTA-018)
     Responsável: Silvino
     """
     
@@ -412,6 +412,407 @@ class TestReportGeneration:
                 print(f"✅ Relatório {report_type} validado com sucesso")
             
             print(f"✅ CTA-012 passou: Todos os relatórios funcionam corretamente com histórico vazio")
+    
+    @pytest.mark.reports
+    def test_cta_013_custom_report_with_valid_period_and_data(self, clean_json_files):
+        """
+        CTA-013: Relatório personalizado com período válido e dados
+        
+        Dado que: Sistema possui 3 hábitos com histórico distribuído
+                 período solicitado: "2025-11-01" até "2025-11-15" (15 dias)
+        Quando: Chama ReportFactory.create_report("custom", raw_data, start_date, end_date)
+        Então: Retorna total_completed correto, max_streak, best_day, completion_rate e daily_data
+        """
+        # Definir período de teste
+        start_date = "2025-11-01"
+        end_date = "2025-11-15"
+        
+        # Criar 3 hábitos
+        habits_data = [
+            {"name": "Correr", "description": "5km", "frequency": "daily"},
+            {"name": "Estudar", "description": "1h programação", "frequency": "daily"},
+            {"name": "Yoga", "description": "30min", "frequency": "daily"}
+        ]
+        
+        for habit_data in habits_data:
+            success, msg = self.habit_model.create_habit(
+                name=habit_data["name"],
+                description=habit_data["description"],
+                frequency=habit_data["frequency"]
+            )
+            
+            if not success:
+                pytest.fail(f"Falha ao criar hábito: {msg}")
+        
+        # Obter hábitos criados
+        all_habits = self.habit_model.get_all_habits()
+        created_habits = all_habits[-3:]
+        
+        # Configurar histórico para o período
+        # Correr: concluído em 10 dias (dias 0-9)
+        correr_days = [
+            "2025-11-01", "2025-11-02", "2025-11-03", "2025-11-04", "2025-11-05",
+            "2025-11-06", "2025-11-07", "2025-11-08", "2025-11-09", "2025-11-10"
+        ]
+        
+        # Estudar: concluído em 8 dias (dias 1, 3, 5, 7, 9, 11, 13, 15)
+        estudar_days = [
+            "2025-11-02", "2025-11-04", "2025-11-06", "2025-11-08", 
+            "2025-11-10", "2025-11-12", "2025-11-14"
+        ]
+        
+        # Yoga: concluído em 5 dias (dias 0, 4, 8, 12, 14)
+        yoga_days = [
+            "2025-11-01", "2025-11-05", "2025-11-09", "2025-11-13", "2025-11-15"
+        ]
+        
+        created_habits[0]['history'] = {date: True for date in correr_days}
+        created_habits[1]['history'] = {date: True for date in estudar_days}
+        created_habits[2]['history'] = {date: True for date in yoga_days}
+        
+        # Salvar
+        save_data(HABIT_DATA_FILE, self.habit_model.data)
+        
+        total_expected = len(correr_days) + len(estudar_days) + len(yoga_days)
+        
+        print(f"\n📅 Período: {start_date} a {end_date} (15 dias)")
+        print(f"Correr: {len(correr_days)} conclusões")
+        print(f"Estudar: {len(estudar_days)} conclusões")
+        print(f"Yoga: {len(yoga_days)} conclusões")
+        print(f"Total esperado: {total_expected} conclusões")
+        
+        # Gerar relatório personalizado
+        custom_report = ReportFactory.create_report("custom", created_habits, start_date, end_date)
+        report_data = custom_report.generate_visualization_data()
+        
+        print(f"\n📊 Dados do relatório personalizado: {report_data}")
+        
+        # Verificações
+        assert report_data is not None, "Relatório não deveria ser None"
+        assert report_data['start_date'] == start_date, f"Data inicial deveria ser {start_date}"
+        assert report_data['end_date'] == end_date, f"Data final deveria ser {end_date}"
+        assert report_data['total_days'] == 15, f"Total de dias deveria ser 15"
+        assert report_data['total_completed'] == total_expected, \
+            f"Total deveria ser {total_expected}, mas é {report_data['total_completed']}"
+        
+        # Verificar campos obrigatórios
+        assert 'average_per_day' in report_data, "Deveria ter 'average_per_day'"
+        assert 'max_streak' in report_data, "Deveria ter 'max_streak'"
+        assert 'completion_rate' in report_data, "Deveria ter 'completion_rate'"
+        assert 'best_day' in report_data, "Deveria ter 'best_day'"
+        assert 'best_day_count' in report_data, "Deveria ter 'best_day_count'"
+        assert 'daily_data' in report_data, "Deveria ter 'daily_data'"
+        
+        # Verificar streak máximo (Correr teve 10 dias consecutivos)
+        assert report_data['max_streak'] >= 10, \
+            f"Max streak deveria ser >= 10, mas é {report_data['max_streak']}"
+        
+        # Verificar dados diários
+        assert len(report_data['daily_data']) == 15, \
+            f"Deveria ter 15 dias de dados, mas tem {len(report_data['daily_data'])}"
+        
+        # Verificar soma dos dados diários
+        total_from_daily = sum(day['completed'] for day in report_data['daily_data'].values())
+        assert total_from_daily == total_expected, \
+            f"Soma dos dados diários deveria ser {total_expected}, mas é {total_from_daily}"
+        
+        print(f"✅ CTA-013 passou: Relatório personalizado gerado corretamente com {total_expected} conclusões")
+    
+    @pytest.mark.reports
+    def test_cta_014_custom_report_with_invalid_dates(self, clean_json_files):
+        """
+        CTA-014: Relatório personalizado com datas inválidas
+        
+        Dado que: Sistema recebe solicitação de relatório com data final anterior à data inicial
+        Quando: Chama ReportFactory.create_report("custom", raw_data, "2025-11-15", "2025-11-01")
+        Então: Levanta ValueError com mensagem apropriada
+        """
+        # Criar 1 hábito (necessário para ter dados)
+        success, msg = self.habit_model.create_habit("Hábito Teste", "Teste", "daily")
+        if not success:
+            pytest.fail(f"Falha ao criar hábito: {msg}")
+        
+        all_habits = self.habit_model.get_all_habits()
+        
+        print("\n❌ Testando datas invertidas (fim antes do início)...")
+        
+        # Tentar criar relatório com datas invertidas
+        with pytest.raises(ValueError) as exc_info:
+            custom_report = ReportFactory.create_report(
+                "custom", 
+                all_habits, 
+                "2025-11-15",  # Data inicial DEPOIS da final
+                "2025-11-01"   # Data final ANTES da inicial
+            )
+        
+        # Verificar mensagem de erro
+        assert "data final não pode ser menor que a data inicial" in str(exc_info.value).lower(), \
+            "Mensagem de erro deveria mencionar datas inválidas"
+        
+        print(f"✅ CTA-014 passou: ValueError levantada corretamente: {exc_info.value}")
+    
+    @pytest.mark.reports
+    def test_cta_015_custom_report_with_no_data_in_period(self, clean_json_files):
+        """
+        CTA-015: Relatório personalizado sem dados no período
+        
+        Dado que: Sistema possui hábitos mas sem registros no período solicitado
+                 período: "2024-01-01" até "2024-01-31" (período passado sem dados)
+        Quando: Chama ReportFactory.create_report("custom", raw_data, start_date, end_date)
+        Então: Retorna estrutura válida com total_completed=0 e completion_rate=0
+        """
+        # Criar 2 hábitos
+        habits_data = [
+            {"name": "Hábito A", "description": "Teste A", "frequency": "daily"},
+            {"name": "Hábito B", "description": "Teste B", "frequency": "daily"}
+        ]
+        
+        for habit_data in habits_data:
+            success, msg = self.habit_model.create_habit(
+                name=habit_data["name"],
+                description=habit_data["description"],
+                frequency=habit_data["frequency"]
+            )
+            
+            if not success:
+                pytest.fail(f"Falha ao criar hábito: {msg}")
+        
+        all_habits = self.habit_model.get_all_habits()
+        created_habits = all_habits[-2:]
+        
+        # Configurar histórico FORA do período de teste
+        created_habits[0]['history'] = {"2025-12-01": True, "2025-12-02": True}
+        created_habits[1]['history'] = {"2025-12-01": True}
+        
+        save_data(HABIT_DATA_FILE, self.habit_model.data)
+        
+        # Período SEM dados
+        start_date = "2024-01-01"
+        end_date = "2024-01-31"
+        
+        print(f"\n📅 Testando período sem dados: {start_date} a {end_date}")
+        print(f"   (Dados existem apenas em dezembro/2025)")
+        
+        # Gerar relatório
+        custom_report = ReportFactory.create_report("custom", created_habits, start_date, end_date)
+        report_data = custom_report.generate_visualization_data()
+        
+        print(f"\n📊 Relatório: {report_data}")
+        
+        # Verificações
+        assert report_data is not None, "Relatório não deveria ser None"
+        assert report_data['total_completed'] == 0, \
+            f"Total deveria ser 0, mas é {report_data['total_completed']}"
+        assert report_data['completion_rate'] == 0.0, \
+            f"Taxa de conclusão deveria ser 0%, mas é {report_data['completion_rate']}"
+        assert report_data['max_streak'] == 0, \
+            f"Max streak deveria ser 0, mas é {report_data['max_streak']}"
+        assert report_data['total_days'] == 31, \
+            f"Total de dias deveria ser 31, mas é {report_data['total_days']}"
+        
+        print(f"✅ CTA-015 passou: Relatório vazio gerado corretamente para período sem dados")
+    
+    @pytest.mark.reports
+    def test_cta_016_custom_report_with_different_periods(self, clean_json_files):
+        """
+        CTA-016: Relatório personalizado com diferentes tamanhos de período
+        
+        Dado que: Sistema possui hábitos com histórico variado
+        Quando: Gera relatórios para períodos de 1, 7, 30 e 90 dias
+        Então: Todos retornam estrutura válida com total_days correto
+        """
+        # Criar 2 hábitos
+        habits_data = [
+            {"name": "Hábito Diário", "description": "Todo dia", "frequency": "daily"},
+            {"name": "Hábito Ocasional", "description": "Às vezes", "frequency": "daily"}
+        ]
+        
+        for habit_data in habits_data:
+            success, msg = self.habit_model.create_habit(
+                name=habit_data["name"],
+                description=habit_data["description"],
+                frequency=habit_data["frequency"]
+            )
+            
+            if not success:
+                pytest.fail(f"Falha ao criar hábito: {msg}")
+        
+        all_habits = self.habit_model.get_all_habits()
+        created_habits = all_habits[-2:]
+        
+        # Criar histórico extenso (últimos 90 dias)
+        base_date = datetime(2025, 11, 15)
+        
+        for i in range(90):
+            date = (base_date - timedelta(days=i)).strftime("%Y-%m-%d")
+            
+            # Hábito diário: completado todos os dias
+            if 'history' not in created_habits[0]:
+                created_habits[0]['history'] = {}
+            created_habits[0]['history'][date] = True
+            
+            # Hábito ocasional: completado a cada 3 dias
+            if i % 3 == 0:
+                if 'history' not in created_habits[1]:
+                    created_habits[1]['history'] = {}
+                created_habits[1]['history'][date] = True
+        
+        save_data(HABIT_DATA_FILE, self.habit_model.data)
+        
+        # Testar diferentes períodos
+        test_periods = [
+            ("2025-11-15", "2025-11-15", 1, "1 dia"),
+            ("2025-11-09", "2025-11-15", 7, "7 dias"),
+            ("2025-10-16", "2025-11-15", 31, "30 dias"),
+            ("2025-08-17", "2025-11-15", 91, "90 dias")
+        ]
+        
+        print("\n📅 Testando diferentes tamanhos de período:")
+        
+        for start, end, expected_days, description in test_periods:
+            print(f"\n   Período: {description} ({start} a {end})")
+            
+            custom_report = ReportFactory.create_report("custom", created_habits, start, end)
+            report_data = custom_report.generate_visualization_data()
+            
+            # Verificações
+            assert report_data is not None, f"Relatório não deveria ser None para {description}"
+            assert report_data['total_days'] == expected_days, \
+                f"Total de dias deveria ser {expected_days}, mas é {report_data['total_days']}"
+            assert report_data['start_date'] == start, f"Data inicial incorreta para {description}"
+            assert report_data['end_date'] == end, f"Data final incorreta para {description}"
+            
+            # Verificar que possui dados diários
+            assert 'daily_data' in report_data, f"Deveria ter daily_data para {description}"
+            assert len(report_data['daily_data']) == expected_days, \
+                f"daily_data deveria ter {expected_days} entradas, mas tem {len(report_data['daily_data'])}"
+            
+            # Verificar campos de estatísticas
+            assert 'total_completed' in report_data, f"Deveria ter total_completed para {description}"
+            assert 'average_per_day' in report_data, f"Deveria ter average_per_day para {description}"
+            assert 'max_streak' in report_data, f"Deveria ter max_streak para {description}"
+            assert 'completion_rate' in report_data, f"Deveria ter completion_rate para {description}"
+            
+            print(f"      ✓ {expected_days} dias verificados")
+            print(f"      ✓ Total completado: {report_data['total_completed']}")
+            print(f"      ✓ Taxa de conclusão: {report_data['completion_rate']}%")
+        
+        print(f"\n✅ CTA-016 passou: Relatórios personalizados funcionam para diferentes períodos")
+    
+    @pytest.mark.reports
+    def test_cta_017_custom_report_via_controller(self, clean_json_files):
+        """
+        CTA-017: Geração de relatório personalizado via ReportController
+        
+        Dado que: Sistema possui hábitos e ReportController configurado
+        Quando: Chama report_controller.generate_custom_report(start_date, end_date)
+        Então: Retorna tupla (sucesso=True, mensagem, dados) com relatório válido
+        """
+        from view.ConsoleView import ConsoleView
+        
+        # Criar hábitos
+        habits_data = [
+            {"name": "Programar", "description": "2h por dia", "frequency": "daily"},
+            {"name": "Inglês", "description": "30min", "frequency": "daily"}
+        ]
+        
+        for habit_data in habits_data:
+            success, msg = self.habit_model.create_habit(
+                name=habit_data["name"],
+                description=habit_data["description"],
+                frequency=habit_data["frequency"]
+            )
+            
+            if not success:
+                pytest.fail(f"Falha ao criar hábito: {msg}")
+        
+        all_habits = self.habit_model.get_all_habits()
+        created_habits = all_habits[-2:]
+        
+        # Configurar histórico
+        test_dates = ["2025-11-01", "2025-11-03", "2025-11-05", "2025-11-07", "2025-11-09"]
+        
+        created_habits[0]['history'] = {date: True for date in test_dates}
+        created_habits[1]['history'] = {test_dates[0]: True, test_dates[2]: True}
+        
+        save_data(HABIT_DATA_FILE, self.habit_model.data)
+        
+        # Criar view e controller
+        console_view = ConsoleView(None, self.user_model)
+        report_controller = ReportController(self.habit_model, console_view)
+        
+        # Período de teste
+        start_date = "2025-11-01"
+        end_date = "2025-11-10"
+        
+        print(f"\n📊 Gerando relatório via controller: {start_date} a {end_date}")
+        
+        # Gerar relatório via controller
+        success, message, report_data = report_controller.generate_custom_report(start_date, end_date)
+        
+        print(f"   Sucesso: {success}")
+        print(f"   Mensagem: {message}")
+        print(f"   Dados: {report_data is not None}")
+        
+        # Verificações
+        assert success is True, f"Deveria ter sucesso, mas retornou {success}"
+        assert message is not None, "Mensagem não deveria ser None"
+        assert "sucesso" in message.lower() or "gerado" in message.lower(), \
+            f"Mensagem deveria indicar sucesso: {message}"
+        assert report_data is not None, "Dados do relatório não deveriam ser None"
+        
+        # Verificar estrutura do relatório
+        assert isinstance(report_data, dict), "Dados deveriam ser um dicionário"
+        assert report_data['start_date'] == start_date, "Data inicial incorreta"
+        assert report_data['end_date'] == end_date, "Data final incorreta"
+        assert report_data['total_days'] == 10, f"Total de dias deveria ser 10"
+        
+        expected_total = len(test_dates) + 2  # 5 + 2 = 7
+        assert report_data['total_completed'] == expected_total, \
+            f"Total completado deveria ser {expected_total}, mas é {report_data['total_completed']}"
+        
+        print(f"\n✅ CTA-017 passou: Relatório gerado com sucesso via controller")
+    
+    @pytest.mark.reports
+    def test_cta_018_custom_report_without_required_dates(self, clean_json_files):
+        """
+        CTA-018: Tentativa de criar relatório personalizado sem datas obrigatórias
+        
+        Dado que: Sistema recebe solicitação sem start_date ou end_date
+        Quando: Chama ReportFactory.create_report("custom", raw_data, None, None)
+        Então: Levanta ValueError indicando que as datas são obrigatórias
+        """
+        # Criar 1 hábito
+        success, msg = self.habit_model.create_habit("Hábito", "Teste", "daily")
+        if not success:
+            pytest.fail(f"Falha ao criar hábito: {msg}")
+        
+        all_habits = self.habit_model.get_all_habits()
+        
+        print("\n❌ Testando criação sem datas obrigatórias...")
+        
+        # Testar sem start_date e end_date
+        with pytest.raises(ValueError) as exc_info:
+            custom_report = ReportFactory.create_report("custom", all_habits, None, None)
+        
+        assert "obrigatórios" in str(exc_info.value).lower() or "required" in str(exc_info.value).lower(), \
+            "Mensagem de erro deveria mencionar que as datas são obrigatórias"
+        
+        print(f"   ✓ ValueError levantada: {exc_info.value}")
+        
+        # Testar sem start_date
+        with pytest.raises(ValueError) as exc_info:
+            custom_report = ReportFactory.create_report("custom", all_habits, None, "2025-11-15")
+        
+        print(f"   ✓ ValueError sem start_date: {exc_info.value}")
+        
+        # Testar sem end_date
+        with pytest.raises(ValueError) as exc_info:
+            custom_report = ReportFactory.create_report("custom", all_habits, "2025-11-01", None)
+        
+        print(f"   ✓ ValueError sem end_date: {exc_info.value}")
+        
+        print(f"\n✅ CTA-018 passou: Validação de datas obrigatórias funcionando corretamente")
 
 if __name__ == "__main__":
-    pytest.main()
+    pytest.main([__file__, '-v', '--tb=short'])
