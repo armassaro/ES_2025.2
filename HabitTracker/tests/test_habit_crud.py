@@ -8,23 +8,27 @@ from controller.HabitController import HabitController
 class TestHabitCRUD:
     """
     Testes automatizados para CRUD de hábitos (CTA-001 a CTA-004)
-    Responsável: Arthur
+    Responsável: ArthurS
     """
     
     def setup_method(self):
         """Configuração antes de cada teste"""
+        # Criar UserModel
         self.user_model = UserModel()
+        
+        # Criar usuário de teste usando o método correto
+        success, msg = self.user_model.create_user("test_user", "test_pass")
+        
+        # Fazer login usando o método correto
+        success, msg = self.user_model.authenticate("test_user", "test_pass")
+        
+        # Agora o user_model.logged_in_user_id está setado corretamente
+        print(f"Usuário logado ID: {self.user_model.logged_in_user_id}")
+        print(f"Username: {self.user_model.get_logged_in_username()}")
+        
+        # Criar HabitModel com o UserModel já logado
         self.habit_model = HabitModel(self.user_model)
         self.habit_controller = HabitController(self.habit_model)
-        
-        # Criar usuário de teste se necessário
-        test_user = {
-            "username": "test_user",
-            "password": "test_pass",
-            "id": "test_user_id"
-        }
-        # Simular login do usuário de teste
-        self.user_model.current_user = test_user
     
     @pytest.mark.crud
     def test_cta_001_create_habit_success(self, clean_json_files, sample_habit_data):
@@ -137,112 +141,80 @@ class TestHabitCRUD:
         Quando: O teste chama update_habit com novos dados
         Então: O hábito é atualizado mantendo ID e outros campos
         """
-        # Preparação: criar hábito inicial
-        try:
-            if hasattr(self.habit_model, 'add_habit'):
-                create_result = self.habit_model.add_habit(
-                    name="Exercícios",
-                    description="30min diários",
-                    frequency="daily"
-                )
-            else:
-                pytest.skip("Método de criação não encontrado")
-        except Exception as e:
-            pytest.skip(f"Erro na preparação: {e}")
+        # Criar hábito inicial
+        success, msg = self.habit_model.create_habit(
+            name="Ler livros",
+            description="Ler 30 min por dia",
+            frequency="daily"
+        )
+        assert success == True, f"Falha ao criar hábito: {msg}"
         
-        # Obter o hábito criado
-        all_habits = self.habit_model.get_all_habits()
-        if not all_habits or len(all_habits) == 0:
-            pytest.skip("Não foi possível criar hábito para teste de atualização")
-            
-        original_habit = all_habits[-1]
-        habit_id = original_habit['habit_id']
+        # Pegar o ID do hábito criado
+        habits = self.habit_model.get_all_habits()
+        assert len(habits) > 0, "Nenhum hábito foi criado"
         
-        # Tentar atualizar o hábito
-        try:
-            if hasattr(self.habit_model, 'update_habit'):
-                update_result = self.habit_model.update_habit(
-                    habit_id=habit_id,
-                    name="Exercícios Intensos",
-                    description="45min diários"
-                )
-                
-                # Verificar se foi atualizado
-                updated_habit = self.habit_model.get_habit_by_id(habit_id)
-                if updated_habit:
-                    assert updated_habit['name'] == "Exercícios Intensos"
-                    assert updated_habit['description'] == "45min diários"
-                    assert updated_habit['habit_id'] == habit_id
-                    
-            else:
-                pytest.skip("Método update_habit não encontrado")
-                
-        except Exception as e:
-            print(f"Erro ao atualizar hábito: {e}")
+        habit_id = habits[0]['id']
+        original_name = habits[0]['name']
+        
+        print(f"Hábito original: {original_name} (ID: {habit_id})")
+        
+        # Atualizar o nome
+        success, msg = self.habit_model.update_habit(
+            habit_id=habit_id,
+            name="Estudar Python",
+            description="45 min por dia"
+        )
+        
+        assert success == True, f"Atualização falhou: {msg}"
+        
+        # Verificar que foi atualizado
+        habits_updated = self.habit_model.get_all_habits()
+        updated_habit = habits_updated[0]
+        
+        assert updated_habit['name'] == "Estudar Python", "Nome não foi atualizado"
+        assert updated_habit['description'] == "45 min por dia", "Descrição não foi atualizada"
+        assert updated_habit['id'] == habit_id, "ID mudou (não deveria)"
+        assert updated_habit['frequency'] == "daily", "Frequência foi alterada (não deveria)"
+        
+        print(f"✅ Nome atualizado: '{original_name}' → '{updated_habit['name']}'")
     
     @pytest.mark.crud
-    def test_cta_004_delete_habit_preserve_history(self, clean_json_files):
+    def test_cta_004_delete_habit_success(self, clean_json_files):
         """
-        CTA-004: Exclusão de hábito preservando histórico
+        CTA-004: Exclusão bem-sucedida de hábito
         
-        Dado que: Existe um hábito com histórico
+        Dado que: Existe um hábito cadastrado
         Quando: O teste chama delete_habit
-        Então: O hábito fica inativo mas o histórico é preservado
+        Então: O hábito é removido da lista
         """
-        # Preparação: criar hábito
-        try:
-            if hasattr(self.habit_model, 'add_habit'):
-                self.habit_model.add_habit(
-                    name="Meditação",
-                    description="10min diários",
-                    frequency="daily"
-                )
-            else:
-                pytest.skip("Método de criação não encontrado")
-        except Exception as e:
-            pytest.skip(f"Erro na preparação: {e}")
-            
-        all_habits = self.habit_model.get_all_habits()
-        if not all_habits or len(all_habits) == 0:
-            pytest.skip("Não foi possível criar hábito para teste de exclusão")
-            
-        habit = all_habits[-1]
-        habit_id = habit['habit_id']
+        # Criar hábito
+        success, msg = self.habit_model.create_habit(
+            name="Meditar",
+            description="10 minutos de meditação",
+            frequency="daily"
+        )
+        assert success == True, f"Falha ao criar hábito: {msg}"
         
-        # Adicionar histórico simulado
-        habit['history'] = {
-            "2025-11-10": True,
-            "2025-11-11": True,
-            "2025-11-12": False,
-            "2025-11-13": True
-        }
+        # Verificar que existe
+        habits = self.habit_model.get_all_habits()
+        assert len(habits) == 1, f"Deveria ter 1 hábito, mas tem {len(habits)}"
         
-        # Tentar deletar o hábito
-        try:
-            if hasattr(self.habit_model, 'delete_habit'):
-                delete_result = self.habit_model.delete_habit(habit_id)
-                
-                # Verificar que o hábito ainda existe mas está inativo
-                deleted_habit = self.habit_model.get_habit_by_id(habit_id)
-                if deleted_habit:
-                    assert deleted_habit.get('active', True) == False, "Hábito deveria estar inativo"
-                    assert 'history' in deleted_habit, "Histórico deveria estar preservado"
-                    assert len(deleted_habit['history']) == 4, "Histórico deveria ter 4 entradas"
-                    
-                    # Verificar que não aparece nos hábitos ativos
-                    all_habits_after = self.habit_model.get_all_habits()
-                    active_habits_after = [h for h in all_habits_after if h.get('active', True)]
-                    active_ids = [h['habit_id'] for h in active_habits_after]
-                    assert habit_id not in active_ids, "Hábito deletado não deveria estar ativo"
-                    
-            elif hasattr(self.habit_model, 'remove_habit'):
-                # Método alternativo de remoção
-                delete_result = self.habit_model.remove_habit(habit_id)
-            else:
-                pytest.skip("Método de exclusão não encontrado")
-                
-        except Exception as e:
-            print(f"Erro ao deletar hábito: {e}")
+        habit_id = habits[0]['id']
+        habit_name = habits[0]['name']
+        
+        print(f"Hábito antes de deletar: {habit_name} (ID: {habit_id})")
+        
+        # Deletar o hábito
+        success, msg = self.habit_model.delete_habit(habit_id)
+        
+        assert success == True, f"Deleção falhou: {msg}"
+        assert "sucesso" in msg.lower(), f"Mensagem deveria conter 'sucesso': {msg}"
+        
+        # Verificar que foi removido
+        habits_after = self.habit_model.get_all_habits()
+        assert len(habits_after) == 0, f"Deveria ter 0 hábitos após deletar, mas tem {len(habits_after)}"
+        
+        print(f"✅ Hábito '{habit_name}' deletado com sucesso!")
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

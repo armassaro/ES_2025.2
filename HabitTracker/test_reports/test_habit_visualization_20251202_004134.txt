@@ -1,0 +1,91 @@
+RELATÓRIO DE TESTE: tests/test_habit_visualization.py
+Data/Hora: 2025-12-02 00:41:38.113125
+Comando: C:\Users\ianba\AppData\Local\Programs\Python\Python313\python.exe -m pytest tests/test_habit_visualization.py -v -s --tb=long --capture=no -W default
+================================================================================
+
+STDOUT:
+--------------------------------------------------------------------------------
+============================= test session starts =============================
+platform win32 -- Python 3.13.9, pytest-9.0.1, pluggy-1.6.0 -- C:\Users\ianba\AppData\Local\Programs\Python\Python313\python.exe
+cachedir: .pytest_cache
+metadata: {'Python': '3.13.9', 'Platform': 'Windows-11-10.0.26100-SP0', 'Packages': {'pytest': '9.0.1', 'pluggy': '1.6.0'}, 'Plugins': {'json-report': '1.5.0', 'metadata': '3.1.1', 'mock': '3.15.1'}}
+rootdir: C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker
+plugins: json-report-1.5.0, metadata-3.1.1, mock-3.15.1
+collecting ... collected 4 items
+
+tests/test_habit_visualization.py::TestHabitVisualization::test_cta_005_get_active_habits_filter SKIPPED
+tests/test_habit_visualization.py::TestHabitVisualization::test_cta_006_get_habit_by_id_with_history SKIPPED
+tests/test_habit_visualization.py::TestHabitVisualization::test_cta_007_get_active_habits_empty_system FAILED
+tests/test_habit_visualization.py::TestHabitVisualization::test_cta_008_habits_alphabetical_ordering SKIPPED
+
+================================== FAILURES ===================================
+_____ TestHabitVisualization.test_cta_007_get_active_habits_empty_system ______
+
+self = <tests.test_habit_visualization.TestHabitVisualization object at 0x000001C2B497F5C0>
+clean_json_files = None
+
+    @pytest.mark.visualization
+    def test_cta_007_get_active_habits_empty_system(self, clean_json_files):
+        """
+        CTA-007: Sistema vazio sem h�bitos
+    
+        Dado que: Sistema est� vazio sem nenhum h�bito cadastrado
+        Quando: Chama get_active_habits()
+        Ent�o: Retorna lista vazia [] ou None, e nenhum erro � lan�ado
+        """
+        # Verificar que o sistema est� realmente vazio
+>       all_habits = self.habit_model.get_all_habits()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_habit_visualization.py:197: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <model.HabitModel.HabitModel object at 0x000001C2B4A0E990>
+
+    def get_all_habits(self):
+        """Retorna todos os h�bitos do usu�rio logado (R1 - Read)."""
+        username = self.user_model.get_logged_in_username()
+        if not username:
+>           print("\u26a0\ufe0f Nenhum usu\xe1rio logado!")
+
+model\HabitModel.py:82: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <encodings.cp1252.IncrementalEncoder object at 0x000001C2B11A4AD0>
+input = '\u26a0\ufe0f Nenhum usu\xe1rio logado!', final = False
+
+    def encode(self, input, final=False):
+>       return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+
+C:\Users\ianba\AppData\Local\Programs\Python\Python313\Lib\encodings\cp1252.py:19: UnicodeEncodeError
+============================== warnings summary ===============================
+tests\test_habit_visualization.py:28
+  C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker\tests\test_habit_visualization.py:28: PytestUnknownMarkWarning: Unknown pytest.mark.visualization - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.visualization
+
+tests\test_habit_visualization.py:114
+  C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker\tests\test_habit_visualization.py:114: PytestUnknownMarkWarning: Unknown pytest.mark.visualization - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.visualization
+
+tests\test_habit_visualization.py:187
+  C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker\tests\test_habit_visualization.py:187: PytestUnknownMarkWarning: Unknown pytest.mark.visualization - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.visualization
+
+tests\test_habit_visualization.py:229
+  C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker\tests\test_habit_visualization.py:229: PytestUnknownMarkWarning: Unknown pytest.mark.visualization - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.visualization
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_habit_visualization.py::TestHabitVisualization::test_cta_007_get_active_habits_empty_system
+================== 1 failed, 3 skipped, 4 warnings in 0.45s ===================
+
+
+STDERR:
+--------------------------------------------------------------------------------
+(vazio)
+
+CÓDIGO DE SAÍDA: 1
+SUCESSO: ❌ NÃO

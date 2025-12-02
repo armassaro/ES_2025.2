@@ -1,12 +1,19 @@
 import pytest
-import os
 import json
-import sys
-from unittest.mock import patch
+import os
 from datetime import datetime
 
-# Adicionar o diretório pai ao path para importar os módulos
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+def pytest_configure(config):
+    """Registrar marcas customizadas"""
+    config.addinivalue_line(
+        "markers", "crud: Testes de operacoes CRUD"
+    )
+    config.addinivalue_line(
+        "markers", "visualization: Testes de visualizacao"
+    )
+    config.addinivalue_line(
+        "markers", "report: Testes de geracao de relatorios"
+    )
 
 @pytest.fixture
 def clean_json_files():

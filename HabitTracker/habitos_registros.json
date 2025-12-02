@@ -88,31 +88,7 @@
             "history": {}
         }
     ],
-    "1": [
-        {
-            "id": "bc72d7a1-37c5-4173-a33f-eec7971f40c7",
-            "name": "ler",
-            "description": "pelo menos 1pg por dia",
-            "frequency": "daily",
-            "active": true,
-            "created_at": "2025-10-26T14:32:26.381549",
-            "history": {
-                "2025-10-26": true,
-                "2025-10-25": true
-            }
-        },
-        {
-            "id": "d1ee193a-4b64-4860-9b2a-e12f2257c4f5",
-            "name": "1",
-            "description": "11",
-            "frequency": "weekly",
-            "active": true,
-            "created_at": "2025-10-26T14:49:40.224831",
-            "history": {
-                "2025-10-26": true
-            }
-        }
-    ],
+    "1": [],
     "Vini": [
         {
             "id": "db16a160-b1df-4694-9928-dec8c93e211e",

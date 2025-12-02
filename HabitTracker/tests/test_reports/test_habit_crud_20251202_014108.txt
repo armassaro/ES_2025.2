@@ -1,0 +1,42 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.9, pytest-9.0.1, pluggy-1.6.0 -- C:\Users\ianba\AppData\Local\Programs\Python\Python313\python.exe
+cachedir: .pytest_cache
+metadata: {'Python': '3.13.9', 'Platform': 'Windows-11-10.0.26100-SP0', 'Packages': {'pytest': '9.0.1', 'pluggy': '1.6.0'}, 'Plugins': {'json-report': '1.5.0', 'metadata': '3.1.1', 'mock': '3.15.1'}}
+rootdir: C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker
+plugins: json-report-1.5.0, metadata-3.1.1, mock-3.15.1
+collecting ... collected 4 items
+
+tests/test_habit_crud.py::TestHabitCRUD::test_cta_001_create_habit_success Usu�rio logado ID: None
+Username: None
+M�todos dispon�veis no HabitModel: ['attach', 'create_habit', 'data', 'delete_habit', 'detach', 'get_all_habits', 'mark_habit_done', 'notify', 'update_habit', 'user_model']
+ Nenhum usu�rio logado!
+Total de h�bitos encontrados: 0
+Dados no JSON: 0 h�bitos
+PASSED
+tests/test_habit_crud.py::TestHabitCRUD::test_cta_002_create_habit_empty_name Usu�rio logado ID: None
+Username: None
+Resultado da cria��o com nome vazio: (False, 'Nenhum usu�rio logado.')
+ Nenhum usu�rio logado!
+PASSED
+tests/test_habit_crud.py::TestHabitCRUD::test_cta_003_update_habit_success Usu�rio logado ID: None
+Username: None
+FAILED
+tests/test_habit_crud.py::TestHabitCRUD::test_cta_004_delete_habit_success Usu�rio logado ID: None
+Username: None
+FAILED
+
+================================== FAILURES ===================================
+_______________ TestHabitCRUD.test_cta_003_update_habit_success _______________
+tests\test_habit_crud.py:150: in test_cta_003_update_habit_success
+    assert success == True, f"Falha ao criar h�bito: {msg}"
+E   AssertionError: Falha ao criar h�bito: Nenhum usu�rio logado.
+E   assert False == True
+_______________ TestHabitCRUD.test_cta_004_delete_habit_success _______________
+tests\test_habit_crud.py:196: in test_cta_004_delete_habit_success
+    assert success == True, f"Falha ao criar h�bito: {msg}"
+E   AssertionError: Falha ao criar h�bito: Nenhum usu�rio logado.
+E   assert False == True
+=========================== short test summary info ===========================
+FAILED tests/test_habit_crud.py::TestHabitCRUD::test_cta_003_update_habit_success
+FAILED tests/test_habit_crud.py::TestHabitCRUD::test_cta_004_delete_habit_success
+========================= 2 failed, 2 passed in 0.46s =========================

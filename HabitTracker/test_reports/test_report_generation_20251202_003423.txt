@@ -1,0 +1,38 @@
+RELATÓRIO DE TESTE: tests/test_report_generation.py
+Data/Hora: 2025-12-02 00:34:30.495423
+Comando: C:\Users\ianba\AppData\Local\Programs\Python\Python313\python.exe -m pytest tests/test_report_generation.py -v -s --tb=long --capture=no -W default
+================================================================================
+
+STDOUT:
+--------------------------------------------------------------------------------
+============================= test session starts =============================
+platform win32 -- Python 3.13.9, pytest-9.0.1, pluggy-1.6.0 -- C:\Users\ianba\AppData\Local\Programs\Python\Python313\python.exe
+cachedir: .pytest_cache
+metadata: {'Python': '3.13.9', 'Platform': 'Windows-11-10.0.26100-SP0', 'Packages': {'pytest': '9.0.1', 'pluggy': '1.6.0'}, 'Plugins': {'json-report': '1.5.0', 'metadata': '3.1.1', 'mock': '3.15.1'}}
+rootdir: C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker
+plugins: json-report-1.5.0, metadata-3.1.1, mock-3.15.1
+collecting ... collected 0 items / 1 error
+
+=================================== ERRORS ====================================
+______________ ERROR collecting tests/test_report_generation.py _______________
+ImportError while importing test module 'C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker\tests\test_report_generation.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Users\ianba\AppData\Local\Programs\Python\Python313\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_report_generation.py:6: in <module>
+    from model.HabitModel import HabitModel
+E   ModuleNotFoundError: No module named 'model'
+=========================== short test summary info ===========================
+ERROR tests/test_report_generation.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+============================== 1 error in 0.46s ===============================
+
+
+STDERR:
+--------------------------------------------------------------------------------
+(vazio)
+
+CÓDIGO DE SAÍDA: 2
+SUCESSO: ❌ NÃO

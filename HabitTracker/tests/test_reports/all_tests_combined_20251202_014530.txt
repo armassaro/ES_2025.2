@@ -1,0 +1,117 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.9, pytest-9.0.1, pluggy-1.6.0 -- C:\Users\ianba\AppData\Local\Programs\Python\Python313\python.exe
+cachedir: .pytest_cache
+metadata: {'Python': '3.13.9', 'Platform': 'Windows-11-10.0.26100-SP0', 'Packages': {'pytest': '9.0.1', 'pluggy': '1.6.0'}, 'Plugins': {'json-report': '1.5.0', 'metadata': '3.1.1', 'mock': '3.15.1'}}
+rootdir: C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker
+plugins: json-report-1.5.0, metadata-3.1.1, mock-3.15.1
+collecting ... collected 12 items
+
+tests/test_habit_crud.py::TestHabitCRUD::test_cta_001_create_habit_success Usu�rio logado ID: None
+Username: None
+M�todos dispon�veis no HabitModel: ['attach', 'create_habit', 'data', 'delete_habit', 'detach', 'get_all_habits', 'mark_habit_done', 'notify', 'update_habit', 'user_model']
+ Nenhum usu�rio logado!
+Total de h�bitos encontrados: 0
+Dados no JSON: 0 h�bitos
+PASSED
+tests/test_habit_crud.py::TestHabitCRUD::test_cta_002_create_habit_empty_name Usu�rio logado ID: None
+Username: None
+Resultado da cria��o com nome vazio: (False, 'Nenhum usu�rio logado.')
+ Nenhum usu�rio logado!
+PASSED
+tests/test_habit_crud.py::TestHabitCRUD::test_cta_003_update_habit_success Usu�rio logado ID: None
+Username: None
+FAILED
+tests/test_habit_crud.py::TestHabitCRUD::test_cta_004_delete_habit_success Usu�rio logado ID: None
+Username: None
+FAILED
+tests/test_habit_visualization.py::TestHabitVisualization::test_cta_005_list_all_habits Usuario logado: 1
+Criado: Beber agua
+Criado: Exercicios
+Criado: Meditar
+Total criado: 3
+ Model: Buscando h�bitos para '1': 3 encontrados
+OK: 3 habitos listados corretamente
+PASSED
+tests/test_habit_visualization.py::TestHabitVisualization::test_cta_006_filter_active_habits Usuario logado: 1
+ Model: Buscando h�bitos para '1': 3 encontrados
+ Model: H�bito 'Habito Inativo' atualizado com sucesso!
+ Model: Buscando h�bitos para '1': 3 encontrados
+OK: Filtro de habitos ativos funcionando (2 ativos de 3 totais)
+PASSED
+tests/test_habit_visualization.py::TestHabitVisualization::test_cta_007_get_habits_empty_system Usuario logado: 1
+ Model: Buscando h�bitos para '1': 0 encontrados
+Sistema possui 0 habitos antes do teste
+OK: Sistema vazio retornou lista vazia
+PASSED
+tests/test_habit_visualization.py::TestHabitVisualization::test_cta_008_habit_has_history Usuario logado: 1
+ Model: Buscando h�bitos para '1': 1 encontrados
+Habito criado: Habito com Historico (ID: 011c127e-d409-44b4-8fa7-e394fd452365)
+ Model: Marcando h�bito 011c127e-d409-44b4-8fa7-e394fd452365 em 2025-11-10
+ Model: H�bito 'Habito com Historico' marcado em 2025-11-10
+   History atualizado: {'2025-11-10': True}
+ Model: Buscando h�bitos para '1': 1 encontrados
+OK: Historico registrado corretamente para 2025-11-10
+PASSED
+tests/test_report_generation.py::TestReportGeneration::test_cta_009_daily_report_with_mixed_completion ERROR
+tests/test_report_generation.py::TestReportGeneration::test_cta_010_weekly_report_with_completion_history ERROR
+tests/test_report_generation.py::TestReportGeneration::test_cta_011_monthly_report_with_varied_patterns ERROR
+tests/test_report_generation.py::TestReportGeneration::test_cta_012_reports_with_empty_history ERROR
+
+=================================== ERRORS ====================================
+_ ERROR at setup of TestReportGeneration.test_cta_009_daily_report_with_mixed_completion _
+tests\conftest.py:54: in mock_datetime
+    with patch('datetime.datetime') as mock_dt:
+         ^^^^^
+E   NameError: name 'patch' is not defined
+_ ERROR at setup of TestReportGeneration.test_cta_010_weekly_report_with_completion_history _
+tests\conftest.py:54: in mock_datetime
+    with patch('datetime.datetime') as mock_dt:
+         ^^^^^
+E   NameError: name 'patch' is not defined
+_ ERROR at setup of TestReportGeneration.test_cta_011_monthly_report_with_varied_patterns _
+tests\conftest.py:54: in mock_datetime
+    with patch('datetime.datetime') as mock_dt:
+         ^^^^^
+E   NameError: name 'patch' is not defined
+_ ERROR at setup of TestReportGeneration.test_cta_012_reports_with_empty_history _
+tests\conftest.py:54: in mock_datetime
+    with patch('datetime.datetime') as mock_dt:
+         ^^^^^
+E   NameError: name 'patch' is not defined
+================================== FAILURES ===================================
+_______________ TestHabitCRUD.test_cta_003_update_habit_success _______________
+tests\test_habit_crud.py:150: in test_cta_003_update_habit_success
+    assert success == True, f"Falha ao criar h�bito: {msg}"
+E   AssertionError: Falha ao criar h�bito: Nenhum usu�rio logado.
+E   assert False == True
+_______________ TestHabitCRUD.test_cta_004_delete_habit_success _______________
+tests\test_habit_crud.py:196: in test_cta_004_delete_habit_success
+    assert success == True, f"Falha ao criar h�bito: {msg}"
+E   AssertionError: Falha ao criar h�bito: Nenhum usu�rio logado.
+E   assert False == True
+============================== warnings summary ===============================
+tests\test_report_generation.py:41
+  C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker\tests\test_report_generation.py:41: PytestUnknownMarkWarning: Unknown pytest.mark.reports - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.reports
+
+tests\test_report_generation.py:167
+  C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker\tests\test_report_generation.py:167: PytestUnknownMarkWarning: Unknown pytest.mark.reports - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.reports
+
+tests\test_report_generation.py:313
+  C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker\tests\test_report_generation.py:313: PytestUnknownMarkWarning: Unknown pytest.mark.reports - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.reports
+
+tests\test_report_generation.py:494
+  C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker\tests\test_report_generation.py:494: PytestUnknownMarkWarning: Unknown pytest.mark.reports - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.reports
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_habit_crud.py::TestHabitCRUD::test_cta_003_update_habit_success
+FAILED tests/test_habit_crud.py::TestHabitCRUD::test_cta_004_delete_habit_success
+ERROR tests/test_report_generation.py::TestReportGeneration::test_cta_009_daily_report_with_mixed_completion
+ERROR tests/test_report_generation.py::TestReportGeneration::test_cta_010_weekly_report_with_completion_history
+ERROR tests/test_report_generation.py::TestReportGeneration::test_cta_011_monthly_report_with_varied_patterns
+ERROR tests/test_report_generation.py::TestReportGeneration::test_cta_012_reports_with_empty_history
+============== 2 failed, 6 passed, 4 warnings, 4 errors in 0.59s ==============

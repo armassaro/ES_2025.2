@@ -1,0 +1,188 @@
+RELATÓRIO DE TESTE: tests/test_habit_crud.py
+Data/Hora: 2025-12-02 00:41:36.013587
+Comando: C:\Users\ianba\AppData\Local\Programs\Python\Python313\python.exe -m pytest tests/test_habit_crud.py -v -s --tb=long --capture=no -W default
+================================================================================
+
+STDOUT:
+--------------------------------------------------------------------------------
+============================= test session starts =============================
+platform win32 -- Python 3.13.9, pytest-9.0.1, pluggy-1.6.0 -- C:\Users\ianba\AppData\Local\Programs\Python\Python313\python.exe
+cachedir: .pytest_cache
+metadata: {'Python': '3.13.9', 'Platform': 'Windows-11-10.0.26100-SP0', 'Packages': {'pytest': '9.0.1', 'pluggy': '1.6.0'}, 'Plugins': {'json-report': '1.5.0', 'metadata': '3.1.1', 'mock': '3.15.1'}}
+rootdir: C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker
+plugins: json-report-1.5.0, metadata-3.1.1, mock-3.15.1
+collecting ... collected 4 items
+
+tests/test_habit_crud.py::TestHabitCRUD::test_cta_001_create_habit_success M�todos dispon�veis no HabitModel: ['attach', 'create_habit', 'data', 'delete_habit', 'detach', 'get_all_habits', 'mark_habit_done', 'notify', 'update_habit', 'user_model']
+FAILED
+tests/test_habit_crud.py::TestHabitCRUD::test_cta_002_create_habit_empty_name Resultado da cria��o com nome vazio: (False, 'Nenhum usu�rio logado.')
+FAILED
+tests/test_habit_crud.py::TestHabitCRUD::test_cta_003_update_habit_success SKIPPED
+tests/test_habit_crud.py::TestHabitCRUD::test_cta_004_delete_habit_preserve_history SKIPPED
+
+================================== FAILURES ===================================
+_______________ TestHabitCRUD.test_cta_001_create_habit_success _______________
+
+self = <tests.test_habit_crud.TestHabitCRUD object at 0x000001DBB874DD10>
+clean_json_files = None
+sample_habit_data = {'description': 'Beber 2L por dia', 'frequency': 'daily', 'name': 'Beber �gua'}
+
+    @pytest.mark.crud
+    def test_cta_001_create_habit_success(self, clean_json_files, sample_habit_data):
+        """
+        CTA-001: Cria��o bem-sucedida de h�bito
+    
+        Dado que: O sistema est� inicializado com HabitModel e HabitController
+        Quando: O teste chama m�todo para criar h�bito com dados v�lidos
+        Ent�o: O h�bito � criado e persiste corretamente
+        """
+        # Verificar m�todos dispon�veis no model
+        print(f"M�todos dispon�veis no HabitModel: {[m for m in dir(self.habit_model) if not m.startswith('_')]}")
+    
+        # Tentar criar h�bito usando os m�todos dispon�veis
+        try:
+            if hasattr(self.habit_model, 'add_habit'):
+                result = self.habit_model.add_habit(
+                    name=sample_habit_data["name"],
+                    description=sample_habit_data["description"],
+                    frequency=sample_habit_data["frequency"]
+                )
+            elif hasattr(self.habit_model, 'create_habit'):
+                result = self.habit_model.create_habit(
+                    name=sample_habit_data["name"],
+                    description=sample_habit_data["description"],
+                    frequency=sample_habit_data["frequency"]
+                )
+            else:
+                pytest.skip("Nenhum m�todo de cria��o encontrado no HabitModel")
+    
+        except Exception as e:
+            print(f"Erro ao criar h�bito: {e}")
+            pytest.fail(f"Falha na cria��o do h�bito: {e}")
+    
+        # Verifica��es b�sicas
+        assert result is not None, "M�todo deveria retornar algo"
+    
+        # Verificar no modelo usando get_all_habits
+>       all_habits = self.habit_model.get_all_habits()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_habit_crud.py:66: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <model.HabitModel.HabitModel object at 0x000001DBB8765D30>
+
+    def get_all_habits(self):
+        """Retorna todos os h�bitos do usu�rio logado (R1 - Read)."""
+        username = self.user_model.get_logged_in_username()
+        if not username:
+>           print("\u26a0\ufe0f Nenhum usu\xe1rio logado!")
+
+model\HabitModel.py:82: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <encodings.cp1252.IncrementalEncoder object at 0x000001DBB4F34AD0>
+input = '\u26a0\ufe0f Nenhum usu\xe1rio logado!', final = False
+
+    def encode(self, input, final=False):
+>       return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+
+C:\Users\ianba\AppData\Local\Programs\Python\Python313\Lib\encodings\cp1252.py:19: UnicodeEncodeError
+_____________ TestHabitCRUD.test_cta_002_create_habit_empty_name ______________
+
+self = <tests.test_habit_crud.TestHabitCRUD object at 0x000001DBB874E210>
+clean_json_files = None
+
+    @pytest.mark.crud
+    def test_cta_002_create_habit_empty_name(self, clean_json_files):
+        """
+        CTA-002: Falha na cria��o com nome vazio
+    
+        Dado que: O sistema est� inicializado
+        Quando: O teste tenta criar h�bito com nome vazio
+        Ent�o: O m�todo retorna False e nenhum h�bito � criado
+        """
+        # Tentar criar h�bito com nome vazio
+        try:
+            if hasattr(self.habit_model, 'add_habit'):
+                result = self.habit_model.add_habit(
+                    name="",
+                    description="Descri��o v�lida",
+                    frequency="daily"
+                )
+            elif hasattr(self.habit_model, 'create_habit'):
+                result = self.habit_model.create_habit(
+                    name="",
+                    description="Descri��o v�lida",
+                    frequency="daily"
+                )
+            else:
+                pytest.skip("M�todo de cria��o n�o encontrado")
+    
+            # Se chegou aqui sem exce��o, verificar se retornou False
+            print(f"Resultado da cria��o com nome vazio: {result}")
+    
+        except Exception as e:
+            print(f"Exce��o esperada ao criar h�bito com nome vazio: {e}")
+            # Exce��o � um comportamento aceit�vel para nome vazio
+            return
+    
+        # Verificar que nenhum h�bito com nome vazio foi criado
+>       all_habits = self.habit_model.get_all_habits()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_habit_crud.py:126: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <model.HabitModel.HabitModel object at 0x000001DBB874ED50>
+
+    def get_all_habits(self):
+        """Retorna todos os h�bitos do usu�rio logado (R1 - Read)."""
+        username = self.user_model.get_logged_in_username()
+        if not username:
+>           print("\u26a0\ufe0f Nenhum usu\xe1rio logado!")
+
+model\HabitModel.py:82: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <encodings.cp1252.IncrementalEncoder object at 0x000001DBB4F34AD0>
+input = '\u26a0\ufe0f Nenhum usu\xe1rio logado!', final = False
+
+    def encode(self, input, final=False):
+>       return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+
+C:\Users\ianba\AppData\Local\Programs\Python\Python313\Lib\encodings\cp1252.py:19: UnicodeEncodeError
+============================== warnings summary ===============================
+tests\test_habit_crud.py:29
+  C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker\tests\test_habit_crud.py:29: PytestUnknownMarkWarning: Unknown pytest.mark.crud - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.crud
+
+tests\test_habit_crud.py:91
+  C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker\tests\test_habit_crud.py:91: PytestUnknownMarkWarning: Unknown pytest.mark.crud - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.crud
+
+tests\test_habit_crud.py:131
+  C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker\tests\test_habit_crud.py:131: PytestUnknownMarkWarning: Unknown pytest.mark.crud - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.crud
+
+tests\test_habit_crud.py:183
+  C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker\tests\test_habit_crud.py:183: PytestUnknownMarkWarning: Unknown pytest.mark.crud - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.crud
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_habit_crud.py::TestHabitCRUD::test_cta_001_create_habit_success
+FAILED tests/test_habit_crud.py::TestHabitCRUD::test_cta_002_create_habit_empty_name
+================== 2 failed, 2 skipped, 4 warnings in 0.44s ===================
+
+
+STDERR:
+--------------------------------------------------------------------------------
+(vazio)
+
+CÓDIGO DE SAÍDA: 1
+SUCESSO: ❌ NÃO

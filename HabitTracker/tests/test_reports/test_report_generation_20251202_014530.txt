@@ -1,0 +1,58 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.9, pytest-9.0.1, pluggy-1.6.0 -- C:\Users\ianba\AppData\Local\Programs\Python\Python313\python.exe
+cachedir: .pytest_cache
+metadata: {'Python': '3.13.9', 'Platform': 'Windows-11-10.0.26100-SP0', 'Packages': {'pytest': '9.0.1', 'pluggy': '1.6.0'}, 'Plugins': {'json-report': '1.5.0', 'metadata': '3.1.1', 'mock': '3.15.1'}}
+rootdir: C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker
+plugins: json-report-1.5.0, metadata-3.1.1, mock-3.15.1
+collecting ... collected 4 items
+
+tests/test_report_generation.py::TestReportGeneration::test_cta_009_daily_report_with_mixed_completion ERROR
+tests/test_report_generation.py::TestReportGeneration::test_cta_010_weekly_report_with_completion_history ERROR
+tests/test_report_generation.py::TestReportGeneration::test_cta_011_monthly_report_with_varied_patterns ERROR
+tests/test_report_generation.py::TestReportGeneration::test_cta_012_reports_with_empty_history ERROR
+
+=================================== ERRORS ====================================
+_ ERROR at setup of TestReportGeneration.test_cta_009_daily_report_with_mixed_completion _
+tests\conftest.py:54: in mock_datetime
+    with patch('datetime.datetime') as mock_dt:
+         ^^^^^
+E   NameError: name 'patch' is not defined
+_ ERROR at setup of TestReportGeneration.test_cta_010_weekly_report_with_completion_history _
+tests\conftest.py:54: in mock_datetime
+    with patch('datetime.datetime') as mock_dt:
+         ^^^^^
+E   NameError: name 'patch' is not defined
+_ ERROR at setup of TestReportGeneration.test_cta_011_monthly_report_with_varied_patterns _
+tests\conftest.py:54: in mock_datetime
+    with patch('datetime.datetime') as mock_dt:
+         ^^^^^
+E   NameError: name 'patch' is not defined
+_ ERROR at setup of TestReportGeneration.test_cta_012_reports_with_empty_history _
+tests\conftest.py:54: in mock_datetime
+    with patch('datetime.datetime') as mock_dt:
+         ^^^^^
+E   NameError: name 'patch' is not defined
+============================== warnings summary ===============================
+tests\test_report_generation.py:41
+  C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker\tests\test_report_generation.py:41: PytestUnknownMarkWarning: Unknown pytest.mark.reports - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.reports
+
+tests\test_report_generation.py:167
+  C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker\tests\test_report_generation.py:167: PytestUnknownMarkWarning: Unknown pytest.mark.reports - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.reports
+
+tests\test_report_generation.py:313
+  C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker\tests\test_report_generation.py:313: PytestUnknownMarkWarning: Unknown pytest.mark.reports - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.reports
+
+tests\test_report_generation.py:494
+  C:\Users\ianba\OneDrive\�rea de Trabalho\facul\ES_2025.2\HabitTracker\tests\test_report_generation.py:494: PytestUnknownMarkWarning: Unknown pytest.mark.reports - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.reports
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/test_report_generation.py::TestReportGeneration::test_cta_009_daily_report_with_mixed_completion
+ERROR tests/test_report_generation.py::TestReportGeneration::test_cta_010_weekly_report_with_completion_history
+ERROR tests/test_report_generation.py::TestReportGeneration::test_cta_011_monthly_report_with_varied_patterns
+ERROR tests/test_report_generation.py::TestReportGeneration::test_cta_012_reports_with_empty_history
+======================== 4 warnings, 4 errors in 0.29s ========================

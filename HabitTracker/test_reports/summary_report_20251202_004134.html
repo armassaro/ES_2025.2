@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Relatório de Testes - HabitTracker</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .success { color: green; }
+        .failure { color: red; }
+        .warning { color: orange; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .details { margin: 10px 0; padding: 10px; background-color: #f9f9f9; }
+    </style>
+</head>
+<body>
+    <h1>📋 Relatório de Testes - HabitTracker</h1>
+    <p><strong>Data/Hora:</strong> 2025-12-02 00:41:41.457371</p>
+    <p><strong>Timestamp:</strong> 20251202_004134</p>
+    
+    <h2>📊 Resumo Geral</h2>
+    <table>
+        <tr>
+            <th>Arquivo de Teste</th>
+            <th>Status</th>
+            <th>Código de Saída</th>
+            <th>Relatório Detalhado</th>
+        </tr>
+    
+        <tr>
+            <td><strong>tests/test_habit_crud.py</strong></td>
+            <td class="failure">❌ FALHA</td>
+            <td>1</td>
+            <td><a href="test_habit_crud_20251202_004134.txt">test_habit_crud_20251202_004134.txt</a></td>
+        </tr>
+        
+        <tr>
+            <td><strong>tests/test_habit_visualization.py</strong></td>
+            <td class="failure">❌ FALHA</td>
+            <td>1</td>
+            <td><a href="test_habit_visualization_20251202_004134.txt">test_habit_visualization_20251202_004134.txt</a></td>
+        </tr>
+        
+        <tr>
+            <td><strong>tests/test_report_generation.py</strong></td>
+            <td class="success">✅ SUCESSO</td>
+            <td>0</td>
+            <td><a href="test_report_generation_20251202_004134.txt">test_report_generation_20251202_004134.txt</a></td>
+        </tr>
+        
+        <tr>
+            <td><strong>ALL_COMBINED</strong></td>
+            <td class="failure">❌ FALHA</td>
+            <td>1</td>
+            <td><a href="all_tests_combined_20251202_004134.txt">all_tests_combined_20251202_004134.txt</a></td>
+        </tr>
+        
+    </table>
+    
+    <h2>🔍 Análise de Problemas Detectados</h2>
+    <div class="details">
+    <h3>⚠️ Warnings</h3><ul><li>tests/test_habit_crud.py: 11 warning(s)</li><li>tests/test_habit_visualization.py: 11 warning(s)</li><li>tests/test_report_generation.py: 11 warning(s)</li></ul>
+    </div>
+    
+    <h2>📝 Recomendações para Refatoração</h2>
+    <div class="details">
+        <h3>🔧 Ações Prioritárias:</h3>
+        <ol>
+            <li><strong>Implementar métodos ausentes:</strong> add_habit, get_active_habits, etc.</li>
+            <li><strong>Corrigir imports:</strong> ReportFactory, ReportController</li>
+            <li><strong>Implementar fixtures:</strong> clean_json_files, mock_datetime</li>
+            <li><strong>Completar HabitModel:</strong> Métodos abstratos e concertos</li>
+            <li><strong>Estrutura de dados:</strong> Padronizar formato de hábitos</li>
+        </ol>
+        
+        <h3>📋 Próximos Passos:</h3>
+        <ul>
+            <li>Revisar arquivos de log detalhados para cada erro específico</li>
+            <li>Implementar métodos faltantes um por vez</li>
+            <li>Executar testes individuais após cada correção</li>
+            <li>Implementar testes de integração após correções básicas</li>
+        </ul>
+    </div>
+    
+    <footer>
+        <hr>
+        <p><small>Relatório gerado automaticamente em {datetime.now()}</small></p>
+    </footer>
+</body>
+</html>
+    
