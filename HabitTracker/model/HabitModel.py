@@ -45,6 +45,15 @@ class HabitModel(Subject):
         super().__init__()
         self.user_model = user_model
         self.data = load_data(HABIT_DATA_FILE, {})
+        self._migrate_data_add_color()
+    
+    def _migrate_data_add_color(self):
+        """Migra dados antigos para adicionar a chave 'color' se não existir."""
+        for username in self.data:
+            for habit in self.data[username]:
+                if 'color' not in habit:
+                    habit['color'] = 'blue'
+        save_data(HABIT_DATA_FILE, self.data)
 
     def notify(self):
         """Notifica todos os observers sobre mudanças."""
@@ -66,6 +75,7 @@ class HabitModel(Subject):
             "description": description,
             "frequency": frequency,
             "active": True,
+            "color": "blue",
             "created_at": datetime.now().isoformat(),
             "history": {}
         }
@@ -86,7 +96,7 @@ class HabitModel(Subject):
         print(f" Model: Buscando hábitos para '{username}': {len(habits)} encontrados")
         return habits
 
-    def update_habit(self, habit_id, name=None, description=None, active=None, frequency=None):
+    def update_habit(self, habit_id, name=None, description=None, active=None, frequency=None, color=None):
         """Atualiza um hábito existente (R1 - Update)."""
         username = self.user_model.get_logged_in_username()
         if not username or username not in self.data:
@@ -102,6 +112,8 @@ class HabitModel(Subject):
                     habit['active'] = active
                 if frequency is not None:
                     habit['frequency'] = frequency
+                if color is not None:
+                    habit['color'] = color
                 
                 save_data(HABIT_DATA_FILE, self.data)
                 self.notify()

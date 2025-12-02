@@ -676,6 +676,152 @@ class TestReportGeneration:
                 print(f"✅ Relatório {report_type} validado com sucesso")
             
             print(f"✅ CTA-012 passou: Todos os relatórios funcionam corretamente com histórico vazio")
+    
+    @pytest.mark.reports
+    def test_custom_report_with_date_range(self, clean_json_files):
+        """
+        Teste: Relatório Personalizado com Intervalo de Datas
+        
+        Dado que: Sistema possui 3 hábitos ativos com histórico variado
+        Quando: Gera um relatório customizado para um intervalo específico (ex: 2025-12-01 a 2025-12-05)
+        Então: Retorna estrutura com start_date, end_date, total_days, total_completed, 
+               completion_rate e daily_data apenas para o intervalo especificado
+        """
+        # Criar usuário logado
+        self.user_model.logged_in_user_id = "test_user_silvino_id"
+        self.user_model.users = {
+            "test_user_silvino_id": {
+                "username": "test_user_silvino",
+                "password": "test_pass",
+                "id": "test_user_silvino_id"
+            }
+        }
+        
+        # Criar hábitos
+        self.habit_model.create_habit("Exercício", "Musculação", "daily")
+        self.habit_model.create_habit("Leitura", "Ler 30 minutos", "daily")
+        self.habit_model.create_habit("Meditação", "Meditar 10 minutos", "weekly")
+        
+        # Adicionar histórico
+        habits = self.habit_model.get_all_habits()
+        if habits:
+            h1_id = habits[0]['id']
+            h2_id = habits[1]['id']
+            h3_id = habits[2]['id']
+            
+            # Marcar hábitos em diferentes datas
+            # 2025-12-01: h1 ✅, h2 ❌, h3 ✅
+            self.habit_model.mark_habit_done(h1_id, '2025-12-01')
+            self.habit_model.mark_habit_done(h3_id, '2025-12-01')
+            
+            # 2025-12-02: h1 ✅, h2 ✅, h3 ✅
+            self.habit_model.mark_habit_done(h1_id, '2025-12-02')
+            self.habit_model.mark_habit_done(h2_id, '2025-12-02')
+            self.habit_model.mark_habit_done(h3_id, '2025-12-02')
+            
+            # 2025-12-03: h1 ❌, h2 ❌, h3 ❌
+            
+            # 2025-12-04: h1 ✅, h2 ✅, h3 ❌
+            self.habit_model.mark_habit_done(h1_id, '2025-12-04')
+            self.habit_model.mark_habit_done(h2_id, '2025-12-04')
+            
+            # 2025-12-05: h1 ✅, h2 ✅, h3 ✅
+            self.habit_model.mark_habit_done(h1_id, '2025-12-05')
+            self.habit_model.mark_habit_done(h2_id, '2025-12-05')
+            self.habit_model.mark_habit_done(h3_id, '2025-12-05')
+        
+        # Gerar relatório customizado
+        raw_data = self.habit_model.get_all_habits()
+        custom_report = ReportFactory.create_report("custom", raw_data, "2025-12-01", "2025-12-05")
+        report_data = custom_report.generate_visualization_data()
+        
+        # Validações
+        assert report_data['start_date'] == "2025-12-01", "Data inicial deveria ser 2025-12-01"
+        assert report_data['end_date'] == "2025-12-05", "Data final deveria ser 2025-12-05"
+        assert report_data['total_days'] == 5, "Total de dias deveria ser 5"
+        assert report_data['total_completed'] == 11, f"Total completado deveria ser 11, mas foi {report_data['total_completed']}"
+        assert 'daily_data' in report_data, "Relatório deveria conter dados diários"
+        assert len(report_data['daily_data']) == 5, "Deveria haver 5 dias no relatório"
+        
+        # Validar dados específicos
+        assert report_data['daily_data']['2025-12-01']['completed'] == 2
+        assert report_data['daily_data']['2025-12-02']['completed'] == 3
+        assert report_data['daily_data']['2025-12-03']['completed'] == 0
+        assert report_data['daily_data']['2025-12-04']['completed'] == 2
+        assert report_data['daily_data']['2025-12-05']['completed'] == 3
+        
+        assert report_data['completion_rate'] > 0, "Taxa de conclusão deveria ser maior que 0"
+        assert report_data['average_per_day'] > 0, "Média por dia deveria ser maior que 0"
+        
+        print(f"✅ Teste de Relatório Personalizado passou!")
+        print(f"   Período: {report_data['start_date']} a {report_data['end_date']}")
+        print(f"   Total de hábitos concluídos: {report_data['total_completed']}")
+        print(f"   Taxa de conclusão: {report_data['completion_rate']}%")
+    
+    @pytest.mark.reports
+    def test_custom_report_invalid_dates(self):
+        """
+        Teste: Validação de Datas - Data Final Anterior à Inicial
+        
+        Dado que: Tentamos criar um relatório com data final anterior à inicial
+        Quando: Chama ReportFactory.create_report("custom", raw_data, "2025-12-05", "2025-12-01")
+        Então: Deve lançar ValueError
+        """
+        raw_data = []
+        
+        with pytest.raises(ValueError) as exc_info:
+            ReportFactory.create_report("custom", raw_data, "2025-12-05", "2025-12-01")
+        
+        assert "data final não pode ser menor" in str(exc_info.value).lower()
+        print(f"✅ Validação de datas funcionou corretamente: {exc_info.value}")
+    
+    @pytest.mark.reports
+    def test_custom_report_single_day(self, clean_json_files):
+        """
+        Teste: Relatório Personalizado para Um Único Dia
+        
+        Dado que: Selecionamos a mesma data para início e fim
+        Quando: Gera um relatório customizado para 2025-12-02
+        Então: Retorna estrutura com total_days=1 e dados apenas daquele dia
+        """
+        # Criar usuário logado
+        self.user_model.logged_in_user_id = "test_user_silvino_id"
+        self.user_model.users = {
+            "test_user_silvino_id": {
+                "username": "test_user_silvino",
+                "password": "test_pass",
+                "id": "test_user_silvino_id"
+            }
+        }
+        
+        # Criar hábitos
+        self.habit_model.create_habit("Exercício", "Musculação", "daily")
+        self.habit_model.create_habit("Leitura", "Ler 30 minutos", "daily")
+        
+        # Marcar hábitos no dia 2025-12-02
+        habits = self.habit_model.get_all_habits()
+        if habits:
+            h1_id = habits[0]['id']
+            h2_id = habits[1]['id']
+            
+            self.habit_model.mark_habit_done(h1_id, '2025-12-02')
+            self.habit_model.mark_habit_done(h2_id, '2025-12-02')
+            self.habit_model.mark_habit_done(h1_id, '2025-12-03')  # Marcar outro dia para garantir isolamento
+        
+        # Gerar relatório customizado para um único dia
+        raw_data = self.habit_model.get_all_habits()
+        custom_report = ReportFactory.create_report("custom", raw_data, "2025-12-02", "2025-12-02")
+        report_data = custom_report.generate_visualization_data()
+        
+        # Validações
+        assert report_data['start_date'] == "2025-12-02"
+        assert report_data['end_date'] == "2025-12-02"
+        assert report_data['total_days'] == 1, "Total de dias deveria ser 1"
+        assert report_data['total_completed'] == 2, f"Total completado deveria ser 2, mas foi {report_data['total_completed']}"
+        assert len(report_data['daily_data']) == 1, "Deveria haver apenas 1 dia no relatório"
+        assert report_data['daily_data']['2025-12-02']['completed'] == 2
+        
+        print(f"✅ Teste de Relatório para Um Dia passou!")
 
 if __name__ == "__main__":
     pytest.main()

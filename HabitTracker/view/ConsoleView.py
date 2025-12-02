@@ -141,7 +141,64 @@ class ConsoleView:
             # period deve ser 'daily', 'weekly' ou 'monthly'
             print(f"Relatório {period.capitalize()}: dados prontos para visualização.")
         print("-----------------------------------------")
+    
+    def show_report_menu(self, report_controller):
+        """Exibe menu de visualização de relatórios após mudança no sistema."""
+        print("\n" + "="*60)
+        print("📊 VISUALIZAR RELATÓRIOS")
+        print("="*60)
+        print("1. Ver Relatórios Padrão (Diário, Semanal, Mensal)")
+        print("2. Ver Relatório Personalizado por Período")
+        print("3. Voltar")
+        
+        choice = input("Escolha uma opção (1-3): ")
+        
+        if choice == '1':
+            # Trigger automático de relatórios padrão
+            self.habit_controller.model.notify()
+        elif choice == '2':
+            self.handle_custom_report_input(report_controller)
+        elif choice == '3':
+            return
+        else:
+            self.show_error("Opção inválida.")
 
+    # --- R3: Geração de Relatório Personalizado ---
+    
+    def handle_custom_report_input(self, report_controller):
+        """Captura datas para gerar relatório personalizado (R3 - Customizado)."""
+        print("\n--- GERAR RELATÓRIO PERSONALIZADO ---")
+        print("Digite as datas no formato YYYY-MM-DD")
+        
+        while True:
+            try:
+                start_date = input("Data Inicial (YYYY-MM-DD): ").strip()
+                end_date = input("Data Final (YYYY-MM-DD): ").strip()
+                
+                # Validar formato de data
+                from datetime import datetime
+                datetime.strptime(start_date, '%Y-%m-%d')
+                datetime.strptime(end_date, '%Y-%m-%d')
+                
+                # Tentar gerar o relatório
+                success, message, report_data = report_controller.generate_custom_report(start_date, end_date)
+                
+                if success:
+                    self.show_message(message)
+                    report_controller.display_custom_report_console(report_data)
+                    return
+                else:
+                    self.show_error(message)
+                    retry = input("Deseja tentar novamente? (S/N): ").upper()
+                    if retry != 'S':
+                        return
+                    
+            except ValueError as e:
+                self.show_error(f"Formato de data inválido! Use YYYY-MM-DD (Ex: 2024-12-01). Erro: {str(e)}")
+                retry = input("Deseja tentar novamente? (S/N): ").upper()
+                if retry != 'S':
+                    return
+    
     # --- Exportação de PDF ---
     
     def handle_export_pdf_input(self):

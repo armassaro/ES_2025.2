@@ -12,34 +12,51 @@ class GUIReportView:
 class HabitCard(tk.Frame):
     """Card individual para cada hábito com visualização de histórico."""
     
+    # Cores predefinidas para os cards
+    CARD_COLORS = {
+
+            'white': '#ffffff',
+            'blue':  "#018dff",
+            'green':  "#00ff37",
+            'red':  "#ff1500",
+            'purple':  "#b700ff",
+            'yellow':  "#e1ff01",
+            'orange':  "#f6b34f",
+            'pink':  "#ef56dd",
+    }
+    
     def __init__(self, parent, habit, on_edit, on_delete, on_mark_done, on_refresh):
-        super().__init__(parent, bg='white', relief='solid', bd=1)
+        # Obter cor do hábito ou usar padrão
+        card_color = self.CARD_COLORS.get(habit.get('color', 'blue'), '#ecf0f1')
+        
+        super().__init__(parent, bg=card_color, relief='solid', bd=1)
         
         self.habit = habit
         self.on_edit = on_edit
         self.on_delete = on_delete
         self.on_mark_done = on_mark_done
         self.on_refresh = on_refresh
+        self.card_color = card_color
         
         self._setup_card()
     
     def _setup_card(self):
         """Configura o layout do card."""
         # Container principal com padding
-        container = tk.Frame(self, bg='white')
-        container.pack(fill='both', expand=True, padx=15, pady=12)
+        container = tk.Frame(self, bg=self.card_color)
+        container.pack(fill='both', expand=True, padx=12, pady=10)
         
         # Linha superior: Nome e status
-        top_frame = tk.Frame(container, bg='white')
-        top_frame.pack(fill='x', pady=(0, 8))
+        top_frame = tk.Frame(container, bg=self.card_color)
+        top_frame.pack(fill='x', pady=(0, 12))
         
         # Nome do hábito
         name_label = tk.Label(
             top_frame,
             text=self.habit['name'],
             font=('Arial', 14, 'bold'),
-            bg='white',
-            fg='#2c3e50',
+            bg=self.card_color,
+            fg='#000000',
             anchor='w'
         )
         name_label.pack(side='left', fill='x', expand=True)
@@ -89,19 +106,19 @@ class HabitCard(tk.Frame):
                 container,
                 text=self.habit['description'],
                 font=('Arial', 10),
-                bg='white',
-                fg='#7f8c8d',
+                bg=self.card_color,
+                fg='#000000',
                 anchor='w',
-                wraplength=600,
+                wraplength=550,
                 justify='left'
             )
-            desc_label.pack(fill='x', pady=(0, 10))
+            desc_label.pack(fill='x', pady=(0, 12))
         
         # NOVO: Histórico interativo da última semana
         self._create_interactive_week_history(container)
         
         # Linha inferior: Data de criação e botões
-        bottom_frame = tk.Frame(container, bg='white')
+        bottom_frame = tk.Frame(container, bg=self.card_color)
         bottom_frame.pack(fill='x', pady=(10, 0))
         
         # Data de criação
@@ -110,13 +127,13 @@ class HabitCard(tk.Frame):
             bottom_frame,
             text=f"📅 Criado em: {created_date}",
             font=('Arial', 9),
-            bg='white',
-            fg='#95a5a6'
+            bg=self.card_color,
+            fg='#000000'
         )
         date_label.pack(side='left')
         
         # Botões de ação
-        btn_frame = tk.Frame(bottom_frame, bg='white')
+        btn_frame = tk.Frame(bottom_frame, bg=self.card_color)
         btn_frame.pack(side='right')
         
         tk.Button(
@@ -147,19 +164,19 @@ class HabitCard(tk.Frame):
     
     def _create_interactive_week_history(self, parent):
         """Cria visualização INTERATIVA do histórico da última semana."""
-        history_frame = tk.Frame(parent, bg='white')
+        history_frame = tk.Frame(parent, bg=self.card_color)
         history_frame.pack(fill='x', pady=10)
         
         tk.Label(
             history_frame,
             text="📊 Últimos 7 dias (clique para marcar/desmarcar):",
             font=('Arial', 9, 'bold'),
-            bg='white',
-            fg='#7f8c8d'
-        ).pack(side='left', padx=(0, 10))
+            bg=self.card_color,
+            fg='#000000'
+        ).pack(side='left', padx=(0, 12))
         
         # Container para os dias
-        days_container = tk.Frame(history_frame, bg='white')
+        days_container = tk.Frame(history_frame, bg=self.card_color)
         days_container.pack(side='left', fill='x', expand=True)
         
         # Gerar últimos 7 dias
@@ -174,16 +191,16 @@ class HabitCard(tk.Frame):
             is_completed = history.get(date_str, False)
             
             # Frame para cada dia
-            day_frame = tk.Frame(days_container, bg='white')
-            day_frame.pack(side='left', padx=3)
+            day_frame = tk.Frame(days_container, bg=self.card_color)
+            day_frame.pack(side='left', padx=4)
             
             # Dia da semana
             tk.Label(
                 day_frame,
                 text=day_name,
-                font=('Arial', 7),
-                bg='white',
-                fg='#7f8c8d'
+                font=('Arial', 8),
+                bg=self.card_color,
+                fg='#000000'
             ).pack()
             
             # BOTÃO interativo (em vez de Label estático)
@@ -193,9 +210,9 @@ class HabitCard(tk.Frame):
             tk.Label(
                 day_frame,
                 text=date.strftime('%d'),
-                font=('Arial', 7),
-                bg='white',
-                fg='#7f8c8d'
+                font=('Arial', 8),
+                bg=self.card_color,
+                fg='#000000'
             ).pack()
     
     def _create_day_button(self, parent, date_str, is_completed):
@@ -216,7 +233,7 @@ class HabitCard(tk.Frame):
         btn = tk.Button(
             parent,
             text=text,
-            font=('Arial', 12, 'bold'),
+            font=('Arial', 11, 'bold'),
             bg=bg_color,
             fg=fg_color,
             width=2,
@@ -227,7 +244,7 @@ class HabitCard(tk.Frame):
             activeforeground=fg_color,
             command=lambda: self._toggle_day(date_str, is_completed)
         )
-        btn.pack()
+        btn.pack(pady=2)
         
         # Efeito hover
         def on_enter(e):
@@ -327,7 +344,7 @@ class MainWindow:
         
         self.root = tk.Tk()
         self.root.title("Habit Tracker - Sistema de Gerenciamento de Hábitos")
-        self.root.geometry("1100x700")
+        self.root.geometry("1200x800")
         self.root.configure(bg='#ecf0f1')
         
         print(f"🪟 GUI: Usuário logado: {self.user_model.get_logged_in_username()}")
@@ -565,7 +582,7 @@ class MainWindow:
         
         dialog = tk.Toplevel(self.root)
         dialog.title("Editar Hábito")
-        dialog.geometry("450x500")
+        dialog.geometry("500x750")
         dialog.configure(bg='white')
         dialog.resizable(False, False)
         
@@ -605,6 +622,45 @@ class MainWindow:
         tk.Radiobutton(freq_frame, text="📊 Semanal", variable=freq_var, value='weekly', font=('Arial', 10), bg='white').pack(side='left', padx=10)
         tk.Radiobutton(freq_frame, text="📈 Mensal", variable=freq_var, value='monthly', font=('Arial', 10), bg='white').pack(side='left', padx=10)
         
+        # Seletor de Cor
+        tk.Label(dialog, text="Cor do Card:", font=('Arial', 10, 'bold'), bg='white').pack(anchor='w', padx=30, pady=(15, 5))
+        
+        color_options = {
+            'white': ('⚪ Branco', '#ffffff'),
+            'blue': ('🔵 Azul', "#018dff"),
+            'green': ('🟢 Verde', "#00ff37"),
+            'red': ('🔴 Vermelho', "#ff1500"),
+            'purple': ('🟣 Roxo', "#b700ff"),
+            'yellow': ('🟡 Amarelo', "#e1ff01"),
+            'orange': ('🟠 Laranja', "#f6b34f"),
+            'pink': ('🩷 Rosa', "#ef56dd"),
+        }
+        
+        color_frame = tk.Frame(dialog, bg='white')
+        color_frame.pack(padx=30, pady=5, fill='x')
+        
+        color_var = tk.StringVar(value=habit.get('color', 'blue'))
+        color_preview = tk.Label(color_frame, text="", width=5, height=2, relief='solid', bd=1)
+        color_preview.pack(side='right', padx=10)
+        
+        def update_color_preview(*args):
+            selected_color = color_var.get()
+            color_preview.config(bg=color_options[selected_color][1])
+        
+        # Criar botões de cores
+        for color_key, (color_label, color_hex) in color_options.items():
+            tk.Radiobutton(
+                color_frame,
+                text=color_label,
+                variable=color_var,
+                value=color_key,
+                font=('Arial', 9),
+                bg='white',
+                command=update_color_preview
+            ).pack(anchor='w', pady=2)
+        
+        update_color_preview()
+        
         # Status ativo
         active_var = tk.BooleanVar(value=habit.get('active', True))
         tk.Checkbutton(
@@ -620,6 +676,7 @@ class MainWindow:
             desc = desc_entry.get("1.0", "end-1c").strip()
             active = active_var.get()
             freq = freq_var.get()
+            color = color_var.get()
             
             print(f"💾 Salvando edição:")
             print(f"   - Habit ID: {habit['id']}")
@@ -627,17 +684,22 @@ class MainWindow:
             print(f"   - Descrição: '{desc}'")
             print(f"   - Ativo: {active}")
             print(f"   - Frequência: {freq}")
+            print(f"   - Cor: {color}")
             
             if not name:
                 messagebox.showwarning("Atenção", "O nome do hábito é obrigatório!")
                 return
+            
+            # Atualizar cor no habit antes de salvar
+            habit['color'] = color
             
             success, message = self.habit_controller.handle_update_habit_request(
                 habit['id'], 
                 name=name, 
                 description=desc, 
                 active=active, 
-                frequency=freq
+                frequency=freq,
+                color=color
             )
             
             print(f"   - Resultado: {'✅ Sucesso' if success else '❌ Falha'}")
@@ -712,7 +774,7 @@ class MainWindow:
         modal.transient(self.root)
         modal.grab_set()
 
-        # Notebook com abas para daily/weekly/monthly
+        # Notebook com abas para daily/weekly/monthly/custom
         notebook = ttk.Notebook(modal)
         notebook.pack(fill='both', expand=True, padx=10, pady=10)
 
@@ -768,6 +830,12 @@ class MainWindow:
         monthly_frame = _make_text_frame(notebook, 'Relatório Mensal', monthly_lines)
         notebook.add(monthly_frame, text='Mensal')
 
+        # Aba Personalizado
+        custom_frame = tk.Frame(notebook, bg='white')
+        notebook.add(custom_frame, text='Personalizado')
+        
+        self._setup_custom_report_tab(custom_frame, raw_data, _make_text_frame)
+
         # Tentativa de desenhar gráficos simples se matplotlib estiver disponível
         try:
             from matplotlib.figure import Figure
@@ -813,6 +881,137 @@ class MainWindow:
         # Botão fechar
         btn_close = tk.Button(modal, text='Fechar', command=modal.destroy, bg='#95a5a6', fg='white')
         btn_close.pack(pady=8)
+    
+    def _setup_custom_report_tab(self, parent, raw_data, make_text_frame):
+        """Configura a aba de relatório personalizado na GUI."""
+        # Frame principal
+        main_frame = tk.Frame(parent, bg='white')
+        main_frame.pack(fill='both', expand=True, padx=10, pady=10)
+        
+        # Instruções
+        instructions = tk.Label(
+            main_frame,
+            text="Selecione o intervalo de datas para gerar um relatório personalizado",
+            font=('Arial', 11),
+            bg='white',
+            fg='#7f8c8d'
+        )
+        instructions.pack(pady=10)
+        
+        # Frame para inputs
+        input_frame = tk.Frame(main_frame, bg='white')
+        input_frame.pack(fill='x', padx=20, pady=10)
+        
+        # Data inicial
+        tk.Label(input_frame, text="Data Inicial (YYYY-MM-DD):", font=('Arial', 10, 'bold'), bg='white').pack(anchor='w', pady=(5, 0))
+        start_entry = tk.Entry(input_frame, width=30, font=('Arial', 11))
+        start_entry.insert(0, (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d'))
+        start_entry.pack(anchor='w', pady=(0, 15))
+        
+        # Data final
+        tk.Label(input_frame, text="Data Final (YYYY-MM-DD):", font=('Arial', 10, 'bold'), bg='white').pack(anchor='w', pady=(5, 0))
+        end_entry = tk.Entry(input_frame, width=30, font=('Arial', 11))
+        end_entry.insert(0, datetime.now().strftime('%Y-%m-%d'))
+        end_entry.pack(anchor='w', pady=(0, 15))
+        
+        # Frame para resultado
+        result_frame = tk.Frame(main_frame, bg='white')
+        result_frame.pack(fill='both', expand=True, padx=10, pady=10)
+        
+        def generate_custom_report():
+            """Gera o relatório personalizado."""
+            start_date = start_entry.get().strip()
+            end_date = end_entry.get().strip()
+            
+            # Validar datas
+            try:
+                datetime.strptime(start_date, '%Y-%m-%d')
+                datetime.strptime(end_date, '%Y-%m-%d')
+            except ValueError:
+                messagebox.showerror("Erro", "Formato de data inválido! Use YYYY-MM-DD")
+                return
+            
+            # Gerar relatório
+            try:
+                custom_report = ReportFactory.create_report('custom', raw_data, start_date, end_date)
+                custom_data = custom_report.generate_visualization_data()
+                
+                # Limpar resultado anterior
+                for widget in result_frame.winfo_children():
+                    widget.destroy()
+                
+                # Exibir resultado
+                custom_lines = [
+                    f"Período: {custom_data.get('start_date', 'N/A')} a {custom_data.get('end_date', 'N/A')}",
+                    f"Total de Dias: {custom_data.get('total_days', 0)}",
+                    f"Total Concluído: {custom_data.get('total_completed', 0)}",
+                    f"Média por Dia: {custom_data.get('average_per_day', 0)}",
+                    f"Maior Sequência: {custom_data.get('max_streak', 0)} dias",
+                    f"Taxa de Conclusão: {custom_data.get('completion_rate', 0)}%",
+                    f"Melhor Dia: {custom_data.get('best_day', 'N/A')} ({custom_data.get('best_day_count', 0)} hábitos)",
+                    '',
+                    'Progresso por Dia:'
+                ]
+                
+                for date, day_data in sorted(custom_data.get('daily_data', {}).items()):
+                    completed = day_data.get('completed', 0)
+                    total = day_data.get('total', 0)
+                    percent = (completed / total * 100) if total > 0 else 0
+                    custom_lines.append(f" - {date}: {completed}/{total} ({percent:.1f}%)")
+                
+                result_text = make_text_frame(result_frame, 'Relatório Personalizado', custom_lines)
+                result_text.pack(fill='both', expand=True)
+                
+                # Tentar desenhar gráfico
+                try:
+                    from matplotlib.figure import Figure
+                    from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+                    
+                    fig = Figure(figsize=(5, 2.5), dpi=100)
+                    ax = fig.add_subplot(111)
+                    
+                    dates = []
+                    percents = []
+                    for date, d in sorted(custom_data.get('daily_data', {}).items()):
+                        dates.append(date[-5:])
+                        total = d.get('total', 0)
+                        completed = d.get('completed', 0)
+                        percent = (completed / total * 100) if total > 0 else 0
+                        percents.append(percent)
+                    
+                    if dates:
+                        ax.bar(dates, percents, color='#9b59b6')
+                        ax.set_title('Percentual concluído por dia (período personalizado)')
+                        ax.set_ylabel('%')
+                        ax.set_ylim(0, 100)
+                        ax.tick_params(axis='x', rotation=45)
+                        
+                        canvas = FigureCanvasTkAgg(fig, master=result_frame)
+                        canvas.draw()
+                        canvas.get_tk_widget().pack(side='bottom', fill='both', expand=False, padx=10, pady=5)
+                
+                except Exception:
+                    pass
+                
+            except ValueError as e:
+                messagebox.showerror("Erro", f"Erro ao gerar relatório:\n{str(e)}")
+            except Exception as e:
+                messagebox.showerror("Erro", f"Erro inesperado:\n{str(e)}")
+        
+        # Botão gerar
+        btn_generate = tk.Button(
+            main_frame,
+            text="📊 Gerar Relatório Personalizado",
+            command=generate_custom_report,
+            bg='#9b59b6',
+            fg='white',
+            font=('Arial', 11, 'bold'),
+            bd=0,
+            padx=20,
+            pady=10,
+            cursor='hand2'
+        )
+        btn_generate.pack(pady=10)
     
     def _export_pdf(self):
         """Exporta relatório em PDF."""

@@ -82,7 +82,7 @@ def setup_architecture(user_model, view_type='console'):
     
     return report_view, habit_controller, report_controller
 
-def run_main_menu(console_view):
+def run_main_menu(console_view, report_controller):
     """Loop principal da aplicação após o login (apenas para Console)."""
     while True:
         logged_in_username = console_view.user_model.get_logged_in_username()
@@ -95,11 +95,12 @@ def run_main_menu(console_view):
         print("3. Atualizar Hábito (Update - R1)")
         print("4. Deletar Hábito (Delete - R1)")
         print("5. REGISTRAR PROGRESSO (R2)")
-        print("6. Gerar Relatórios (R3)")
-        print("7. Exportar Relatório em PDF")
-        print("8. Sair")
+        print("6. Gerar Relatórios Padrão (Diário, Semanal, Mensal) (R3)")
+        print("7. Gerar Relatório Personalizado por Período (R3)")
+        print("8. Exportar Relatório em PDF")
+        print("9. Sair")
         
-        choice = input("Escolha uma opção (1-8): ")
+        choice = input("Escolha uma opção (1-9): ")
 
         if choice == '1':
             habits = console_view.habit_controller.handle_read_habits_request()
@@ -115,8 +116,10 @@ def run_main_menu(console_view):
         elif choice == '6':
             console_view.habit_controller.model.notify()
         elif choice == '7':
-            console_view.handle_export_pdf_input()
+            console_view.handle_custom_report_input(report_controller)
         elif choice == '8':
+            console_view.handle_export_pdf_input()
+        elif choice == '9':
             print("Saindo do Habit Tracker. Volte sempre!")
             break
         else:
@@ -130,7 +133,7 @@ def run_app_console():
     #                                 ^^^^^^^^^^^^^^^^ NÃO DESCARTE ISSO!
 
     if console_view.handle_initial_auth():
-        run_main_menu(console_view)
+        run_main_menu(console_view, report_controller)
     else:
         console_view.show_error("Falha na autenticação. Encerrando o aplicativo.")
 

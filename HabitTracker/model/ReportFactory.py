@@ -254,20 +254,101 @@ class MonthlyReport(Report):
         }
 
 
+class CustomReport(Report):
+    """Produto Concreto: Relatório por Período Personalizado."""
+    def __init__(self, raw_data, start_date, end_date):
+        self.habits = raw_data
+        self.start_date = datetime.strptime(start_date, '%Y-%m-%d')
+        self.end_date = datetime.strptime(end_date, '%Y-%m-%d')
+        
+        # Validar datas
+        if self.end_date < self.start_date:
+            raise ValueError("A data final não pode ser menor que a data inicial.")
+    
+    def generate_visualization_data(self):
+        """Gera dados do relatório personalizado para o intervalo especificado."""
+        total_completed = 0
+        daily_data = defaultdict(lambda: {'completed': 0, 'total': 0})
+        streak = 0
+        max_streak = 0
+        current_streak = 0
+        max_count = 0
+        best_day = ""
+        
+        # Contar hábitos ativos
+        active_habits = [h for h in self.habits if h.get('active', True)]
+        
+        # Processar cada dia no intervalo
+        current = self.start_date
+        while current <= self.end_date:
+            current_date = current.strftime('%Y-%m-%d')
+            day_completed = 0
+            day_total = len(active_habits)
+            
+            for habit in active_habits:
+                if habit.get('history', {}).get(current_date, False):
+                    day_completed += 1
+                    total_completed += 1
+            
+            daily_data[current_date] = {
+                'completed': day_completed,
+                'total': day_total
+            }
+            
+            # Rastrear melhor dia
+            if day_completed > max_count:
+                max_count = day_completed
+                best_day = current_date
+            
+            # Calcular streak
+            if day_completed > 0:
+                current_streak += 1
+                max_streak = max(max_streak, current_streak)
+            else:
+                current_streak = 0
+            
+            current += timedelta(days=1)
+        
+        # Calcular estatísticas finais
+        total_days = (self.end_date - self.start_date).days + 1
+        avg_per_day = round(total_completed / total_days, 1) if total_days > 0 else 0
+        completion_rate = round(
+            (total_completed / (len(active_habits) * total_days) * 100), 1
+        ) if active_habits and total_days > 0 else 0
+        
+        return {
+            'start_date': self.start_date.strftime('%Y-%m-%d'),
+            'end_date': self.end_date.strftime('%Y-%m-%d'),
+            'total_days': total_days,
+            'total_completed': total_completed,
+            'average_per_day': avg_per_day,
+            'max_streak': max_streak,
+            'completion_rate': completion_rate,
+            'best_day': best_day,
+            'best_day_count': max_count,
+            'daily_data': dict(daily_data)
+        }
+
+
 class ReportFactory:
     """Criador (Creator): Factory que cria diferentes tipos de relatórios."""
     
     @staticmethod
-    def create_report(report_type, raw_data):
+    def create_report(report_type, raw_data, start_date=None, end_date=None):
         """
         Factory Method: Cria o relatório apropriado com base no tipo.
         
         Args:
-            report_type: Tipo do relatório ('daily', 'weekly', 'monthly')
+            report_type: Tipo do relatório ('daily', 'weekly', 'monthly', 'custom')
             raw_data: Dados brutos dos hábitos
+            start_date: Data inicial para relatório customizado (formato: 'YYYY-MM-DD')
+            end_date: Data final para relatório customizado (formato: 'YYYY-MM-DD')
         
         Returns:
-            Um objeto Report (DailyReport, WeeklyReport ou MonthlyReport)
+            Um objeto Report (DailyReport, WeeklyReport, MonthlyReport ou CustomReport)
+        
+        Raises:
+            ValueError: Se as datas forem inválidas ou tipo de relatório não existir
         """
         if report_type == "daily":
             return DailyReport(raw_data)
@@ -275,5 +356,9 @@ class ReportFactory:
             return WeeklyReport(raw_data)
         elif report_type == "monthly":
             return MonthlyReport(raw_data)
+        elif report_type == "custom":
+            if start_date is None or end_date is None:
+                raise ValueError("start_date e end_date são obrigatórios para relatório customizado.")
+            return CustomReport(raw_data, start_date, end_date)
         else:
             raise ValueError(f"Tipo de relatório inválido: {report_type}")

@@ -16,14 +16,15 @@ class HabitController:
         print(f"🔧 Controller: Retornando {len(habits)} hábitos")
         return habits
 
-    def handle_update_habit_request(self, habit_id, name=None, description=None, active=None, frequency=None):
+    def handle_update_habit_request(self, habit_id, name=None, description=None, active=None, frequency=None, color=None):
         """Lida com a solicitação de atualização de hábito."""
         print(f"🔧 Controller: Atualizando hábito ID={habit_id}")
         print(f"   - Nome: {name}")
         print(f"   - Descrição: {description}")
         print(f"   - Ativo: {active}")
         print(f"   - Frequência: {frequency}")
-        return self.model.update_habit(habit_id, name, description, active, frequency)
+        print(f"   - Cor: {color}")
+        return self.model.update_habit(habit_id, name, description, active, frequency, color)
 
     def handle_delete_habit_request(self, habit_id):
         """Lida com a solicitação de exclusão de hábito."""
