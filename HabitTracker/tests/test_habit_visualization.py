@@ -179,6 +179,75 @@ class TestHabitVisualization:
         assert updated_habit['history'][test_date] == True, f"Data {test_date} deveria estar marcada como True"
         
         print(f"OK: Historico registrado corretamente para {test_date}")
+    
+    @pytest.mark.visualization
+    def test_cta_009_update_habit_color(self, clean_json_files):
+        """
+        CTA-009: Modificar a cor de um hábito
+        
+        Dado que: Existe um hábito cadastrado com cor padrão
+        Quando: Atualizo a cor do hábito
+        Então: A cor é atualizada corretamente no sistema
+        """
+        # Criar hábito com cor padrão (blue)
+        success, msg = self.habit_model.create_habit(
+            name="Hábito Colorido",
+            description="Teste de cores",
+            frequency="daily"
+        )
+        assert success == True, f"Falha ao criar hábito: {msg}"
+        
+        # Pegar o hábito criado
+        all_habits = self.habit_model.get_all_habits()
+        assert len(all_habits) > 0, "Nenhum hábito foi criado"
+        
+        habit = all_habits[-1]
+        habit_id = habit['id']
+        
+        print(f"\n🎨 Hábito criado: {habit['name']} (ID: {habit_id})")
+        print(f"   Cor inicial: {habit.get('color', 'blue')}")
+        
+        # Verificar cor inicial
+        assert habit.get('color') in ['blue', None], f"Cor inicial deveria ser 'blue', mas é {habit.get('color')}"
+        
+        # Lista de cores disponíveis no MainWindow
+        available_colors = ['white', 'blue', 'green', 'red', 'purple', 'yellow', 'orange', 'pink']
+        
+        # Testar mudança para cada cor
+        for test_color in ['green', 'red', 'purple', 'yellow', 'orange', 'pink']:
+            print(f"\n   🔄 Testando mudança para: {test_color}")
+            
+            # Atualizar cor do hábito
+            success, msg = self.habit_model.update_habit(
+                habit_id, 
+                color=test_color
+            )
+            
+            assert success == True, f"Falha ao atualizar cor para {test_color}: {msg}"
+            print(f"      ✅ Atualização bem-sucedida: {msg}")
+            
+            # Verificar que a cor foi atualizada
+            all_habits_updated = self.habit_model.get_all_habits()
+            updated_habit = [h for h in all_habits_updated if h['id'] == habit_id][0]
+            
+            # Verificações
+            assert 'color' in updated_habit, "Hábito deveria ter campo 'color'"
+            assert updated_habit['color'] == test_color, \
+                f"Cor deveria ser '{test_color}', mas é '{updated_habit['color']}'"
+            
+            print(f"      ✓ Cor verificada no modelo: {updated_habit['color']}")
+        
+        # Verificar que outras propriedades não foram alteradas
+        final_habits = self.habit_model.get_all_habits()
+        final_habit = [h for h in final_habits if h['id'] == habit_id][0]
+        
+        assert final_habit['name'] == "Hábito Colorido", "Nome não deveria ter mudado"
+        assert final_habit['description'] == "Teste de cores", "Descrição não deveria ter mudado"
+        assert final_habit['frequency'] == "daily", "Frequência não deveria ter mudado"
+        assert final_habit.get('active', True) == True, "Status ativo não deveria ter mudado"
+        
+        print(f"\n✅ CTA-009 passou: Cor do hábito atualizada corretamente para todas as cores disponíveis")
+        print(f"   Cores testadas: {available_colors[1:]}")  # Excluir 'white' e 'blue' que já eram padrão
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
