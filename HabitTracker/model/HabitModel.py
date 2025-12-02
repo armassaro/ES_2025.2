@@ -53,7 +53,8 @@ class HabitModel(Subject):
             for habit in self.data[username]:
                 if 'color' not in habit:
                     habit['color'] = 'blue'
-        save_data(HABIT_DATA_FILE, self.data)
+        if self.data:  # Only save if there's data to save
+            save_data(HABIT_DATA_FILE, self.data)
 
     def notify(self):
         """Notifica todos os observers sobre mudanças."""
@@ -61,18 +62,36 @@ class HabitModel(Subject):
             observer.update(self)
 
     def create_habit(self, name, description="", frequency="daily"):
-        """Cria um novo hábito (R1 - Create)."""
+        """
+        Cria um novo hábito (R1 - Create).
+        
+        Args:
+            name: Nome do hábito
+            description: Descrição do hábito (opcional)
+            frequency: Frequência do hábito ('daily', 'weekly', 'monthly')
+        
+        Returns:
+            Tupla (sucesso, mensagem)
+        """
         username = self.user_model.get_logged_in_username()
         if not username:
             return False, "Nenhum usuário logado."
+        
+        # Validação de entrada
+        if not name or not name.strip():
+            return False, "Nome do hábito não pode estar vazio."
+        
+        valid_frequencies = ['daily', 'weekly', 'monthly']
+        if frequency not in valid_frequencies:
+            return False, f"Frequência inválida. Use: {', '.join(valid_frequencies)}"
 
         if username not in self.data:
             self.data[username] = []
 
         habit = {
             "id": str(uuid.uuid4()),
-            "name": name,
-            "description": description,
+            "name": name.strip(),
+            "description": description.strip(),
             "frequency": frequency,
             "active": True,
             "color": "blue",
@@ -89,11 +108,11 @@ class HabitModel(Subject):
         """Retorna todos os hábitos do usuário logado (R1 - Read)."""
         username = self.user_model.get_logged_in_username()
         if not username:
-            print(" Nenhum usuário logado!")
+            print("[AVISO] Nenhum usuario logado!")
             return []
         
         habits = self.data.get(username, [])
-        print(f" Model: Buscando hábitos para '{username}': {len(habits)} encontrados")
+        print(f"[INFO] Model: Buscando habitos para '{username}': {len(habits)} encontrados")
         return habits
 
     def update_habit(self, habit_id, name=None, description=None, active=None, frequency=None, color=None):
@@ -117,7 +136,7 @@ class HabitModel(Subject):
                 
                 save_data(HABIT_DATA_FILE, self.data)
                 self.notify()
-                print(f" Model: Hábito '{habit['name']}' atualizado com sucesso!")
+                print(f"[INFO] Model: Habito '{habit['name']}' atualizado com sucesso!")
                 return True, f"Hábito '{habit['name']}' atualizado!"
 
         return False, "Hábito não encontrado."
@@ -143,18 +162,18 @@ class HabitModel(Subject):
         if date is None:
             date = datetime.now().strftime('%Y-%m-%d')
 
-        print(f" Model: Marcando hábito {habit_id} em {date}")
+        print(f"[INFO] Model: Marcando habito {habit_id} em {date}")
         
         username = self.user_model.get_logged_in_username()
         if not username or username not in self.data:
-            print(f" Model: Usuário não encontrado ({username})")
+            print(f"[AVISO] Model: Usuario nao encontrado ({username})")
             return False, "Usuário não encontrado."
 
         for habit in self.data[username]:
             if habit.get('id') == habit_id:
                 # Verificar se já foi marcado
                 if date in habit.get('history', {}) and habit['history'][date]:
-                    print(f" Model: Hábito já marcado em {date}")
+                    print(f"[INFO] Model: Habito ja marcado em {date}")
                     return False, f"Hábito '{habit['name']}' já foi marcado como concluído em {date}!"
 
                 # Garantir que 'history' existe
@@ -166,7 +185,7 @@ class HabitModel(Subject):
                 
                 # Salvar dados
                 save_data(HABIT_DATA_FILE, self.data)
-                print(f" Model: Hábito '{habit['name']}' marcado em {date}")
+                print(f"[INFO] Model: Habito '{habit['name']}' marcado em {date}")
                 print(f"   History atualizado: {habit['history']}")
                 
                 # Notificar observers
@@ -174,6 +193,6 @@ class HabitModel(Subject):
                 
                 return True, f"Hábito '{habit['name']}' marcado como concluído em {date}!"
 
-        print(f" Model: Hábito {habit_id} não encontrado")
-        print(f"   Hábitos disponíveis: {[h.get('id') for h in self.data.get(username, [])]}")
+        print(f"[AVISO] Model: Habito {habit_id} nao encontrado")
+        print(f"   Habitos disponiveis: {[h.get('id') for h in self.data.get(username, [])]}")
         return False, "Hábito não encontrado."

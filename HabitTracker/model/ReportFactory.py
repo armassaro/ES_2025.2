@@ -33,19 +33,19 @@ class DailyReport(Report):
             
             # Considerar frequência
             if frequency == 'daily':
-                status = "✅ Concluído" if is_done else "⏳ Pendente"
+                status = "[SUCESSO] Concluído" if is_done else "⏳ Pendente"
                 if is_done:
                     completed_today += 1
             elif frequency == 'weekly':
                 # Verificar se foi feito nos últimos 7 dias
                 done_this_week = self._check_done_in_last_days(habit, 7)
-                status = "✅ Concluído esta semana" if done_this_week else "⏳ Pendente (semanal)"
+                status = "[SUCESSO] Concluído esta semana" if done_this_week else "⏳ Pendente (semanal)"
                 if done_this_week:
                     completed_today += 1
             elif frequency == 'monthly':
                 # Verificar se foi feito nos últimos 30 dias
                 done_this_month = self._check_done_in_last_days(habit, 30)
-                status = "✅ Concluído este mês" if done_this_month else "⏳ Pendente (mensal)"
+                status = "[SUCESSO] Concluído este mês" if done_this_month else "⏳ Pendente (mensal)"
                 if done_this_month:
                     completed_today += 1
             else:
@@ -58,7 +58,8 @@ class DailyReport(Report):
             })
         
         pending = total_habits - completed_today
-        completion_rate = round((completed_today / total_habits * 100), 1) if total_habits > 0 else 0
+        # Fix: Prevent division by zero
+        completion_rate = round((completed_today / total_habits * 100), 1) if total_habits > 0 else 0.0
         
         return {
             'date': self.today,

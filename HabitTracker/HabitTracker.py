@@ -145,7 +145,7 @@ def run_app_gui():
     
     user_model = UserModel()
     
-    print(f"👤 Usuários cadastrados: {list(user_model.users.keys())}")
+    print(f"[HabitTracker.py] Usuários cadastrados: {list(user_model.users.keys())}")
     
     login_window = LoginWindow(user_model)
     authenticated = login_window.run()
@@ -154,14 +154,14 @@ def run_app_gui():
         print("❌ Login cancelado.")
         return
     
-    print(f"✅ Usuário autenticado: {user_model.get_logged_in_username()}")
+    print(f"[SUCESSO] Usuário autenticado: {user_model.get_logged_in_username()}")
     print(f"   ID: {user_model.get_logged_in_user_id()}")
     
     report_view, habit_controller, report_controller = setup_architecture(user_model, view_type='gui')
     
     # DEBUG: Verificar hábitos carregados
     habits = habit_controller.handle_read_habits_request()
-    print(f"📊 Hábitos carregados: {len(habits)}")
+    print(f"[INFO] Hábitos carregados: {len(habits)}")
     for i, h in enumerate(habits):
         print(f"   {i+1}. {h.get('name')} (ID: {h.get('id')})")
     

@@ -17,7 +17,7 @@ class ReportController(Observer):
 
     def update(self, subject):
         """Implementação do Observer: Chamado quando o HabitModel muda."""
-        print("\n[Sistema]: ✅ Notificação recebida do HabitModel")
+        print("\n[Sistema]: [SUCESSO] Notificação recebida do HabitModel")
         # Gerar e exibir relatórios automaticamente apenas quando a view for o ConsoleView
         try:
             view_name = self.view.__class__.__name__
@@ -91,7 +91,7 @@ class ReportController(Observer):
             custom_report = ReportFactory.create_report("custom", raw_data, start_date, end_date)
             report_data = custom_report.generate_visualization_data()
             
-            print(f"✅ Relatório personalizado gerado: {start_date} até {end_date}")
+            print(f"[SUCESSO] Relatório personalizado gerado: {start_date} até {end_date}")
             return True, f"Relatório gerado com sucesso para o período {start_date} a {end_date}!", report_data
             
         except ValueError as e:
@@ -106,7 +106,7 @@ class ReportController(Observer):
     def _display_console_reports(self, report_data):
         """Exibe os relatórios no console de forma formatada."""
         print("\n" + "="*60)
-        print("📊 RELATÓRIOS DE PROGRESSO")
+        print("[INFO] RELATÓRIOS DE PROGRESSO")
         print("="*60)
         
         # Relatório Diário
@@ -114,8 +114,8 @@ class ReportController(Observer):
         print("─"*60)
         daily = report_data['daily']
         print(f"📅 Data: {daily['date']}")
-        print(f"✅ Concluídos: {daily['completed']}/{daily['total_habits']}")
-        print(f"📊 Taxa: {daily['completion_rate']}%")
+        print(f"[SUCESSO] Concluídos: {daily['completed']}/{daily['total_habits']}")
+        print(f"[INFO] Taxa: {daily['completion_rate']}%")
         
         print("\nDetalhes:")
         for habit in daily['habits_detail']:
@@ -127,8 +127,8 @@ class ReportController(Observer):
         print("─"*60)
         weekly = report_data['weekly']
         print(f"📅 Período: {weekly['start_date']} a {weekly['end_date']}")
-        print(f"✅ Total Concluído: {weekly['total_completed']}")
-        print(f"📊 Média por Dia: {weekly['average_per_day']}")
+        print(f"[SUCESSO] Total Concluído: {weekly['total_completed']}")
+        print(f"[INFO] Média por Dia: {weekly['average_per_day']}")
         print(f"🔥 Sequência Atual: {weekly['current_streak']} dias")
         print(f"📈 Taxa de Conclusão: {weekly['completion_rate']}%")
         print(f"🏆 Melhor Dia: {weekly['best_day']} ({weekly['best_day_count']} hábitos)")
@@ -146,8 +146,8 @@ class ReportController(Observer):
         print("─"*60)
         monthly = report_data['monthly']
         print(f"📅 Período: {monthly['start_date']} a {monthly['end_date']}")
-        print(f"✅ Total Concluído: {monthly['total_completed']}")
-        print(f"📊 Média por Dia: {monthly['average_per_day']}")
+        print(f"[SUCESSO] Total Concluído: {monthly['total_completed']}")
+        print(f"[INFO] Média por Dia: {monthly['average_per_day']}")
         print(f"🔥 Maior Sequência: {monthly['max_streak']} dias")
         print(f"📈 Taxa de Conclusão: {monthly['completion_rate']}%")
         print(f"🏆 Melhor Semana: {monthly['best_week_start']} ({monthly['best_week_count']} hábitos)")
@@ -162,14 +162,14 @@ class ReportController(Observer):
     def display_custom_report_console(self, report_data):
         """Exibe o relatório personalizado no console."""
         print("\n" + "="*60)
-        print("📊 RELATÓRIO PERSONALIZADO")
+        print("[INFO] RELATÓRIO PERSONALIZADO")
         print("="*60)
         
         custom = report_data
         print(f"📅 Período: {custom['start_date']} a {custom['end_date']}")
         print(f"📆 Total de Dias: {custom['total_days']}")
-        print(f"✅ Total Concluído: {custom['total_completed']}")
-        print(f"📊 Média por Dia: {custom['average_per_day']}")
+        print(f"[SUCESSO] Total Concluído: {custom['total_completed']}")
+        print(f"[INFO] Média por Dia: {custom['average_per_day']}")
         print(f"🔥 Maior Sequência: {custom['max_streak']} dias")
         print(f"📈 Taxa de Conclusão: {custom['completion_rate']}%")
         print(f"🏆 Melhor Dia: {custom['best_day']} ({custom['best_day_count']} hábitos)")

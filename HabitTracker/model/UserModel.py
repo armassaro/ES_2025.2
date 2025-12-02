@@ -1,6 +1,7 @@
 import json
 import uuid
 from typing import Tuple, Dict, Any
+from datetime import datetime
 
 USER_FILE = "usuarios.json"
 
@@ -26,21 +27,57 @@ class UserModel:
         self.logged_in_user_id: str | None = None
 
     def _generate_user_id(self) -> str:
-        """Gera um ID de usuário simples para simulação."""
+        """Gera um ID de usuário único usando UUID."""
         return str(uuid.uuid4())
 
     def create_user(self, username: str, password: str) -> Tuple[bool, str]:
-        """Implementar R4: Lógica de criação de usuário."""
+        """
+        Cria um novo usuário no sistema.
+        
+        Args:
+            username: Nome de usuário único
+            password: Senha do usuário
+        
+        Returns:
+            Tupla (sucesso, mensagem)
+        """
+        # Validação de entrada
+        if not username or not password:
+            return False, "Erro: Nome de usuário e senha são obrigatórios."
+        
+        if len(username) < 3:
+            return False, "Erro: Nome de usuário deve ter pelo menos 3 caracteres."
+        
+        if len(password) < 4:
+            return False, "Erro: Senha deve ter pelo menos 4 caracteres."
+        
         if any(user['username'] == username for user in self.users.values()):
             return False, f"Erro: Usuário '{username}' já existe."
 
         user_id = self._generate_user_id()
-        self.users[user_id] = {'username': username, 'password': password, 'id': user_id}
+        self.users[user_id] = {
+            'username': username, 
+            'password': password, 
+            'id': user_id,
+            'created_at': datetime.now().isoformat()
+        }
         save_data(USER_FILE, self.users)
         return True, f"Usuário '{username}' criado com sucesso."
 
     def authenticate(self, username: str, password: str) -> Tuple[bool, str]:
-        """Lógica de autenticação e definição de usuário logado."""
+        """
+        Autentica um usuário no sistema.
+        
+        Args:
+            username: Nome de usuário
+            password: Senha
+        
+        Returns:
+            Tupla (sucesso, mensagem)
+        """
+        if not username or not password:
+            return False, "Erro: Nome de usuário e senha são obrigatórios."
+        
         for user_id, user_data in self.users.items():
             if user_data['username'] == username and user_data['password'] == password:
                 self.logged_in_user_id = user_id
@@ -48,6 +85,7 @@ class UserModel:
         return False, "Erro: Credenciais inválidas."
 
     def get_logged_in_user_id(self) -> str | None:
+        """Retorna o ID do usuário logado."""
         return self.logged_in_user_id
 
     def get_logged_in_username(self) -> str | None:

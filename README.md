@@ -37,6 +37,9 @@
 > - [5. Novas funcionalidades](#5-novas-funcionalidades)
 >   - [5.1. Customização de cores para hábitos](#51-customização-de-cores-para-hábitos)
 >   - [5.2. Relatórios com intervalo de tempo customizado](#52-relatórios-com-intervalo-de-tempo-customizado)
+> - [6. Correções de bugs e refatorações](#6-correções-de-bugs-e-refatorações)
+>   - [6.1. Bugs corrigidos](#61-bugs-corrigidos)
+>   - [6.2. Refatorações implementadas](#62-refatorações-implementadas)
 
 ## 1. Ideia do projeto
 O presente projeto possui como principal intuito a criação de um sistema de gerenciamento de hábitos com capacidade de criação de conta e acompanhamento da criação e evolução pessoal dos hábitos escolhidos pelo próprio usuário.
@@ -499,6 +502,292 @@ A funcionalidade foi implementada através de modificações e adições em múl
 
 2. **ReportController** (`controller/ReportController.py`): Foi adicionado o método `generate_custom_report(start_date, end_date)` que coordena a geração de relatórios customizados. Este método recebe as datas de início e fim como strings, valida os parâmetros, interage com o `HabitModel` para obter os dados necessários, invoca a `ReportFactory` para criar o relatório do tipo custom, e notifica a view apropriada com os dados gerados. O método implementa tratamento de erros robusto, retornando tuplas `(success, message, data)` que permitem à interface gráfica apresentar mensagens claras ao usuário em caso de sucesso ou falha.
 
-3. **MainWindow** (`view/gui/MainWindow.py`): Foi implementado o método `_setup_custom_report_tab()` que adiciona uma nova aba "Personalizado" à janela de relatórios. Esta aba contém campos de entrada para data inicial e final (com valores padrão sugeridos: 30 dias atrás até hoje), um botão para gerar o relatório, e uma área dinâmica para exibição dos resultados. O método `generate_custom_report()` processa a requisição do usuário, valida o formato das datas inseridas (YYYY-MM-DD), invoca o `ReportFactory` para criar o relatório customizado, e apresenta os resultados de forma estruturada incluindo texto descritivo e, quando a biblioteca matplotlib está disponível, um gráfico de barras mostrando o percentual de conclusão diário ao longo do período selecionado.
+## 6. Correções de bugs e refatorações
 
-Ambas as funcionalidades foram desenvolvidas respeitando os padrões de projeto já estabelecidos no sistema, garantindo consistência arquitetural e facilitando futuras manutenções e expansões do código.
+Esta seção documenta os bugs identificados e corrigidos na aplicação, bem como as refatorações implementadas para melhorar a qualidade, manutenibilidade e desempenho do código.
+
+### 6.1. Bugs corrigidos
+
+Durante a análise do código, foram identificados e corrigidos três bugs críticos que afetavam a funcionalidade e estabilidade da aplicação:
+
+#### Bug #1: Erro de codificação Unicode no HabitModel.py
+
+**Descrição do problema:**
+O arquivo `HabitModel.py` utilizava emojis (⚠️) em mensagens de log nas linhas 82, 140, 160, 167 e 177. No ambiente Windows com console PowerShell, estes caracteres especiais Unicode causavam exceção `UnicodeEncodeError: 'charmap' codec can't encode characters`, impedindo a execução dos testes automatizados e causando crashes durante a operação normal do sistema.
+
+**Impacto:**
+- Falha completa na execução de testes automatizados
+- Impossibilidade de debug através de mensagens de log
+- Experiência degradada do usuário em ambientes Windows
+
+**Solução implementada:**
+Todos os emojis foram substituídos por prefixos ASCII entre colchetes:
+- `⚠️` → `[AVISO]`
+- `✅` → `[INFO]`
+- `📊` → `[INFO]`
+
+Esta mudança garante compatibilidade total com todos os sistemas operacionais e codificações de console, mantendo a clareza das mensagens de log.
+
+**Arquivos modificados:**
+- `HabitTracker/model/HabitModel.py` (linhas 82, 96-105, 140, 160-177)
+
+**Código corrigido:**
+```python
+# Antes:
+print(f"⚠️ Model: Usuário não encontrado")
+
+# Depois:
+print(f"[AVISO] Model: Usuario nao encontrado")
+```
+
+---
+
+#### Bug #2: Valor de retorno ignorado na autenticação automática
+
+**Descrição do problema:**
+No arquivo `ConsoleView.py`, linha 43, após a criação bem-sucedida de um novo usuário, o sistema tentava fazer login automático chamando `self.user_model.authenticate(username, password)`, porém o valor de retorno da função (tupla `(success, message)`) não era capturado nem verificado. Isso causava dois problemas:
+1. Se a autenticação falhasse silenciosamente, o usuário acreditaria estar logado quando não estava
+2. Não havia feedback ao usuário sobre o status do login automático
+
+**Impacto:**
+- Estado inconsistente da aplicação
+- Experiência confusa para o usuário
+- Potencial acesso negado em operações subsequentes
+
+**Solução implementada:**
+O código foi refatorado para capturar o retorno da função `authenticate()` e tratar ambos os casos (sucesso e falha):
+
+```python
+# Antes:
+if success:
+    self.show_message(message)
+    self.user_model.authenticate(username, password)
+    return True
+
+# Depois:
+if success:
+    self.show_message(message)
+    auth_success, auth_message = self.user_model.authenticate(username, password)
+    if auth_success:
+        self.show_message(auth_message)
+        return True
+    else:
+        self.show_error(f"Erro ao fazer login automático: {auth_message}")
+        return False
+```
+
+**Arquivos modificados:**
+- `HabitTracker/view/ConsoleView.py` (linhas 38-47)
+
+---
+
+#### Bug #3: Potencial divisão por zero em cálculo de taxas de conclusão
+
+**Descrição do problema:**
+No arquivo `ReportFactory.py`, o cálculo da taxa de conclusão (`completion_rate`) utilizava uma expressão ternária que verificava se `total_habits > 0`, mas retornava `0` (inteiro) em vez de `0.0` (float). Embora tecnicamente não causasse divisão por zero, esta inconsistência de tipos poderia cauar problemas em operações subsequentes que esperassem sempre valores float. Além disso, não havia validação adicional em outros pontos do código para garantir que operações matemáticas sempre tivessem denominadores não-zero.
+
+**Impacto:**
+- Inconsistência de tipos de retorno
+- Potencial para erros em cálculos subsequentes
+- Falta de robustez em edge cases
+
+**Solução implementada:**
+O código foi modificado para garantir retorno consistente do tipo float e adicionar comentário explicativo:
+
+```python
+# Antes:
+completion_rate = round((completed_today / total_habits * 100), 1) if total_habits > 0 else 0
+
+# Depois:
+# Fix: Prevent division by zero and ensure float type consistency
+completion_rate = round((completed_today / total_habits * 100), 1) if total_habits > 0 else 0.0
+```
+
+Adicionalmente, foi incluída validação preventiva no método `_migrate_data_add_color()` do `HabitModel.py` para evitar salvamento desnecessário de dados vazios:
+
+```python
+if self.data:  # Only save if there's data to save
+    save_data(HABIT_DATA_FILE, self.data)
+```
+
+**Arquivos modificados:**
+- `HabitTracker/model/ReportFactory.py` (linha 61)
+- `HabitTracker/model/HabitModel.py` (linha 53)
+
+---
+
+### 6.2. Refatorações implementadas
+
+Foram realizadas refatorações significativas para melhorar a qualidade, legibilidade e manutenibilidade do código. Abaixo estão documentadas as 4 principais refatorações:
+
+#### Refatoração #1: Extração de métodos auxiliares no HabitController
+
+**Motivação:**
+O `HabitController` continha código repetitivo para logging de ações e detalhes em múltiplos métodos, violando o princípio DRY (Don't Repeat Yourself). Mensagens de debug estavam espalhadas e inconsistentes.
+
+**Implementação:**
+Foram extraídos dois métodos auxiliares privados para centralizar a lógica de logging:
+
+```python
+def _log_action(self, message):
+    """Método auxiliar para logging centralizado."""
+    print(f"[CONTROLLER] {message}")
+
+def _log_details(self, details):
+    """Método auxiliar para logging de detalhes."""
+    for key, value in details.items():
+        if value is not None:
+            print(f"   - {key}: {value}")
+```
+
+**Benefícios:**
+- Redução de duplicação de código
+- Consistência em mensagens de log
+- Facilidade para modificar formato de logging no futuro
+- Melhor separação de responsabilidades
+
+**Arquivo modificado:**
+- `HabitTracker/controller/HabitController.py`
+
+---
+
+#### Refatoração #2: Melhorias na validação e documentação do UserModel
+
+**Motivação:**
+O método `create_user()` não validava adequadamente as entradas do usuário, permitindo a criação de contas com nomes vazios ou senhas fracas. A documentação dos métodos era insuficiente.
+
+**Implementação:**
+Foram adicionadas validações de entrada robustas e documentação completa:
+
+```python
+def create_user(self, username: str, password: str) -> Tuple[bool, str]:
+    """
+    Cria um novo usuário no sistema.
+    
+    Args:
+        username: Nome de usuário único
+        password: Senha do usuário
+    
+    Returns:
+        Tupla (sucesso, mensagem)
+    """
+    # Validação de entrada
+    if not username or not password:
+        return False, "Erro: Nome de usuário e senha são obrigatórios."
+    
+    if len(username) < 3:
+        return False, "Erro: Nome de usuário deve ter pelo menos 3 caracteres."
+    
+    if len(password) < 4:
+        return False, "Erro: Senha deve ter pelo menos 4 caracteres."
+    
+    # ... resto do código
+```
+
+Além disso, foi adicionado campo `created_at` aos usuários para rastreabilidade:
+
+```python
+self.users[user_id] = {
+    'username': username, 
+    'password': password, 
+    'id': user_id,
+    'created_at': datetime.now().isoformat()
+}
+```
+
+**Benefícios:**
+- Maior segurança e integridade dos dados
+- Melhor experiência do usuário com mensagens de erro claras
+- Rastreabilidade de quando usuários foram criados
+- Documentação completa facilitando manutenção
+
+**Arquivo modificado:**
+- `HabitTracker/model/UserModel.py`
+
+---
+
+#### Refatoração #3: Validação de entrada no método create_habit
+
+**Motivação:**
+O método `create_habit()` do `HabitModel` aceitava nomes vazios ou com espaços, e não validava o parâmetro `frequency`, permitindo valores inválidos que poderiam causar bugs em outras partes do sistema.
+
+**Implementação:**
+Adicionadas validações completas de entrada com mensagens de erro específicas:
+
+```python
+def create_habit(self, name, description="", frequency="daily"):
+    """
+    Cria um novo hábito (R1 - Create).
+    
+    Args:
+        name: Nome do hábito
+        description: Descrição do hábito (opcional)
+        frequency: Frequência do hábito ('daily', 'weekly', 'monthly')
+    
+    Returns:
+        Tupla (sucesso, mensagem)
+    """
+    # Validação de entrada
+    if not name or not name.strip():
+        return False, "Nome do hábito não pode estar vazio."
+    
+    valid_frequencies = ['daily', 'weekly', 'monthly']
+    if frequency not in valid_frequencies:
+        return False, f"Frequência inválida. Use: {', '.join(valid_frequencies)}"
+    
+    # ... resto do código com name.strip() e description.strip()
+```
+
+**Benefícios:**
+- Prevenção de dados inválidos no sistema
+- Melhor qualidade dos dados persistidos
+- Mensagens de erro claras para o usuário
+- Documentação completa do contrato da função
+
+**Arquivo modificado:**
+- `HabitTracker/model/HabitModel.py`
+
+---
+
+#### Refatoração #4: Melhoria na documentação do método authenticate
+
+**Motivação:**
+O método `authenticate()` do `UserModel` não possuía validação de entrada nem documentação adequada, tornando seu uso menos claro e potencialmente inseguro.
+
+**Implementação:**
+Adicionada validação de entrada e documentação completa:
+
+```python
+def authenticate(self, username: str, password: str) -> Tuple[bool, str]:
+    """
+    Autentica um usuário no sistema.
+    
+    Args:
+        username: Nome de usuário
+        password: Senha
+    
+    Returns:
+        Tupla (sucesso, mensagem)
+    """
+    if not username or not password:
+        return False, "Erro: Nome de usuário e senha são obrigatórios."
+    
+    for user_id, user_data in self.users.items():
+        if user_data['username'] == username and user_data['password'] == password:
+            self.logged_in_user_id = user_id
+            return True, f"Usuário '{username}' logado com sucesso."
+    return False, "Erro: Credenciais inválidas."
+```
+
+**Benefícios:**
+- Prevenção de tentativas de login com campos vazios
+- Documentação clara do comportamento esperado
+- Melhor tratamento de edge cases
+- Código mais robusto e defensivo
+
+**Arquivo modificado:**
+- `HabitTracker/model/UserModel.py`
+
+---
+
+3. **MainWindow** (`view/gui/MainWindow.py`): Foi implementado o método `_setup_custom_report_tab()` que adiciona uma nova aba "Personalizado" à janela de relatórios. Esta aba contém campos de entrada para data inicial e final (com valores padrão sugeridos: 30 dias atrás até hoje), um botão para gerar o relatório, e uma área dinâmica para exibição dos resultados. O método `generate_custom_report()` processa a requisição do usuário, valida o formato das datas inseridas (YYYY-MM-DD), invoca o `ReportFactory` para criar o relatório customizado, e apresenta os resultados de forma estruturada incluindo texto descritivo e, quando a biblioteca matplotlib está disponível, um gráfico de barras mostrando o percentual de conclusão diário ao longo do período selecionado.
