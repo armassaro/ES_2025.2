@@ -1,189 +1,97 @@
-import subprocess
-import sys
+#!/usr/bin/env python3
 import os
-from datetime import datetime
-from pathlib import Path
+import sys
+import platform
+import subprocess
 
-def run_test_suite():
-    """
-    Script para executar todos os testes do HabitTracker e gerar relatórios
-    """
-    print("🚀 Iniciando execução completa da suíte de testes HabitTracker")
-    print("=" * 80)
+def main():
+    # Detectar sistema operacional
+    sistema = platform.system()
     
-    # Detectar e ajustar diretório correto
-    current_dir = Path.cwd()
-    if current_dir.name == 'tests':
-        # Está em tests/, subir para HabitTracker
-        project_root = current_dir.parent
-        os.chdir(project_root)
-        print(f"📂 Detectado em tests/, mudando para: {project_root}")
-    else:
-        project_root = current_dir
-        print(f"📂 Já está na raiz: {project_root}")
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(script_dir)
+    os.chdir(project_root)
     
-    print(f"📂 Diretório de trabalho atual: {os.getcwd()}")
+    print(f"[Diretório]: {os.getcwd()}")
     
-    # Configurações - salvar em tests/test_reports/
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    reports_dir = "tests/test_reports"
+    # Definir comandos baseado no SO
+    if sistema == "Windows":
+        python_cmd = "python3"
+    else:  # Linux, macOS, etc.
+        python_cmd = "python"
     
-    # Criar diretório de relatórios se não existir
-    os.makedirs(reports_dir, exist_ok=True)
-    
-    # Lista de todos os arquivos de teste
-    test_files = [
-        "tests/test_habit_crud.py",
-        "tests/test_habit_visualization.py",
-        "tests/test_report_generation.py"
+    # Lista de comandos a executar
+    comandos = [
+        f"{python_cmd} tests/test_habit_crud.py",
+        f"{python_cmd} tests/test_habit_visualization.py -v -s",
+        f"{python_cmd} tests/test_report_generation.py -v -s"
     ]
     
-    # Verificar se os arquivos de teste existem
-    print("\n🔍 Verificando arquivos de teste...")
-    missing_files = []
-    for test_file in test_files:
-        if os.path.exists(test_file):
-            print(f"   ✅ {test_file}")
-        else:
-            print(f"   ❌ {test_file} - ARQUIVO NÃO ENCONTRADO!")
-            missing_files.append(test_file)
+    # Executar cada comando em sequência
+    resultados = []
     
-    if missing_files:
-        print(f"\n⚠️  ATENÇÃO: {len(missing_files)} arquivo(s) não encontrado(s)!")
-        print("   Continuando com os arquivos disponíveis...\n")
-    
-    print(f"\n📁 Relatórios serão salvos em: {reports_dir}/")
-    print(f"🕐 Timestamp: {timestamp}")
-    print("-" * 80)
-    
-    # Executar cada arquivo de teste individualmente
-    available_tests = [f for f in test_files if os.path.exists(f)]
-    
-    total_passed = 0
-    total_failed = 0
-    
-    for i, test_file in enumerate(available_tests, 1):
-        print(f"\n{'='*80}")
-        print(f"📋 [{i}/{len(available_tests)}] Executando: {test_file}")
-        print(f"{'='*80}")
-        
-        # Nome do arquivo de relatório
-        test_name = os.path.basename(test_file).replace('.py', '')
-        report_file = f"{reports_dir}/{test_name}_{timestamp}.txt"
+    for i, comando in enumerate(comandos, 1):
+        print(f"\n")
+        print(f"[{i}/{len(comandos)}] Executando: {comando}")
         
         try:
-            # Executar pytest
-            cmd = [
-                sys.executable, "-m", "pytest", 
-                test_file, 
-                "-v", "-s", 
-                "--tb=short",
-                "--capture=no"
-            ]
-            
-            print(f"⏱️  Iniciado em: {datetime.now().strftime('%H:%M:%S')}")
-            
-            # Executar e capturar saída
-            result = subprocess.run(
-                cmd, 
-                capture_output=True, 
-                text=True, 
-                encoding='utf-8',
-                errors='replace',
-                timeout=300
+            # Executar comando
+            resultado = subprocess.run(
+                comando,
+                shell=True,
+                cwd=project_root,
+                capture_output=False,  # Mostrar output em tempo real
+                text=True
             )
             
-            # Combinar stdout e stderr
-            full_output = ""
-            if result.stdout:
-                full_output += result.stdout
-            if result.stderr:
-                full_output += "\n" + result.stderr
+            # Armazenar código de saída
+            resultados.append({
+                'comando': comando,
+                'sucesso': resultado.returncode == 0,
+                'codigo': resultado.returncode
+            })
             
-            # Mostrar no console
-            print(full_output)
-            
-            # Salvar APENAS o log real em arquivo
-            with open(report_file, 'w', encoding='utf-8') as f:
-                f.write(full_output)
-            
-            # Contar resultados
-            if result.returncode == 0:
-                total_passed += 1
-                print(f"✅ SUCESSO")
+            if resultado.returncode == 0:
+                print(f"\n✅ Teste {i} concluído com SUCESSO")
             else:
-                total_failed += 1
-                print(f"❌ FALHOU")
-            
-            print(f"💾 Log salvo em: {report_file}")
-            print(f"⏱️  Finalizado em: {datetime.now().strftime('%H:%M:%S')}")
+                print(f"\n❌ Teste {i} FALHOU (código: {resultado.returncode})")
                 
-        except subprocess.TimeoutExpired:
-            print(f"\n⏰ TIMEOUT - Teste demorou mais de 5 minutos")
-            with open(report_file, 'w', encoding='utf-8') as f:
-                f.write(f"TIMEOUT ERROR - Teste demorou mais de 5 minutos\n")
-            total_failed += 1
-            
         except Exception as e:
-            print(f"\n💥 ERRO DE EXECUÇÃO: {str(e)}")
-            with open(report_file, 'w', encoding='utf-8') as f:
-                f.write(f"EXECUTION ERROR: {str(e)}\n")
-            total_failed += 1
+            print(f"\n💥 ERRO ao executar comando: {e}")
+            resultados.append({
+                'comando': comando,
+                'sucesso': False,
+                'codigo': -1
+            })
     
-    # Executar TODOS os testes juntos
-    print(f"\n{'='*80}")
-    print(f"📋 [FINAL] Executando todos os testes combinados...")
-    print(f"{'='*80}")
+    # Resumo final
+    print("\n")
+    print("[RESUMO DA EXECUÇÃO]")
     
-    all_tests_report = f"{reports_dir}/all_tests_combined_{timestamp}.txt"
+    total = len(resultados)
+    sucessos = sum(1 for r in resultados if r['sucesso'])
+    falhas = total - sucessos
     
-    try:
-        cmd_all = [
-            sys.executable, "-m", "pytest", 
-            "tests/",
-            "-v", "-s", 
-            "--tb=short"
-        ]
-        
-        print(f"⏱️  Iniciado em: {datetime.now().strftime('%H:%M:%S')}")
-        
-        result_all = subprocess.run(
-            cmd_all,
-            capture_output=True,
-            text=True,
-            encoding='utf-8',
-            errors='replace',
-            timeout=600
-        )
-        
-        # Combinar saída
-        full_output = ""
-        if result_all.stdout:
-            full_output += result_all.stdout
-        if result_all.stderr:
-            full_output += "\n" + result_all.stderr
-        
-        # Mostrar no console
-        print(full_output)
-        
-        # Salvar em arquivo
-        with open(all_tests_report, 'w', encoding='utf-8') as f:
-            f.write(full_output)
-        
-        print(f"💾 Log combinado salvo em: {all_tests_report}")
-        print(f"⏱️  Finalizado em: {datetime.now().strftime('%H:%M:%S')}")
-        
-    except Exception as e:
-        print(f"💥 Erro ao executar todos os testes: {e}")
+    for i, resultado in enumerate(resultados, 1):
+        icone = "✅" if resultado['sucesso'] else "❌"
+        status = "PASSOU" if resultado['sucesso'] else "FALHOU"
+        print(f"{icone} Teste {i}: {status}")
+        print(f"   Comando: {resultado['comando']}")
+        print(f"   Código: {resultado['codigo']}")
+        print()
     
-    # Resumo final simples
-    print("\n" + "=" * 80)
-    print("🏁 EXECUÇÃO COMPLETA!")
-    print("=" * 80)
-    print(f"✅ Passou: {total_passed}")
-    print(f"❌ Falhou: {total_failed}")
-    print(f"\n📄 Todos os logs salvos em: {reports_dir}/")
-    print("=" * 80)
+    print("-"*80)
+    print(f"📊 Total: {total} | ✅ Sucessos: {sucessos} | ❌ Falhas: {falhas}")
+    print("="*80)
+    
+    # Código de saída
+    return 0 if falhas == 0 else 1
+
 
 if __name__ == "__main__":
-    run_test_suite()
+    try:
+        codigo_saida = main()
+        sys.exit(codigo_saida)
+    except Exception as e:
+        print(f"\n\n[ERRO INESPERADO]: {e}")
+        sys.exit(1)
