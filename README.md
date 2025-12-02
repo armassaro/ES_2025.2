@@ -34,6 +34,9 @@
 >       - [4.3.1. Cenários de teste automatizados relacionados ao CRUD de criação de hábitos (Arthur)](#431-cenários-de-teste-automatizados-relacionados-ao-crud-de-criação-de-hábitos-arthur)
 >       - [4.3.2. Cenários de teste automatizados relacionados a visualização de hábitos (Ian)](#432-cenários-de-teste-automatizados-relacionados-a-visualização-de-hábitos-ian)
 >       - [4.3.3. Cenários de teste automatizados relacionados a geração de relatórios (Silvino)](#433-cenários-de-teste-automatizados-relacionados-a-geração-de-relatórios-silvino)
+> - [5. Novas funcionalidades](#5-novas-funcionalidades)
+>   - [5.1. Customização de cores para hábitos](#51-customização-de-cores-para-hábitos)
+>   - [5.2. Relatórios com intervalo de tempo customizado](#52-relatórios-com-intervalo-de-tempo-customizado)
 
 ## 1. Ideia do projeto
 O presente projeto possui como principal intuito a criação de um sistema de gerenciamento de hábitos com capacidade de criação de conta e acompanhamento da criação e evolução pessoal dos hábitos escolhidos pelo próprio usuário.
@@ -353,9 +356,56 @@ Ex.:
 A estrutura do registro de teste colocado acima possui como principais características a possibilidade da documentação dos testes de forma objetiva e clara, bem como pela busca fácil a partir da seção de tags em cada teste.
 
 ### 4.3. Testes automatizados
-Os testes automatizados são uma coleção de scripts programados para testar as funcionalidades do projeto de forma automática e em larga escala, de forma com que seja possível economizar tempo.  
-Os scripts de teste da aplicação estão presentes na pasta [scripts](/3a%20entrega/scripts/) e os resultados da execução destes scripts também estarão listados no [Logs de testes.md](/3a%20entrega/Logs%20de%20testes.md).  
-Abaixo se encontram os cenários de teste que os scripts automatizados se baseiam: 
+
+Os testes automatizados são uma coleção de scripts programados para testar as funcionalidades do projeto de forma automática e em larga escala, de forma com que seja possível economizar tempo. O sistema utiliza o framework **pytest** para implementação e execução dos testes unitários, garantindo cobertura abrangente das funcionalidades principais da aplicação.
+
+**Estrutura de Testes Implementada:**
+
+A suite de testes está organizada em três módulos principais localizados na pasta `HabitTracker/tests/`:
+- `test_habit_crud.py` - Testes de CRUD de hábitos (Arthur)
+- `test_habit_visualization.py` - Testes de visualização e listagem (Ian)
+- `test_report_generation.py` - Testes de geração de relatórios (Silvino)
+
+**Padrão de Nomenclatura e Assinatura:**
+
+Todos os métodos de teste seguem o padrão de nomenclatura `test_cta_XXX_descricao_breve`, onde XXX corresponde ao identificador do cenário de teste (CTA-001 a CTA-018). Cada método de teste possui a seguinte estrutura de assinatura:
+
+```python
+@pytest.mark.<categoria>
+def test_cta_XXX_descricao(self, clean_json_files, sample_habit_data=None):
+    """
+    CTA-XXX: Título do cenário
+    
+    Dado que: [pré-condição]
+    Quando: [ação executada]
+    Então: [resultado esperado]
+    """
+```
+
+Os testes utilizam **fixtures pytest** definidas em `conftest.py` para garantir isolamento e consistência:
+- `clean_json_files`: Limpa os arquivos JSON antes de cada teste
+- `sample_habit_data`: Fornece dados de exemplo para testes de criação
+
+**Configuração e Inicialização:**
+
+Cada classe de teste implementa o método `setup_method()` que é executado antes de cada teste individual, garantindo um estado limpo e consistente. Este método realiza:
+1. Criação e autenticação de usuário de teste
+2. Inicialização de `HabitModel` e `UserModel`
+3. Configuração de controladores necessários
+
+**Validações e Assertions:**
+
+Os testes utilizam assertions do pytest para validar:
+- Valores de retorno (tuplas `(success, message)` dos métodos do modelo)
+- Estado do sistema após operações
+- Persistência de dados no arquivo JSON
+- Estrutura e conteúdo dos objetos retornados
+
+**Execução dos Testes:**
+
+Os testes podem ser executados individualmente ou em conjunto através do script `run_all_test.py`, que executa sequencialmente todos os módulos de teste e gera um resumo consolidado dos resultados. Os resultados são salvos na pasta `test_reports/` em formato texto e HTML para análise posterior.
+
+Os scripts de teste da aplicação estão presentes na pasta `HabitTracker/tests/` e os resultados da execução destes scripts estão disponíveis em `HabitTracker/test_reports/`. Abaixo se encontram os cenários de teste que os scripts automatizados implementam:
 
 #### 4.3.1. Cenários de teste automatizados relacionados ao CRUD de criação de hábitos (Arthur)
 
@@ -419,3 +469,36 @@ Abaixo se encontram os cenários de teste que os scripts automatizados se baseia
 | **CTA-018** | O sistema está inicializado com hábitos cadastrados | O teste automatizado tenta chamar `ReportFactory.create_report("custom", raw_data, None, None)`, depois `("custom", raw_data, None, "2025-11-15")`, e depois `("custom", raw_data, "2025-11-01", None)` | Todos os 3 casos levantam `ValueError` com mensagem contendo "obrigatórios" ou "required", nenhum relatório é gerado em nenhum dos casos, e o sistema permanece estável |
 
 ---
+
+## 5. Novas funcionalidades
+Foram incluídas novas funcionalidades para a terceira entrega do projeto, visando aprimorar a experiência do usuário e expandir as capacidades analíticas do sistema. As funcionalidades implementadas são detalhadas a seguir:
+
+### 5.1. Customização de cores para hábitos
+
+A funcionalidade de customização de cores permite que o usuário personalize visualmente seus hábitos na interface gráfica, atribuindo cores específicas a cada card de hábito. Esta funcionalidade foi desenvolvida com o objetivo de facilitar a identificação visual rápida dos hábitos e permitir que o usuário organize seus hábitos por categorias através de um esquema de cores personalizado.
+
+A personalização visual dos hábitos através de cores melhora significativamente a experiência do usuário ao permitir uma organização visual mais intuitiva. Por exemplo, o usuário pode escolher cores quentes (vermelho, laranja) para hábitos relacionados à saúde física, cores frias (azul, roxo) para hábitos mentais e intelectuais, e cores vibrantes (verde, amarelo) para hábitos sociais ou recreativos. Esta categorização visual auxilia na navegação rápida pela lista de hábitos e torna a interface mais agradável e personalizada.
+
+A funcionalidade foi implementada através de modificações em três componentes principais do sistema:
+
+1. **HabitModel** (`model/HabitModel.py`): Foi adicionado o atributo `color` ao modelo de dados do hábito, permitindo o armazenamento da preferência de cor escolhida pelo usuário. Este atributo é persistido no arquivo `habitos_registros.json` junto com os demais dados do hábito, garantindo que a escolha de cor seja mantida entre sessões da aplicação.
+
+2. **HabitController** (`controller/HabitController.py`): O método `handle_update_habit_request()` foi estendido para aceitar e processar o parâmetro `color`, permitindo que as requisições de atualização de hábitos incluam a modificação da cor. O controlador valida e repassa esta informação ao modelo de forma consistente com a arquitetura MVC.
+
+3. **MainWindow** (`view/gui/MainWindow.py`): A interface gráfica foi expandida significativamente para suportar a seleção de cores. No diálogo de edição de hábitos (`_edit_habit()`), foi adicionada uma seção dedicada à seleção de cor contendo oito opções pré-definidas (branco, azul, verde, vermelho, roxo, amarelo, laranja e rosa), cada uma representada por um RadioButton com emoji correspondente. Um componente de preview foi implementado para exibir em tempo real a cor selecionada, proporcionando feedback visual imediato ao usuário. A classe `HabitCard` foi modificada para aplicar a cor escolhida ao background do card, utilizando o dicionário `CARD_COLORS` que mapeia nomes de cores para seus códigos hexadecimais correspondentes.
+
+### 5.2. Relatórios com intervalo de tempo customizado
+
+A funcionalidade de relatórios customizados permite que o usuário gere análises de progresso para períodos de tempo específicos, complementando os relatórios predefinidos (diário, semanal e mensal). Esta funcionalidade foi desenvolvida para atender necessidades específicas de análise temporal que os períodos fixos não contemplam.
+
+Relatórios com intervalos customizados são fundamentais para análises mais flexíveis e direcionadas do progresso do usuário. Por exemplo, o usuário pode desejar analisar seu desempenho durante um período de férias específico, avaliar o impacto de uma mudança de rotina ocorrida em datas específicas, ou comparar seu progresso em diferentes quinzenas do mês. Esta funcionalidade permite análises retrospectivas precisas para qualquer período de interesse, tornando o sistema mais adaptável às necessidades individuais de cada usuário.
+
+A funcionalidade foi implementada através de modificações e adições em múltiplos componentes do sistema:
+
+1. **ReportFactory** (`model/ReportFactory.py`): Foi criada a classe `CustomReport` que estende a hierarquia de relatórios existente. Esta classe implementa a lógica de cálculo de estatísticas para períodos arbitrários definidos pelo usuário através dos parâmetros `start_date` e `end_date`. O método `create_report()` da factory foi estendido para suportar o tipo `'custom'`, incluindo validações rigorosas das datas fornecidas (formato, ordem cronológica, obrigatoriedade dos parâmetros). A classe `CustomReport` calcula métricas abrangentes incluindo: total de dias no período, total de hábitos concluídos, média diária de conclusões, maior sequência de dias consecutivos, taxa de conclusão percentual, melhor dia do período (com maior número de conclusões), e dados diários detalhados para cada data no intervalo especificado.
+
+2. **ReportController** (`controller/ReportController.py`): Foi adicionado o método `generate_custom_report(start_date, end_date)` que coordena a geração de relatórios customizados. Este método recebe as datas de início e fim como strings, valida os parâmetros, interage com o `HabitModel` para obter os dados necessários, invoca a `ReportFactory` para criar o relatório do tipo custom, e notifica a view apropriada com os dados gerados. O método implementa tratamento de erros robusto, retornando tuplas `(success, message, data)` que permitem à interface gráfica apresentar mensagens claras ao usuário em caso de sucesso ou falha.
+
+3. **MainWindow** (`view/gui/MainWindow.py`): Foi implementado o método `_setup_custom_report_tab()` que adiciona uma nova aba "Personalizado" à janela de relatórios. Esta aba contém campos de entrada para data inicial e final (com valores padrão sugeridos: 30 dias atrás até hoje), um botão para gerar o relatório, e uma área dinâmica para exibição dos resultados. O método `generate_custom_report()` processa a requisição do usuário, valida o formato das datas inseridas (YYYY-MM-DD), invoca o `ReportFactory` para criar o relatório customizado, e apresenta os resultados de forma estruturada incluindo texto descritivo e, quando a biblioteca matplotlib está disponível, um gráfico de barras mostrando o percentual de conclusão diário ao longo do período selecionado.
+
+Ambas as funcionalidades foram desenvolvidas respeitando os padrões de projeto já estabelecidos no sistema, garantindo consistência arquitetural e facilitando futuras manutenções e expansões do código.
